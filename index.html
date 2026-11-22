@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Учебные тренажёры — Каталог</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="auth.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f4efe6;
+      color: #1b2e24;
+      padding: 20px 16px;
+    }
+    .wrap { max-width: 540px; margin: 0 auto; }
+    .header-card {
+      background: #eef5f0;
+      border: 1px solid #bfd6c7;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 18px;
+      text-align: center;
+    }
+    .header-card h1 { font-size: 1.3rem; color: #15603e; margin-bottom: 6px; }
+    .id-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #ffffff;
+      border: 1px solid #bfd6c7;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.88rem;
+      margin-top: 8px;
+    }
+    .copy-btn {
+      background: #15603e;
+      color: #fff;
+      border: none;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+    .course-card {
+      background: #ffffff;
+      border: 1px solid #bfd6c7;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 3px 10px rgba(21, 96, 62, 0.05);
+    }
+    .course-info h2 { font-size: 1.05rem; margin-bottom: 4px; color: #1b2e24; }
+    .course-info p { font-size: 0.85rem; color: #4b6658; line-height: 1.4; }
+    .status-tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 6px;
+      margin-top: 6px;
+    }
+    .status-open { background: #d2e7db; color: #15603e; }
+    .status-locked { background: #fef3c7; color: #b45309; }
+    .action-btn {
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      text-decoration: none;
+      white-space: nowrap;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-open { background: #15603e; color: #ffffff; }
+    .btn-buy { background: #f8f5ee; color: #b45309; border: 1px solid #f59e0b; }
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-box {
+      background: #fff;
+      border-radius: 14px;
+      padding: 20px;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+    }
+    .modal-box h3 { color: #15603e; margin-bottom: 8px; }
+    .modal-box p { font-size: 0.9rem; color: #4b6658; margin-bottom: 14px; line-height: 1.5; }
+  </style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="header-card">
+    <h1>Библиотека тренажёров</h1>
+    <p style="font-size:0.88rem;color:#4b6658;">Выберите доступный курс для обучения</p>
+    <div class="id-badge">
+      <span>Ваш ID: <strong id="displayId">...</strong></span>
+      <button class="copy-btn" id="copyIdBtn" onclick="copyUserId()">Копировать</button>
+    </div>
+  </div>
+
+  <div id="coursesContainer"></div>
+</div>
+
+<div class="modal" id="buyModal" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal-box">
+    <h3 id="modalTitle">Открытие доступа</h3>
+    <p id="modalText"></p>
+    <button class="action-btn btn-open" style="width:100%;" onclick="document.getElementById('buyModal').style.display='none'">Понятно</button>
+  </div>
+</div>
+
+<script>
+  // Список ваших тренажёров (при добавлении нового курса просто допишите сюда 1 объект)
+  const COURSES = [
+    {
+      code: "sira",
+      title: "🕌 Сира Пророка ﷺ",
+      desc: "Жизнеописание Посланника Аллаха ﷺ с проверкой знаний.",
+      folder: "sira/index.html",
+      price: "500 ₽"
+    },
+    {
+      code: "nawawi",
+      title: "📖 40 хадисов Ан-Науауи",
+      desc: "Заучивание с огласовками, озвучкой, подсветкой слов и транскрипцией.",
+      folder: "nawawi/index.html",
+      price: "500 ₽"
+    }
+  ];
+
+  const userId = getCurrentTelegramId();
+  document.getElementById("displayId").textContent = userId || "не определён";
+  if (!userId) document.getElementById("copyIdBtn").style.display = "none";
+
+  function copyUserId() {
+    if (!userId) return;
+    navigator.clipboard.writeText(userId);
+    const btn = document.getElementById("copyIdBtn");
+    btn.textContent = "Готово ✓";
+    setTimeout(() => btn.textContent = "Копировать", 2000);
+  }
+
+  function openBuyInfo(title, price) {
+    document.getElementById("modalTitle").textContent = title;
+    document.getElementById("modalText").innerHTML =
+      `Стоимость бессрочного доступа: <strong>${price}</strong>.<br><br>` +
+      `Скопируйте ваш ID (<strong>${userId || "из бота"}</strong>) и отправьте администратору (<strong>${ADMIN_CONTACT}</strong>). После подтверждения курс откроется в этом меню автоматически.`;
+    document.getElementById("buyModal").style.display = "flex";
+  }
+
+  const container = document.getElementById("coursesContainer");
+  COURSES.forEach(course => {
+    const unlocked = checkCourseAccess(course.code);
+    const card = document.createElement("div");
+    card.className = "course-card";
+
+    const linkUrl = userId ? `${course.folder}?id=${userId}` : course.folder;
+
+    card.innerHTML = `
+      <div class="course-info">
+        <h2>${course.title}</h2>
+        <p>${course.desc}</p>
+        <span class="status-tag ${unlocked ? "status-open" : "status-locked"}">
+          ${unlocked ? "✓ Доступ открыт" : "🔒 Закрыто • " + course.price}
+        </span>
+      </div>
+      <div>
+        ${unlocked
+          ? `<a href="${linkUrl}" class="action-btn btn-open">Открыть →</a>`
+          : `<button class="action-btn btn-buy" onclick="openBuyInfo('${course.title}', '${course.price}')">Получить</button>`
+        }
+      </div>
+    `;
+    container.appendChild(card);
+  });
+</script>
+</body>
+</html>
