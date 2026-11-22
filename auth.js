@@ -1,7 +1,7 @@
 // Единый файл управления доступом ко всем тренажёрам
 // Коды курсов: "sira" (Сира), "nawawi" (40 хадисов), "all" (полный доступ ко всему)
 
-const ADMIN_CONTACT = "@ваш_ник_в_телеграм"; // Замените на ваш ник в Telegram
+const ADMIN_CONTACT = "@Rustam_abu_Aisha"; // Замените на ваш ник в Telegram
 
 const USER_ACCESS = {
   "859435297": ["all"],
