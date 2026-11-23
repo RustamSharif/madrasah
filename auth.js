@@ -5,7 +5,7 @@ const ADMIN_CONTACT = "@Rustam_abu_Aisha";
 const TRIAL_DURATION_HOURS = 24; // Длительность пробного доступа в часах
 
 const USER_ACCESS = {
-  "859435297": ["all"],
+  //"859435297": ["all"],
   "806762570": ["all"],
   // Пример ручного временного доступа:
   // "123456789": { courses: ["all"], expires: "2026-12-01T23:59:00" },
