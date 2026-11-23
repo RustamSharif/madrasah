@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Библиотека интерактивных тренажёров</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script>
+    document.write('<script src="auth.js?v=' + Date.now() + '"><\/script>');
+  </script>
+  <style>
+    :root {
+      --bg-color: #f4efe6;
+      --bg-pattern: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23cbbba0' stroke-width='0.9' stroke-opacity='0.35'%3E%3Crect x='22' y='22' width='36' height='36'/%3E%3Crect x='22' y='22' width='36' height='36' transform='rotate(45 40 40)'/%3E%3Ccircle cx='40' cy='40' r='8'/%3E%3Cpath d='M0 40 H14 M66 40 H80 M40 0 V14 M40 66 V80'/%3E%3Cpath d='M0 0 L14 14 M80 0 L66 14 M0 80 L14 66 M80 80 L66 66'/%3E%3C/g%3E%3C/svg%3E");
+      --card-bg: #eef5f0;
+      --inner-bg: #ffffff;
+      --text-main: #1b2e24;
+      --text-muted: #4b6658;
+      --primary: #15603e;
+      --primary-hover: #0e462d;
+      --primary-light: #d2e7db;
+      --border: #bfd6c7;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      background-image: var(--bg-pattern);
+      color: var(--text-main);
+      line-height: 1.55;
+      padding: 20px 14px 40px 14px;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .header-card {
+      background: linear-gradient(135deg, #0e462d, #15603e);
+      color: #ffffff;
+      border-radius: 16px;
+      padding: 24px 20px;
+      text-align: center;
+      margin-bottom: 18px;
+      box-shadow: 0 6px 18px rgba(21, 96, 62, 0.18);
+      border-bottom: 4px solid #c59b27;
+    }
+
+    .header-card h1 {
+      font-size: 1.45rem;
+      margin-bottom: 6px;
+    }
+
+    .header-card p {
+      font-size: 0.94rem;
+      opacity: 0.92;
+    }
+
+    .id-bar {
+      background: var(--inner-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.04);
+    }
+
+    .id-label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .id-value {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 0.5px;
+    }
+
+    .btn-copy {
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-copy:hover {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .courses-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .course-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      box-shadow: 0 4px 12px rgba(21,96,62,0.06);
+    }
+
+    .course-card.locked {
+      background: #f3f4f6;
+      border-color: #d1d5db;
+    }
+
+    .course-info {
+      flex: 1;
+      min-width: 230px;
+    }
+
+    .course-tag {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 2px 9px;
+      border-radius: 6px;
+      margin-bottom: 6px;
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .course-card.locked .course-tag {
+      background: #e5e7eb;
+      color: #4b5563;
+    }
+
+    .course-title {
+      font-size: 1.12rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .course-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .btn-open {
+      background: var(--primary);
+      color: #ffffff;
+      text-decoration: none;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.94rem;
+      white-space: nowrap;
+      display: inline-block;
+    }
+
+    .btn-open:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-locked {
+      background: #e5e7eb;
+      color: #4b5563;
+      border: 1px solid #d1d5db;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header-card">
+    <h1>Библиотека исламских тренажёров</h1>
+    <p>Интерактивные курсы для заучивания и проверки знаний</p>
+  </div>
+
+  <div class="id-bar">
+    <div>
+      <div class="id-label">Ваш персональный ID в Telegram:</div>
+      <div class="id-value" id="userIdDisplay">Определение...</div>
+    </div>
+    <button class="btn-copy" id="copyIdBtn" onclick="copyUserId()">📋 Скопировать ID</button>
+  </div>
+
+  <div class="courses-list" id="coursesList"></div>
+
+  <div class="footer-note" id="footerNote"></div>
+</div>
+
+<script>
+  const COURSES = [
+    {
+      code: "sira",
+      badge: "История Ислама • 7 модулей",
+      title: "Сира Пророка Мухаммада ﷺ",
+      desc: "Хронологический курс, тесты по семье и сподвижникам Пророка ﷺ, конспекты-шпаргалки и итоговый экзамен (190 вопросов).",
+      url: "sira/index.html"
+    },
+    {
+      code: "nawawi",
+      badge: "Хадисоведение • 4 главы",
+      title: "40 хадисов имама Ан-Науауи",
+      desc: "Тренажёр для заучивания: огласованный арабский текст, озвучка, скрытие слов по уровням, транскрипция и перевод.",
+      url: "nawawi/index.html"
+    },
+    {
+      code: "fiqh",
+      badge: "Ханафитский мазхаб • 16 глав",
+      title: "Фикх аль-Ибада (Мухтасар аль-Кудури)",
+      desc: "Подробные шпаргалки и 240 тестовых вопросов с разбором по очищению, намазу, посту, закяту, хаджу, азану и удхии.",
+      url: "fiqh/index.html"
+    }
+  ];
+
+  let currentUserId = null;
+
+  function initCatalog() {
+    currentUserId = typeof getCurrentTelegramId === "function" ? getCurrentTelegramId() : null;
+    const idDisplay = document.getElementById("userIdDisplay");
+    const copyBtn = document.getElementById("copyIdBtn");
+
+    if (currentUserId) {
+      idDisplay.textContent = currentUserId;
+    } else {
+      idDisplay.textContent = "Откройте через Telegram-бот";
+      copyBtn.style.display = "none";
+    }
+
+    const adminName = typeof ADMIN_CONTACT !== "undefined" ? ADMIN_CONTACT : "администратору";
+    document.getElementById("footerNote").innerHTML =
+      `Для открытия доступа к закрытым курсам отправьте ваш ID <strong>${adminName}</strong>.`;
+
+    renderCourses();
+  }
+
+  function renderCourses() {
+    const container = document.getElementById("coursesList");
+    container.innerHTML = "";
+
+    COURSES.forEach(course => {
+      const unlocked = typeof hasAccess === "function" && hasAccess(currentUserId, course.code);
+      const card = document.createElement("div");
+      card.className = `course-card ${unlocked ? "" : "locked"}`;
+
+      const targetUrl = currentUserId
+        ? `${course.url}?id=${encodeURIComponent(currentUserId)}`
+        : course.url;
+
+      card.innerHTML = `
+        <div class="course-info">
+          <span class="course-tag">${course.badge}</span>
+          <div class="course-title">${course.title}</div>
+          <div class="course-desc">${course.desc}</div>
+        </div>
+        <div>
+          ${unlocked
+            ? `<a href="${targetUrl}" class="btn-open">Открыть →</a>`
+            : `<button class="btn-locked" onclick="showLockAlert('${course.title}')">🔒 Закрыто</button>`
+          }
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  function copyUserId() {
+    if (!currentUserId) return;
+    navigator.clipboard.writeText(currentUserId).then(() => {
+      const btn = document.getElementById("copyIdBtn");
+      btn.textContent = "Скопировано ✓";
+      setTimeout(() => { btn.textContent = "📋 Скопировать ID"; }, 2000);
+    });
+  }
+
+  function showLockAlert(title) {
+    const adminName = typeof ADMIN_CONTACT !== "undefined" ? ADMIN_CONTACT : "администратору";
+    alert(
+      `Доступ к курсу «${title}» пока не активирован.\n\n` +
+      `Скопируйте ваш ID вверху страницы (${currentUserId || "не определён"}) и отправьте его ${adminName}.`
+    );
+  }
+
+  initCatalog();
+</script>
+
+</body>
+</html>
