@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Фикх аль-Ибада (Ханафитский мазхаб)</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script>
+    document.write('<script src="../auth.js?v=' + Date.now() + '"><\/script>');
+  </script>
+  <script>
+    if (typeof protectCoursePage === "function") {
+      protectCoursePage("fiqh", "Фикх аль-Ибада (Ханафитский мазхаб)");
+    }
+  </script>
+  <style>
+    :root {
+      --bg-color: #f4efe6;
+      --bg-pattern: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23cbbba0' stroke-width='0.9' stroke-opacity='0.35'%3E%3Crect x='22' y='22' width='36' height='36'/%3E%3Crect x='22' y='22' width='36' height='36' transform='rotate(45 40 40)'/%3E%3Ccircle cx='40' cy='40' r='8'/%3E%3Cpath d='M0 40 H14 M66 40 H80 M40 0 V14 M40 66 V80'/%3E%3Cpath d='M0 0 L14 14 M80 0 L66 14 M0 80 L14 66 M80 80 L66 66'/%3E%3C/g%3E%3C/svg%3E");
+      --card-bg: #eef5f0;
+      --inner-bg: #f9fcfa;
+      --header-bg: #f8f5ee;
+      --text-main: #1b2e24;
+      --text-muted: #4b6658;
+      --primary: #15603e;
+      --primary-hover: #0e462d;
+      --primary-light: #d2e7db;
+      --accent: #b45309;
+      --border: #bfd6c7;
+      --header-border: #dcd3c1;
+    }
+
+    body.dark-theme {
+      --bg-color: #111827;
+      --bg-pattern: none;
+      --card-bg: #1f2937;
+      --inner-bg: #111827;
+      --header-bg: #1f2937;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --primary: #14b8a6;
+      --primary-hover: #0d9488;
+      --primary-light: #134e4a;
+      --accent: #f59e0b;
+      --border: #374151;
+      --header-border: #374151;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      background-image: var(--bg-pattern);
+      color: var(--text-main);
+      line-height: 1.6;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    header {
+      background-color: var(--header-bg);
+      border-bottom: 1px solid var(--header-border);
+      padding: 14px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .brand { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .brand h1 { font-size: 1.15rem; color: var(--primary); font-weight: 700; }
+
+    .badge {
+      font-size: 0.82rem;
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+      border: 1px solid var(--border);
+    }
+
+    .top-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    button, .btn-link {
+      cursor: pointer;
+      font-family: inherit;
+      border: 1px solid var(--border);
+      background: var(--inner-bg);
+      color: var(--text-main);
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+
+    button:hover, .btn-link:hover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 22px auto;
+      padding: 0 14px 40px 14px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: 0 4px 16px rgba(21,96,62,0.07);
+    }
+
+    .intro-text {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 18px;
+    }
+
+    .chapters-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .chapter-row {
+      background: var(--inner-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .chapter-info { flex: 1; min-width: 220px; }
+    .chapter-title { font-weight: 700; font-size: 1rem; color: var(--text-main); }
+    .chapter-meta { font-size: 0.83rem; color: var(--text-muted); margin-top: 2px; }
+
+    .score-pill {
+      display: inline-block;
+      margin-left: 8px;
+      padding: 1px 8px;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .chapter-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      color: #ffffff;
+    }
+
+    .exam-box {
+      margin-top: 20px;
+      padding: 18px;
+      background: var(--inner-bg);
+      border: 2px solid var(--accent);
+      border-radius: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .exam-box h3 { color: var(--accent); font-size: 1.05rem; margin-bottom: 4px; }
+    .exam-box p { font-size: 0.88rem; color: var(--text-muted); }
+
+    /* Экран теста */
+    .quiz-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 18px;
+    }
+
+    .topic-tag {
+      display: inline-block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .question-text {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+      line-height: 1.45;
+    }
+
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option-btn {
+      width: 100%;
+      text-align: left;
+      padding: 14px 16px;
+      font-size: 0.98rem;
+      font-weight: 500;
+      border-radius: 10px;
+      background: var(--inner-bg);
+      border: 1px solid var(--border);
+      line-height: 1.45;
+    }
+
+    .option-btn:disabled { cursor: default; }
+    .option-btn.correct {
+      background: #d1fae5 !important;
+      border-color: #059669 !important;
+      color: #065f46 !important;
+      font-weight: 700;
+    }
+    .option-btn.wrong {
+      background: #fee2e2 !important;
+      border-color: #dc2626 !important;
+      color: #991b1b !important;
+    }
+
+    .explanation-box {
+      display: none;
+      margin-top: 18px;
+      padding: 16px;
+      background: var(--inner-bg);
+      border-left: 5px solid var(--primary);
+      border-radius: 8px;
+      font-size: 0.96rem;
+    }
+
+    .source-tag {
+      display: block;
+      margin-top: 8px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .quiz-footer {
+      margin-top: 20px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    /* Модальное окно шпаргалки */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 200;
+      padding: 16px;
+      overflow-y: auto;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-card {
+      background: var(--inner-bg);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      max-width: 720px;
+      width: 100%;
+      max-height: 88vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-body {
+      padding: 20px;
+      overflow-y: auto;
+      font-size: 0.96rem;
+      line-height: 1.65;
+    }
+
+    .modal-body h3 { color: var(--primary); margin-bottom: 12px; font-size: 1.1rem; }
+    .modal-body ul, .modal-body ol { padding-left: 20px; margin-bottom: 10px; }
+    .modal-body li { margin-bottom: 8px; }
+
+    .result-box { text-align: center; padding: 20px 10px; }
+    .result-score { font-size: 2rem; font-weight: 800; color: var(--primary); margin: 12px 0; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <a href="#" onclick="goCatalog(event)" class="btn-link">← Все курсы</a>
+    <h1>Фикх аль-Ибада</h1>
+    <span class="badge" id="totalQuestionsBadge">Загрузка базы...</span>
+  </div>
+  <div class="top-actions">
+    <button onclick="toggleTheme()" id="themeBtn">🌙 Тёмная тема</button>
+  </div>
+</header>
+
+<div class="container">
+  <!-- Главное меню глав -->
+  <div id="menu-screen" class="card">
+    <p class="intro-text">
+      Интерактивный курс и конспекты по ханафитскому фикху на основе классического матна <strong>«Мухтасар аль-Кудури»</strong>. Изучите краткую шпаргалку по теме и закрепите знания в тесте.
+    </p>
+    <div class="chapters-grid" id="chaptersList"></div>
+
+    <div class="exam-box">
+      <div>
+        <h3>🎓 Итоговый зачёт по всему курсу</h3>
+        <p>40 случайных вопросов из всех 16 глав раздела «Ибадат»</p>
+      </div>
+      <button class="btn-primary" onclick="startFinalExam()">Начать зачёт →</button>
+    </div>
+  </div>
+
+  <!-- Экран тестирования -->
+  <div id="quiz-screen" class="card" style="display:none;">
+    <div class="quiz-topbar">
+      <button onclick="returnToMenu()">← К списку глав</button>
+      <span class="badge" id="quizProgress">Вопрос 1 из 15 | Верно: 0</span>
+      <button id="inQuizCheatBtn" onclick="openCurrentCheatsheet()">📖 Шпаргалка</button>
+    </div>
+
+    <div class="topic-tag" id="qTopic"></div>
+    <div class="question-text" id="qText"></div>
+    <div class="options-list" id="qOptions"></div>
+
+    <div class="explanation-box" id="qExplanation">
+      <div id="qExpText"></div>
+      <span class="source-tag" id="qSource"></span>
+    </div>
+
+    <div class="quiz-footer">
+      <button class="btn-primary" id="nextBtn" style="display:none;" onclick="nextQuestion()">Следующий вопрос →</button>
+    </div>
+  </div>
+
+  <!-- Экран результатов -->
+  <div id="result-screen" class="card" style="display:none;">
+    <div class="result-box">
+      <h2 id="resultTitle">Тест завершён!</h2>
+      <div class="result-score" id="resultScore">0 / 15 (0%)</div>
+      <p id="resultMessage" style="margin-bottom: 22px; color: var(--text-muted);"></p>
+      <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+        <button onclick="retryCurrent()">🔄 Пройти ещё раз</button>
+        <button class="btn-primary" onclick="returnToMenu()">К списку глав</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Модальное окно шпаргалки -->
+<div class="modal-overlay" id="cheatModal" onclick="if(event.target===this) closeCheatsheet()">
+  <div class="modal-card">
+    <div class="modal-header">
+      <strong style="color:var(--primary);" id="cheatModalTitle">Шпаргалка по теме</strong>
+      <button onclick="closeCheatsheet()">✕ Закрыть</button>
+    </div>
+    <div class="modal-body" id="cheatModalBody"></div>
+  </div>
+</div>
+
+<!-- Подключение всех 6 файлов базы знаний по Мухтасар аль-Кудури -->
+<script src="fiqh_part1.js"></script>
+<script src="fiqh_part2.js"></script>
+<script src="fiqh_part3a.js"></script>
+<script src="fiqh_part3b.js"></script>
+<script src="fiqh_part4a.js"></script>
+<script src="fiqh_part4b.js"></script>
+
+<script>
+  const CHAPTERS = [
+    { key: "Тахарат", title: "1. Тахарат (Очищение и виды вод)" },
+    { key: "Вуду", title: "2. Вуду (Малое омовение и масх)" },
+    { key: "Гусль", title: "3. Гусль (Полное омовение)" },
+    { key: "Тайаммум", title: "4. Тайаммум (Очищение землёй)" },
+    { key: "Намаз (Основы)", title: "5. Намаз: времена, условия и арканы" },
+    { key: "Намаз (Сунны)", title: "6. Намаз: ваджибы, сунны и макрухи" },
+    { key: "Намаз (Нарушения и Сахв)", title: "7. Намаз: нарушения, Суджуд Сахв и сомнения" },
+    { key: "Джамаат", title: "8. Джамаат (Коллективный намаз и имамат)" },
+    { key: "Мусафир", title: "9. Мусафир (Намаз путника)" },
+    { key: "Джума и Ид", title: "10. Джума и Ид (Пятничный и праздничный намазы)" },
+    { key: "Джаназа", title: "11. Джаназа (Заупокойная молитва и похороны)" },
+    { key: "Пост", title: "12. Пост (Саум и Итикаф)" },
+    { key: "Закят", title: "13. Закят и Закят аль-Фитр" },
+    { key: "Хадж", title: "14. Хадж и Умра (Паломничество)" },
+    { key: "Азан", title: "15. Азан и Икамат" },
+    { key: "Удхия", title: "16. Жертвоприношение (Удхия / Курбан)" }
+  ];
+
+  let progress = JSON.parse(localStorage.getItem("fiqh_kuduri_progress") || "{}");
+  let currentMode = null; // chapter key или "EXAM"
+  let currentQuestions = [];
+  let currentIdx = 0;
+  let score = 0;
+
+  function init() {
+    const data = window.FIQH_DATA || { cheatsheets: {}, questions: [] };
+    document.getElementById("totalQuestionsBadge").textContent = `База: ${data.questions.length} вопросов`;
+    renderMenu();
+  }
+
+  function renderMenu() {
+    const list = document.getElementById("chaptersList");
+    const data = window.FIQH_DATA || { cheatsheets: {}, questions: [] };
+    list.innerHTML = "";
+
+    CHAPTERS.forEach(ch => {
+      const qCount = data.questions.filter(q => q.chapter === ch.key).length;
+      const best = progress[ch.key];
+      const hasCheat = Boolean(data.cheatsheets[ch.key]);
+
+      const row = document.createElement("div");
+      row.className = "chapter-row";
+
+      const info = document.createElement("div");
+      info.className = "chapter-info";
+      info.innerHTML = `
+        <div class="chapter-title">
+          ${ch.title}
+          ${best !== undefined ? `<span class="score-pill">Лучший результат: ${best}%</span>` : ""}
+        </div>
+        <div class="chapter-meta">Вопросов: ${qCount} • Источник: Мухтасар аль-Кудури</div>
+      `;
+
+      const btns = document.createElement("div");
+      btns.className = "chapter-btns";
+
+      if (hasCheat) {
+        const cheatBtn = document.createElement("button");
+        cheatBtn.textContent = "📖 Шпаргалка";
+        cheatBtn.onclick = () => openCheatsheet(ch.key, ch.title);
+        btns.appendChild(cheatBtn);
+      }
+
+      const startBtn = document.createElement("button");
+      startBtn.className = "btn-primary";
+      startBtn.textContent = "Тест →";
+      startBtn.onclick = () => startChapter(ch.key);
+      btns.appendChild(startBtn);
+
+      row.appendChild(info);
+      row.appendChild(btns);
+      list.appendChild(row);
+    });
+  }
+
+  function startChapter(chapterKey) {
+    const data = window.FIQH_DATA || { questions: [] };
+    const pool = data.questions.filter(q => q.chapter === chapterKey);
+    if (!pool.length) {
+      alert("Вопросы по этой главе не найдены. Проверьте загрузку файлов fiqh_part*.js");
+      return;
+    }
+    currentMode = chapterKey;
+    currentQuestions = [...pool].sort(() => Math.random() - 0.5);
+    currentIdx = 0;
+    score = 0;
+    document.getElementById("inQuizCheatBtn").style.display = "inline-flex";
+    showScreen("quiz-screen");
+    renderQuestion();
+  }
+
+  function startFinalExam() {
+    const data = window.FIQH_DATA || { questions: [] };
+    if (!data.questions.length) return;
+    currentMode = "EXAM";
+    currentQuestions = [...data.questions].sort(() => Math.random() - 0.5).slice(0, 40);
+    currentIdx = 0;
+    score = 0;
+    document.getElementById("inQuizCheatBtn").style.display = "inline-flex";
+    showScreen("quiz-screen");
+    renderQuestion();
+  }
+
+  function renderQuestion() {
+    const q = currentQuestions[currentIdx];
+    document.getElementById("quizProgress").textContent =
+      `Вопрос ${currentIdx + 1} из ${currentQuestions.length} | Верно: ${score}`;
+    document.getElementById("qTopic").textContent = `${q.chapter} • ${q.topic}`;
+    document.getElementById("qText").textContent = q.question;
+
+    const optsBox = document.getElementById("qOptions");
+    optsBox.innerHTML = "";
+    q.options.forEach((opt, idx) => {
+      const btn = document.createElement("button");
+      btn.className = "option-btn";
+      btn.textContent = opt;
+      btn.onclick = () => handleAnswer(idx, btn);
+      optsBox.appendChild(btn);
+    });
+
+    document.getElementById("qExplanation").style.display = "none";
+    document.getElementById("nextBtn").style.display = "none";
+  }
+
+  function handleAnswer(selectedIdx, btn) {
+    const q = currentQuestions[currentIdx];
+    const buttons = document.querySelectorAll("#qOptions .option-btn");
+    buttons.forEach(b => b.disabled = true);
+
+    if (selectedIdx === q.correct) {
+      btn.classList.add("correct");
+      score++;
+    } else {
+      btn.classList.add("wrong");
+      if (buttons[q.correct]) buttons[q.correct].classList.add("correct");
+    }
+
+    document.getElementById("quizProgress").textContent =
+      `Вопрос ${currentIdx + 1} из ${currentQuestions.length} | Верно: ${score}`;
+    document.getElementById("qExpText").textContent = q.explanation;
+    document.getElementById("qSource").textContent = "Источник: " + q.source;
+    document.getElementById("qExplanation").style.display = "block";
+
+    const nextBtn = document.getElementById("nextBtn");
+    nextBtn.style.display = "inline-flex";
+    nextBtn.textContent = currentIdx === currentQuestions.length - 1 ? "Завершить тест 🏁" : "Следующий вопрос →";
+  }
+
+  function nextQuestion() {
+    currentIdx++;
+    if (currentIdx < currentQuestions.length) {
+      renderQuestion();
+    } else {
+      finishQuiz();
+    }
+  }
+
+  function finishQuiz() {
+    const pct = Math.round((score / currentQuestions.length) * 100);
+    if (currentMode !== "EXAM") {
+      if (progress[currentMode] === undefined || pct > progress[currentMode]) {
+        progress[currentMode] = pct;
+        localStorage.setItem("fiqh_kuduri_progress", JSON.stringify(progress));
+      }
+    }
+
+    document.getElementById("resultTitle").textContent =
+      currentMode === "EXAM" ? "Итоговый зачёт завершён!" : `Глава «${currentMode}» завершена!`;
+    document.getElementById("resultScore").textContent = `${score} из ${currentQuestions.length} (${pct}%)`;
+
+    let msg = "Рекомендуется ещё раз просмотреть конспект-шпаргалку и повторить тест.";
+    if (pct === 100) msg = "МашаАллах! Безупречный результат — тема усвоена полностью.";
+    else if (pct >= 80) msg = "Отличный результат! Уверенные знания по «Мухтасар аль-Кудури».";
+    else if (pct >= 60) msg = "Хороший результат, но стоит обратить внимание на допущенные ошибки.";
+
+    document.getElementById("resultMessage").textContent = msg;
+    showScreen("result-screen");
+  }
+
+  function retryCurrent() {
+    if (currentMode === "EXAM") startFinalExam();
+    else startChapter(currentMode);
+  }
+
+  function returnToMenu() {
+    renderMenu();
+    showScreen("menu-screen");
+  }
+
+  function showScreen(id) {
+    ["menu-screen", "quiz-screen", "result-screen"].forEach(s => {
+      document.getElementById(s).style.display = (s === id) ? "block" : "none";
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function openCheatsheet(chapterKey, title) {
+    const data = window.FIQH_DATA || { cheatsheets: {} };
+    const html = data.cheatsheets[chapterKey];
+    if (!html) return;
+    document.getElementById("cheatModalTitle").textContent = title || chapterKey;
+    document.getElementById("cheatModalBody").innerHTML = html;
+    document.getElementById("cheatModal").style.display = "flex";
+  }
+
+  function openCurrentCheatsheet() {
+    const q = currentQuestions[currentIdx];
+    if (!q) return;
+    const ch = CHAPTERS.find(c => c.key === q.chapter);
+    openCheatsheet(q.chapter, ch ? ch.title : q.chapter);
+  }
+
+  function closeCheatsheet() {
+    document.getElementById("cheatModal").style.display = "none";
+  }
+
+  function toggleTheme() {
+    document.body.classList.toggle("dark-theme");
+    const isDark = document.body.classList.contains("dark-theme");
+    document.getElementById("themeBtn").textContent = isDark ? "☀️ Светлая тема" : "🌙 Тёмная тема";
+  }
+
+  function goCatalog(e) {
+    e.preventDefault();
+    const uid = typeof getCurrentTelegramId === "function" ? getCurrentTelegramId() : null;
+    window.location.href = uid ? `../index.html?id=${encodeURIComponent(uid)}` : "../index.html";
+  }
+
+  init();
+</script>
+</body>
+</html>
