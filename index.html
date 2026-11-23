@@ -1,314 +1,308 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Библиотека интерактивных тренажёров</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script>
-    document.write('<script src="auth.js?v=' + Date.now() + '"><\/script>');
-  </script>
-  <style>
-    :root {
-      --bg-color: #f4efe6;
-      --bg-pattern: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23cbbba0' stroke-width='0.9' stroke-opacity='0.35'%3E%3Crect x='22' y='22' width='36' height='36'/%3E%3Crect x='22' y='22' width='36' height='36' transform='rotate(45 40 40)'/%3E%3Ccircle cx='40' cy='40' r='8'/%3E%3Cpath d='M0 40 H14 M66 40 H80 M40 0 V14 M40 66 V80'/%3E%3Cpath d='M0 0 L14 14 M80 0 L66 14 M0 80 L14 66 M80 80 L66 66'/%3E%3C/g%3E%3C/svg%3E");
-      --card-bg: #eef5f0;
-      --inner-bg: #ffffff;
-      --text-main: #1b2e24;
-      --text-muted: #4b6658;
-      --primary: #15603e;
-      --primary-hover: #0e462d;
-      --primary-light: #d2e7db;
-      --border: #bfd6c7;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--bg-color);
-      background-image: var(--bg-pattern);
-      color: var(--text-main);
-      line-height: 1.55;
-      padding: 20px 14px 40px 14px;
-    }
-
-    .container {
-      max-width: 720px;
-      margin: 0 auto;
-    }
-
-    .header-card {
-      background: linear-gradient(135deg, #0e462d, #15603e);
-      color: #ffffff;
-      border-radius: 16px;
-      padding: 24px 20px;
-      text-align: center;
-      margin-bottom: 18px;
-      box-shadow: 0 6px 18px rgba(21, 96, 62, 0.18);
-      border-bottom: 4px solid #c59b27;
-    }
-
-    .header-card h1 {
-      font-size: 1.45rem;
-      margin-bottom: 6px;
-    }
-
-    .header-card p {
-      font-size: 0.94rem;
-      opacity: 0.92;
-    }
-
-    .id-bar {
-      background: var(--inner-bg);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px 18px;
-      margin-bottom: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.04);
-    }
-
-    .id-label {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-    }
-
-    .id-value {
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: var(--primary);
-      letter-spacing: 0.5px;
-    }
-
-    .btn-copy {
-      background: var(--primary-light);
-      color: var(--primary);
-      border: 1px solid var(--border);
-      padding: 8px 14px;
-      border-radius: 8px;
-      font-size: 0.88rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .btn-copy:hover {
-      background: var(--primary);
-      color: #ffffff;
-    }
-
-    .courses-list {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .course-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 18px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-      box-shadow: 0 4px 12px rgba(21,96,62,0.06);
-    }
-
-    .course-card.locked {
-      background: #f3f4f6;
-      border-color: #d1d5db;
-    }
-
-    .course-info {
-      flex: 1;
-      min-width: 230px;
-    }
-
-    .course-tag {
-      display: inline-block;
-      font-size: 0.78rem;
-      font-weight: 700;
-      padding: 2px 9px;
-      border-radius: 6px;
-      margin-bottom: 6px;
-      background: var(--primary-light);
-      color: var(--primary);
-    }
-
-    .course-card.locked .course-tag {
-      background: #e5e7eb;
-      color: #4b5563;
-    }
-
-    .course-title {
-      font-size: 1.12rem;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-
-    .course-desc {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-    }
-
-    .btn-open {
-      background: var(--primary);
-      color: #ffffff;
-      text-decoration: none;
-      padding: 10px 18px;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 0.94rem;
-      white-space: nowrap;
-      display: inline-block;
-    }
-
-    .btn-open:hover {
-      background: var(--primary-hover);
-    }
-
-    .btn-locked {
-      background: #e5e7eb;
-      color: #4b5563;
-      border: 1px solid #d1d5db;
-      padding: 10px 16px;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 0.9rem;
-      white-space: nowrap;
-      cursor: pointer;
-    }
-
-    .footer-note {
-      text-align: center;
-      margin-top: 24px;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Библиотека исламских тренажёров</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        document.write('<script src="auth.js?v=' + Date.now() + '"><\/script>');
+    </script>
+    <style>
+        :root {
+            --primary: #1b5e20;
+            --primary-dark: #124116;
+            --primary-light: #e8f2e9;
+            --accent: #b89535;
+            --bg-base: #b5b8b4;
+            --card-bg: #d4d6d2;
+            --item-bg: #e2e4e0;
+            --text: #1a1d1a;
+            --muted: #4a4f4a;
+            --border: #9ea39d;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-size: 17px;
+            line-height: 1.55;
+            color: var(--text);
+            margin: 0;
+            padding: 18px 14px;
+            background-color: var(--bg-base);
+        }
+        .container { max-width: 780px; margin: 0 auto; }
+        .header {
+            background: linear-gradient(135deg, #124116, #1b5e20);
+            color: #f4f6f4;
+            padding: 26px 20px;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 18px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
+            border-bottom: 5px solid var(--accent);
+        }
+        .header h1 { margin: 0 0 8px 0; font-size: 1.65rem; line-height: 1.3; }
+        .header p { margin: 0; font-size: 0.98rem; opacity: 0.92; }
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.09);
+            border: 1px solid var(--border);
+            margin-bottom: 18px;
+        }
+        .id-panel {
+            background: var(--item-bg);
+            border: 1px dashed var(--primary);
+            border-radius: 12px;
+            padding: 14px 16px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .id-label { font-size: 0.85rem; color: var(--muted); }
+        .id-value { font-size: 1.15rem; font-weight: 800; color: var(--primary); letter-spacing: 0.5px; }
+        .copy-btn {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 9px 14px;
+            border-radius: 9px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .copy-btn:hover { background: var(--primary-dark); }
+        .trial-banner {
+            border-radius: 14px;
+            padding: 16px 18px;
+            margin-bottom: 18px;
+            display: none;
+        }
+        .trial-banner.available {
+            background: #fff8e1;
+            border: 2px solid #d4af37;
+            color: #4a3500;
+        }
+        .trial-banner.active {
+            background: #e3f2fd;
+            border: 2px solid #2196f3;
+            color: #0d3c61;
+        }
+        .trial-banner.expired {
+            background: #fbe9e7;
+            border: 1px solid #e57373;
+            color: #7f1d1d;
+        }
+        .trial-title { font-weight: 800; font-size: 1.05rem; margin-bottom: 4px; }
+        .trial-desc { font-size: 0.92rem; margin-bottom: 12px; line-height: 1.45; }
+        .trial-btn {
+            background: #b89535;
+            color: #fff;
+            border: none;
+            padding: 11px 18px;
+            border-radius: 10px;
+            font-size: 0.96rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        }
+        .trial-btn:hover { background: #9e7e28; }
+        .courses-grid { display: flex; flex-direction: column; gap: 14px; }
+        .course-card {
+            background: var(--item-bg);
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            padding: 16px 18px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            transition: transform 0.15s, border-color 0.15s;
+        }
+        .course-card.unlocked:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        .course-info { flex: 1; min-width: 230px; }
+        .course-title { font-size: 1.12rem; font-weight: 700; margin: 0 0 5px 0; color: #143617; }
+        .course-desc { font-size: 0.92rem; color: var(--muted); margin: 0; }
+        .course-action {
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-decoration: none;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .course-action.open {
+            background: var(--primary);
+            color: #fff;
+        }
+        .course-action.open:hover { background: var(--primary-dark); }
+        .course-action.locked {
+            background: #cfd2ce;
+            color: #555a55;
+            border: 1px solid #aeb3ad;
+            cursor: default;
+        }
+        .footer-note {
+            text-align: center;
+            font-size: 0.88rem;
+            color: var(--muted);
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
 
 <div class="container">
-  <div class="header-card">
-    <h1>Библиотека исламских тренажёров</h1>
-    <p>Интерактивные курсы для заучивания и проверки знаний</p>
-  </div>
-
-  <div class="id-bar">
-    <div>
-      <div class="id-label">Ваш персональный ID в Telegram:</div>
-      <div class="id-value" id="userIdDisplay">Определение...</div>
+    <div class="header">
+        <h1>Библиотека тренажёров</h1>
+        <p>Интерактивные курсы для изучения и повторения исламских наук</p>
     </div>
-    <button class="btn-copy" id="copyIdBtn" onclick="copyUserId()">📋 Скопировать ID</button>
-  </div>
 
-  <div class="courses-list" id="coursesList"></div>
+    <div class="card">
+        <div class="id-panel">
+            <div>
+                <div class="id-label">Ваш персональный ID в системе:</div>
+                <div class="id-value" id="user-id-display">Определяется...</div>
+            </div>
+            <button class="copy-btn" id="copy-id-btn" onclick="copyUserId()">📋 Скопировать ID</button>
+        </div>
 
-  <div class="footer-note" id="footerNote"></div>
+        <!-- Плашка пробного доступа на 24 часа -->
+        <div class="trial-banner" id="trial-banner"></div>
+
+        <div class="courses-grid" id="courses-grid"></div>
+
+        <div class="footer-note" id="admin-note"></div>
+    </div>
 </div>
 
 <script>
-  const COURSES = [
-    {
-      code: "sira",
-      badge: "История Ислама • 7 модулей",
-      title: "Сира Пророка Мухаммада ﷺ",
-      desc: "Хронологический курс, тесты по семье и сподвижникам Пророка ﷺ, конспекты-шпаргалки и итоговый экзамен (190 вопросов).",
-      url: "sira/index.html"
-    },
-    {
-      code: "nawawi",
-      badge: "Хадисоведение • 4 главы",
-      title: "40 хадисов имама Ан-Науауи",
-      desc: "Тренажёр для заучивания: огласованный арабский текст, озвучка, скрытие слов по уровням, транскрипция и перевод.",
-      url: "nawawi/index.html"
-    },
-    {
-      code: "fiqh",
-      badge: "Ханафитский мазхаб • 16 глав",
-      title: "Фикх аль-Ибада (Мухтасар аль-Кудури)",
-      desc: "Подробные шпаргалки и 240 тестовых вопросов с разбором по очищению, намазу, посту, закяту, хаджу, азану и удхии.",
-      url: "fiqh/index.html"
+    const COURSES = [
+        {
+            code: "sira",
+            title: "🕌 Сира Пророка Мухаммада ﷺ",
+            desc: "Хронологический курс, тематические модули, шпаргалки и 190 тестовых вопросов.",
+            url: "sira/index.html"
+        },
+        {
+            code: "nawawi",
+            title: "📖 40 хадисов имама Ан-Науауи",
+            desc: "Огласованный арабский текст, транскрипция, перевод, аудиочтец и заучивание со скрытием слов.",
+            url: "nawawi/index.html"
+        },
+        {
+            code: "fiqh",
+            title: "⚖️ Фикх аль-Ибада (Мухтасар аль-Кудури)",
+            desc: "16 глав по ханафитскому мазхабу, конспекты-шпаргалки и 240 тестовых вопросов.",
+            url: "fiqh/index.html"
+        }
+    ];
+
+    let detectedUserId = null;
+
+    function initCatalog() {
+        detectedUserId = typeof getCurrentTelegramId === "function" ? getCurrentTelegramId() : null;
+        const idDisplay = document.getElementById("user-id-display");
+        const copyBtn = document.getElementById("copy-id-btn");
+
+        if (detectedUserId) {
+            idDisplay.textContent = detectedUserId;
+        } else {
+            idDisplay.textContent = "Откройте через Telegram-бот";
+            copyBtn.style.display = "none";
+        }
+
+        const adminContact = typeof ADMIN_CONTACT !== "undefined" ? ADMIN_CONTACT : "@Rustam_abu_Aisha";
+        document.getElementById("admin-note").innerHTML =
+            `Для получения бессрочного доступа отправьте ваш ID администратору: <strong>${adminContact}</strong>`;
+
+        renderTrialBanner();
+        renderCourses();
     }
-  ];
 
-  let currentUserId = null;
+    function renderTrialBanner() {
+        const banner = document.getElementById("trial-banner");
+        if (typeof hasPermanentOrManualAccess !== "function" || typeof getTrialStatus !== "function") {
+            return;
+        }
 
-  function initCatalog() {
-    currentUserId = typeof getCurrentTelegramId === "function" ? getCurrentTelegramId() : null;
-    const idDisplay = document.getElementById("userIdDisplay");
-    const copyBtn = document.getElementById("copyIdBtn");
+        // Проверяем, есть ли уже постоянный доступ ко всем курсам
+        const hasAllPermanent = COURSES.every(c => hasPermanentOrManualAccess(detectedUserId, c.code));
+        if (hasAllPermanent) {
+            banner.style.display = "none";
+            return;
+        }
 
-    if (currentUserId) {
-      idDisplay.textContent = currentUserId;
-    } else {
-      idDisplay.textContent = "Откройте через Telegram-бот";
-      copyBtn.style.display = "none";
+        const trial = getTrialStatus(detectedUserId);
+        banner.style.display = "block";
+
+        if (trial.state === "available") {
+            banner.className = "trial-banner available";
+            banner.innerHTML = `
+                <div class="trial-title">🎁 Бесплатный тест-драйв на 24 часа</div>
+                <div class="trial-desc">Хотите сначала посмотреть все тренажёры изнутри? Активируйте полный пробный доступ на 1 сутки без ограничений.</div>
+                <button class="trial-btn" onclick="activateTrial('${detectedUserId || ""}')">Попробовать бесплатно 24 часа →</button>
+            `;
+        } else if (trial.state === "active") {
+            const leftStr = typeof formatRemainingTime === "function" ? formatRemainingTime(trial.remainingMs) : "менее 24 ч";
+            banner.className = "trial-banner active";
+            banner.innerHTML = `
+                <div class="trial-title">⏳ Активен пробный доступ ко всем тренажёрам</div>
+                <div class="trial-desc" style="margin-bottom:0;">Осталось времени: <strong>${leftStr}</strong>. Оцените курсы и при желании напишите администратору для открытия постоянного доступа.</div>
+            `;
+        } else {
+            banner.className = "trial-banner expired";
+            banner.innerHTML = `
+                <div class="trial-title">⌛ Пробный период (24 часа) завершён</div>
+                <div class="trial-desc" style="margin-bottom:0;">Чтобы продолжить обучение без ограничений, скопируйте свой ID выше и отправьте его администратору.</div>
+            `;
+        }
     }
 
-    const adminName = typeof ADMIN_CONTACT !== "undefined" ? ADMIN_CONTACT : "администратору";
-    document.getElementById("footerNote").innerHTML =
-      `Для открытия доступа к закрытым курсам отправьте ваш ID <strong>${adminName}</strong>.`;
+    function renderCourses() {
+        const grid = document.getElementById("courses-grid");
+        grid.innerHTML = COURSES.map(course => {
+            const unlocked = typeof hasAccess === "function" ? hasAccess(detectedUserId, course.code) : false;
+            const linkUrl = detectedUserId ? `${course.url}?id=${encodeURIComponent(detectedUserId)}` : course.url;
 
-    renderCourses();
-  }
+            return `
+                <div class="course-card ${unlocked ? "unlocked" : ""}">
+                    <div class="course-info">
+                        <div class="course-title">${course.title}</div>
+                        <p class="course-desc">${course.desc}</p>
+                    </div>
+                    ${unlocked
+                        ? `<a href="${linkUrl}" class="course-action open">Открыть →</a>`
+                        : `<span class="course-action locked">🔒 Закрыто</span>`
+                    }
+                </div>
+            `;
+        }).join("");
+    }
 
-  function renderCourses() {
-    const container = document.getElementById("coursesList");
-    container.innerHTML = "";
+    function copyUserId() {
+        if (!detectedUserId) return;
+        navigator.clipboard.writeText(detectedUserId).then(() => {
+            const btn = document.getElementById("copy-id-btn");
+            const old = btn.textContent;
+            btn.textContent = "Скопировано ✓";
+            setTimeout(() => { btn.textContent = old; }, 2000);
+        });
+    }
 
-    COURSES.forEach(course => {
-      const unlocked = typeof hasAccess === "function" && hasAccess(currentUserId, course.code);
-      const card = document.createElement("div");
-      card.className = `course-card ${unlocked ? "" : "locked"}`;
-
-      const targetUrl = currentUserId
-        ? `${course.url}?id=${encodeURIComponent(currentUserId)}`
-        : course.url;
-
-      card.innerHTML = `
-        <div class="course-info">
-          <span class="course-tag">${course.badge}</span>
-          <div class="course-title">${course.title}</div>
-          <div class="course-desc">${course.desc}</div>
-        </div>
-        <div>
-          ${unlocked
-            ? `<a href="${targetUrl}" class="btn-open">Открыть →</a>`
-            : `<button class="btn-locked" onclick="showLockAlert('${course.title}')">🔒 Закрыто</button>`
-          }
-        </div>
-      `;
-      container.appendChild(card);
-    });
-  }
-
-  function copyUserId() {
-    if (!currentUserId) return;
-    navigator.clipboard.writeText(currentUserId).then(() => {
-      const btn = document.getElementById("copyIdBtn");
-      btn.textContent = "Скопировано ✓";
-      setTimeout(() => { btn.textContent = "📋 Скопировать ID"; }, 2000);
-    });
-  }
-
-  function showLockAlert(title) {
-    const adminName = typeof ADMIN_CONTACT !== "undefined" ? ADMIN_CONTACT : "администратору";
-    alert(
-      `Доступ к курсу «${title}» пока не активирован.\n\n` +
-      `Скопируйте ваш ID вверху страницы (${currentUserId || "не определён"}) и отправьте его ${adminName}.`
-    );
-  }
-
-  initCatalog();
+    window.addEventListener("DOMContentLoaded", initCatalog);
 </script>
-
 </body>
 </html>
