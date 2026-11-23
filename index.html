@@ -10,155 +10,214 @@
     </script>
     <style>
         :root {
-            --primary: #1b5e20;
-            --primary-dark: #124116;
-            --primary-light: #e8f2e9;
+            --primary: #15603e;
+            --primary-dark: #0e442b;
             --accent: #b89535;
-            --bg-base: #b5b8b4;
-            --card-bg: #d4d6d2;
-            --item-bg: #e2e4e0;
-            --text: #1a1d1a;
-            --muted: #4a4f4a;
-            --border: #9ea39d;
+            --bg-base: #eef2ef;
+            --card-bg: #ffffff;
+            --text: #1b2e24;
+            --muted: #52695d;
+            --border: #d5e0d9;
         }
         * { box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            font-size: 17px;
-            line-height: 1.55;
-            color: var(--text);
             margin: 0;
-            padding: 18px 14px;
+            padding: 18px 14px 36px;
             background-color: var(--bg-base);
+            color: var(--text);
+            line-height: 1.5;
         }
-        .container { max-width: 780px; margin: 0 auto; }
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+        }
         .header {
-            background: linear-gradient(135deg, #124116, #1b5e20);
-            color: #f4f6f4;
-            padding: 26px 20px;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: #ffffff;
+            padding: 24px 20px;
             border-radius: 16px;
             text-align: center;
             margin-bottom: 18px;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
-            border-bottom: 5px solid var(--accent);
+            border-bottom: 4px solid var(--accent);
+            box-shadow: 0 6px 16px rgba(21, 96, 62, 0.18);
         }
-        .header h1 { margin: 0 0 8px 0; font-size: 1.65rem; line-height: 1.3; }
-        .header p { margin: 0; font-size: 0.98rem; opacity: 0.92; }
-        .card {
+        .header h1 {
+            margin: 0 0 6px 0;
+            font-size: 1.45rem;
+        }
+        .header p {
+            margin: 0;
+            font-size: 0.92rem;
+            opacity: 0.9;
+        }
+        .id-card {
             background: var(--card-bg);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.09);
             border: 1px solid var(--border);
-            margin-bottom: 18px;
-        }
-        .id-panel {
-            background: var(--item-bg);
-            border: 1px dashed var(--primary);
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 14px 16px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
             margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
         }
-        .id-label { font-size: 0.85rem; color: var(--muted); }
-        .id-value { font-size: 1.15rem; font-weight: 800; color: var(--primary); letter-spacing: 0.5px; }
+        .id-info {
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+        .id-value {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 0.5px;
+        }
         .copy-btn {
-            background: var(--primary);
-            color: #fff;
-            border: none;
-            padding: 9px 14px;
-            border-radius: 9px;
-            font-size: 0.9rem;
+            background: #e8f1ec;
+            color: var(--primary);
+            border: 1px solid #bfd6c7;
+            border-radius: 10px;
+            padding: 8px 14px;
+            font-size: 0.88rem;
             font-weight: 600;
             cursor: pointer;
+            white-space: nowrap;
         }
-        .copy-btn:hover { background: var(--primary-dark); }
+        .copy-btn:active { transform: scale(0.97); }
+
         .trial-banner {
+            background: linear-gradient(135deg, #fffdf5, #fdf6e2);
+            border: 1.5px solid #e2c065;
             border-radius: 14px;
-            padding: 16px 18px;
+            padding: 16px;
             margin-bottom: 18px;
-            display: none;
-        }
-        .trial-banner.available {
-            background: #fff8e1;
-            border: 2px solid #d4af37;
-            color: #4a3500;
-        }
-        .trial-banner.active {
-            background: #e3f2fd;
-            border: 2px solid #2196f3;
-            color: #0d3c61;
-        }
-        .trial-banner.expired {
-            background: #fbe9e7;
-            border: 1px solid #e57373;
-            color: #7f1d1d;
-        }
-        .trial-title { font-weight: 800; font-size: 1.05rem; margin-bottom: 4px; }
-        .trial-desc { font-size: 0.92rem; margin-bottom: 12px; line-height: 1.45; }
-        .trial-btn {
-            background: #b89535;
-            color: #fff;
-            border: none;
-            padding: 11px 18px;
-            border-radius: 10px;
-            font-size: 0.96rem;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-        }
-        .trial-btn:hover { background: #9e7e28; }
-        .courses-grid { display: flex; flex-direction: column; gap: 14px; }
-        .course-card {
-            background: var(--item-bg);
-            border: 2px solid var(--border);
-            border-radius: 14px;
-            padding: 16px 18px;
             display: flex;
-            flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
             gap: 14px;
-            transition: transform 0.15s, border-color 0.15s;
+            box-shadow: 0 3px 10px rgba(184, 149, 53, 0.12);
+        }
+        .trial-banner.active {
+            background: linear-gradient(135deg, #eef8f2, #e1f2e8);
+            border-color: #7cc09c;
+        }
+        .trial-banner.expired {
+            background: #f5f5f5;
+            border-color: #cccccc;
+        }
+        .trial-title {
+            font-weight: 700;
+            font-size: 0.98rem;
+            color: #5c4308;
+            margin-bottom: 3px;
+        }
+        .trial-banner.active .trial-title { color: #125235; }
+        .trial-banner.expired .trial-title { color: #555555; }
+        .trial-desc {
+            font-size: 0.84rem;
+            color: #6e5820;
+        }
+        .trial-banner.active .trial-desc { color: #2d6a4f; }
+        .trial-banner.expired .trial-desc { color: #666666; }
+        .trial-btn {
+            background: var(--accent);
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 0.86rem;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            box-shadow: 0 2px 6px rgba(184, 149, 53, 0.3);
+        }
+        .trial-btn:active { transform: scale(0.97); }
+
+        .section-label {
+            font-size: 0.88rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--muted);
+            margin: 0 0 12px 4px;
+        }
+        .courses-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .course-card {
+            background: var(--card-bg);
+            border: 1.5px solid var(--border);
+            border-radius: 14px;
+            padding: 16px 18px;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            transition: all 0.16s ease;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
         }
         .course-card.unlocked:hover {
             border-color: var(--primary);
             transform: translateY(-2px);
         }
-        .course-info { flex: 1; min-width: 230px; }
-        .course-title { font-size: 1.12rem; font-weight: 700; margin: 0 0 5px 0; color: #143617; }
-        .course-desc { font-size: 0.92rem; color: var(--muted); margin: 0; }
-        .course-action {
-            padding: 10px 16px;
-            border-radius: 10px;
-            font-size: 0.95rem;
+        .course-card.locked {
+            background: #f7f9f8;
+            border-color: #dce3de;
+            opacity: 0.92;
+        }
+        .course-info { flex: 1; }
+        .course-badge {
+            display: inline-block;
+            font-size: 0.78rem;
             font-weight: 700;
-            text-decoration: none;
+            padding: 3px 9px;
+            border-radius: 6px;
+            margin-bottom: 6px;
+        }
+        .badge-open {
+            background: #e3f3ea;
+            color: var(--primary);
+        }
+        .badge-lock {
+            background: #eceeed;
+            color: #5f6e66;
+        }
+        .course-title {
+            font-size: 1.08rem;
+            font-weight: 700;
+            margin: 0 0 4px 0;
+            color: var(--text);
+        }
+        .course-desc {
+            font-size: 0.86rem;
+            color: var(--muted);
+            margin: 0;
+        }
+        .course-action {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--primary);
             white-space: nowrap;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
         }
-        .course-action.open {
-            background: var(--primary);
-            color: #fff;
-        }
-        .course-action.open:hover { background: var(--primary-dark); }
-        .course-action.locked {
-            background: #cfd2ce;
-            color: #555a55;
-            border: 1px solid #aeb3ad;
-            cursor: default;
+        .course-card.locked .course-action {
+            color: #78877f;
         }
         .footer-note {
             text-align: center;
-            font-size: 0.88rem;
+            font-size: 0.84rem;
             color: var(--muted);
-            margin-top: 10px;
+            margin-top: 22px;
+            padding: 0 10px;
+        }
+        @media (max-width: 520px) {
+            .trial-banner { flex-direction: column; align-items: stretch; text-align: center; }
+            .course-card { flex-direction: column; align-items: flex-start; }
+            .course-action { align-self: flex-end; }
         }
     </style>
 </head>
@@ -166,143 +225,162 @@
 
 <div class="container">
     <div class="header">
-        <h1>Библиотека тренажёров</h1>
-        <p>Интерактивные курсы для изучения и повторения исламских наук</p>
+        <h1>Библиотека учебных тренажёров</h1>
+        <p>Интерактивные курсы, шпаргалки и тесты для закрепления знаний</p>
     </div>
 
-    <div class="card">
-        <div class="id-panel">
-            <div>
-                <div class="id-label">Ваш персональный ID в системе:</div>
-                <div class="id-value" id="user-id-display">Определяется...</div>
-            </div>
-            <button class="copy-btn" id="copy-id-btn" onclick="copyUserId()">📋 Скопировать ID</button>
+    <div class="id-card">
+        <div>
+            <div class="id-info">Ваш персональный ID в Telegram:</div>
+            <div class="id-value" id="userIdDisplay">Определяется...</div>
         </div>
-
-        <!-- Плашка пробного доступа на 24 часа -->
-        <div class="trial-banner" id="trial-banner"></div>
-
-        <div class="courses-grid" id="courses-grid"></div>
-
-        <div class="footer-note" id="admin-note"></div>
+        <button class="copy-btn" id="copyIdBtn" onclick="copyUserId()">📋 Скопировать ID</button>
     </div>
+
+    <div id="trialContainer"></div>
+
+    <div class="section-label">Доступные курсы</div>
+    <div class="courses-list" id="coursesList"></div>
+
+    <div class="footer-note" id="footerNote"></div>
 </div>
 
 <script>
     const COURSES = [
         {
             code: "sira",
-            title: "🕌 Сира Пророка Мухаммада ﷺ",
-            desc: "Хронологический курс, тематические модули, шпаргалки и 190 тестовых вопросов.",
+            title: "Сира Пророка Мухаммада ﷺ",
+            desc: "7 модулей, шпаргалки и 190 тестовых вопросов по жизнеописанию Посланника Аллаха ﷺ.",
             url: "sira/index.html"
         },
         {
             code: "nawawi",
-            title: "📖 40 хадисов имама Ан-Науауи",
-            desc: "Огласованный арабский текст, транскрипция, перевод, аудиочтец и заучивание со скрытием слов.",
+            title: "40 хадисов имама Ан-Науауи",
+            desc: "42 хадиса с огласовками, русской транскрипцией, аудиочтением и пословным тренажёром заучивания.",
             url: "nawawi/index.html"
         },
         {
             code: "fiqh",
-            title: "⚖️ Фикх аль-Ибада (Мухтасар аль-Кудури)",
-            desc: "16 глав по ханафитскому мазхабу, конспекты-шпаргалки и 240 тестовых вопросов.",
+            title: "Фикх аль-Ибада (Мухтасар аль-Кудури)",
+            desc: "16 глав по ханафитскому мазхабу, подробные шпаргалки и 240 вопросов с разборами.",
             url: "fiqh/index.html"
+        },
+        {
+            code: "tajweed",
+            title: "Таджвид (Правила чтения Корана)",
+            desc: "10 глав по риуаяту Хафс ан Асым, конспекты-шпаргалки с примерами и 150 вопросов.",
+            url: "tajweed/index.html"
         }
     ];
 
-    let detectedUserId = null;
+    const currentUserId = typeof getCurrentTelegramId === "function" ? getCurrentTelegramId() : null;
 
-    function initCatalog() {
-        detectedUserId = typeof getCurrentTelegramId === "function" ? getCurrentTelegramId() : null;
-        const idDisplay = document.getElementById("user-id-display");
-        const copyBtn = document.getElementById("copy-id-btn");
+    function copyUserId() {
+        if (!currentUserId) return;
+        navigator.clipboard.writeText(currentUserId);
+        const btn = document.getElementById("copyIdBtn");
+        btn.textContent = "Скопировано ✓";
+        setTimeout(() => { btn.textContent = "📋 Скопировать ID"; }, 2000);
+    }
 
-        if (detectedUserId) {
-            idDisplay.textContent = detectedUserId;
+    function activateFreeTrial() {
+        if (typeof startSelfTrial === "function") {
+            const ok = startSelfTrial(currentUserId);
+            if (ok) renderCatalog();
+        }
+    }
+
+    function renderTrialBanner() {
+        const box = document.getElementById("trialContainer");
+        box.innerHTML = "";
+        if (!currentUserId) return;
+
+        // Если у пользователя уже есть постоянный полный доступ, баннер не нужен
+        const perm = (typeof USER_ACCESS !== "undefined") ? USER_ACCESS[currentUserId] : null;
+        if (Array.isArray(perm) && perm.includes("all")) return;
+        if (perm && !Array.isArray(perm) && Array.isArray(perm.courses) && perm.courses.includes("all") && !perm.expires) return;
+
+        if (typeof getSelfTrialStatus === "function") {
+            const status = getSelfTrialStatus(currentUserId);
+            if (status.state === "available") {
+                box.innerHTML = `
+                    <div class="trial-banner">
+                        <div>
+                            <div class="trial-title">🎁 Бесплатный тест-драйв на 24 часа</div>
+                            <div class="trial-desc">Оцените все 4 тренажёра, шпаргалки и тесты в полном объёме в течение суток.</div>
+                        </div>
+                        <button class="trial-btn" onclick="activateFreeTrial()">Попробовать бесплатно 24 часа →</button>
+                    </div>
+                `;
+            } else if (status.state === "active") {
+                const hrs = Math.floor(status.remainingMs / (1000 * 60 * 60));
+                const mins = Math.floor((status.remainingMs % (1000 * 60 * 60)) / (1000 * 60));
+                box.innerHTML = `
+                    <div class="trial-banner active">
+                        <div>
+                            <div class="trial-title">⏳ Пробный доступ активен</div>
+                            <div class="trial-desc">Все тренажёры открыты. Осталось времени: <strong>${hrs} ч ${mins} мин</strong>.</div>
+                        </div>
+                    </div>
+                `;
+            } else if (status.state === "expired") {
+                box.innerHTML = `
+                    <div class="trial-banner expired">
+                        <div>
+                            <div class="trial-title">⌛ Пробный период (24 часа) завершён</div>
+                            <div class="trial-desc">Чтобы открыть бессрочный доступ ко всем тренажёрам, отправьте ваш ID администратору.</div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+    }
+
+    function renderCatalog() {
+        const idDisplay = document.getElementById("userIdDisplay");
+        const copyBtn = document.getElementById("copyIdBtn");
+
+        if (currentUserId) {
+            idDisplay.textContent = currentUserId;
+            copyBtn.style.display = "inline-block";
         } else {
             idDisplay.textContent = "Откройте через Telegram-бот";
             copyBtn.style.display = "none";
         }
 
-        const adminContact = typeof ADMIN_CONTACT !== "undefined" ? ADMIN_CONTACT : "@Rustam_abu_Aisha";
-        document.getElementById("admin-note").innerHTML =
-            `Для получения бессрочного доступа отправьте ваш ID администратору: <strong>${adminContact}</strong>`;
-
         renderTrialBanner();
-        renderCourses();
-    }
 
-    function renderTrialBanner() {
-        const banner = document.getElementById("trial-banner");
-        if (typeof hasPermanentOrManualAccess !== "function" || typeof getTrialStatus !== "function") {
-            return;
-        }
+        const listEl = document.getElementById("coursesList");
+        listEl.innerHTML = "";
 
-        // Проверяем, есть ли уже постоянный доступ ко всем курсам
-        const hasAllPermanent = COURSES.every(c => hasPermanentOrManualAccess(detectedUserId, c.code));
-        if (hasAllPermanent) {
-            banner.style.display = "none";
-            return;
-        }
+        COURSES.forEach(course => {
+            const open = (typeof hasAccess === "function") ? hasAccess(currentUserId, course.code) : false;
+            const targetUrl = currentUserId ? `${course.url}?id=${encodeURIComponent(currentUserId)}` : course.url;
 
-        const trial = getTrialStatus(detectedUserId);
-        banner.style.display = "block";
+            const card = document.createElement("a");
+            card.className = "course-card " + (open ? "unlocked" : "locked");
+            card.href = targetUrl;
 
-        if (trial.state === "available") {
-            banner.className = "trial-banner available";
-            banner.innerHTML = `
-                <div class="trial-title">🎁 Бесплатный тест-драйв на 24 часа</div>
-                <div class="trial-desc">Хотите сначала посмотреть все тренажёры изнутри? Активируйте полный пробный доступ на 1 сутки без ограничений.</div>
-                <button class="trial-btn" onclick="activateTrial('${detectedUserId || ""}')">Попробовать бесплатно 24 часа →</button>
-            `;
-        } else if (trial.state === "active") {
-            const leftStr = typeof formatRemainingTime === "function" ? formatRemainingTime(trial.remainingMs) : "менее 24 ч";
-            banner.className = "trial-banner active";
-            banner.innerHTML = `
-                <div class="trial-title">⏳ Активен пробный доступ ко всем тренажёрам</div>
-                <div class="trial-desc" style="margin-bottom:0;">Осталось времени: <strong>${leftStr}</strong>. Оцените курсы и при желании напишите администратору для открытия постоянного доступа.</div>
-            `;
-        } else {
-            banner.className = "trial-banner expired";
-            banner.innerHTML = `
-                <div class="trial-title">⌛ Пробный период (24 часа) завершён</div>
-                <div class="trial-desc" style="margin-bottom:0;">Чтобы продолжить обучение без ограничений, скопируйте свой ID выше и отправьте его администратору.</div>
-            `;
-        }
-    }
-
-    function renderCourses() {
-        const grid = document.getElementById("courses-grid");
-        grid.innerHTML = COURSES.map(course => {
-            const unlocked = typeof hasAccess === "function" ? hasAccess(detectedUserId, course.code) : false;
-            const linkUrl = detectedUserId ? `${course.url}?id=${encodeURIComponent(detectedUserId)}` : course.url;
-
-            return `
-                <div class="course-card ${unlocked ? "unlocked" : ""}">
-                    <div class="course-info">
-                        <div class="course-title">${course.title}</div>
-                        <p class="course-desc">${course.desc}</p>
-                    </div>
-                    ${unlocked
-                        ? `<a href="${linkUrl}" class="course-action open">Открыть →</a>`
-                        : `<span class="course-action locked">🔒 Закрыто</span>`
-                    }
+            card.innerHTML = `
+                <div class="course-info">
+                    <span class="course-badge ${open ? "badge-open" : "badge-lock"}">
+                        ${open ? "✓ Доступ открыт" : "🔒 Закрыто"}
+                    </span>
+                    <div class="course-title">${course.title}</div>
+                    <p class="course-desc">${course.desc}</p>
                 </div>
+                <div class="course-action">${open ? "Открыть →" : "🔒 Закрыто"}</div>
             `;
-        }).join("");
-    }
-
-    function copyUserId() {
-        if (!detectedUserId) return;
-        navigator.clipboard.writeText(detectedUserId).then(() => {
-            const btn = document.getElementById("copy-id-btn");
-            const old = btn.textContent;
-            btn.textContent = "Скопировано ✓";
-            setTimeout(() => { btn.textContent = old; }, 2000);
+            listEl.appendChild(card);
         });
+
+        const admin = (typeof ADMIN_CONTACT !== "undefined") ? ADMIN_CONTACT : "@admin";
+        document.getElementById("footerNote").innerHTML =
+            `Для получения бессрочного доступа ко всем курсам скопируйте ваш ID и отправьте администратору: <strong>${admin}</strong>`;
     }
 
-    window.addEventListener("DOMContentLoaded", initCatalog);
+    renderCatalog();
 </script>
+
 </body>
 </html>
