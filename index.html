@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Библиотека исламских тренажёров</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script>
+    // Подключаем единый auth.js со сбросом кэша
+    document.write('<script src="auth.js?v=' + Date.now() + '"><\/script>');
+  </script>
+  <style>
+    :root {
+      --bg: #f3f4f6;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --primary: #0d6e4e;
+      --primary-dark: #09523a;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 14px 16px 36px;
+    }
+
+    /* Верхняя панель: ID слева + единый переключатель День/Ночь справа */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .id-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .id-badge strong {
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.2px;
+    }
+
+    .copy-btn {
+      border: none;
+      background: rgba(13, 110, 78, 0.12);
+      color: #0d6e4e;
+      font-weight: 600;
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+    html[data-theme="dark"] .copy-btn {
+      background: rgba(16, 185, 129, 0.2);
+      color: #6ee7b7;
+    }
+
+    /* Зелёная шапка с арабским приветствием */
+    .hero-banner {
+      background: linear-gradient(135deg, #0d6e4e 0%, #064e3b 100%);
+      color: #ffffff;
+      border-radius: 18px;
+      padding: 20px 18px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(13, 110, 78, 0.18);
+      margin-bottom: 12px;
+    }
+
+    .arabic-bismillah {
+      font-family: "Amiri", "Traditional Arabic", "Scheherazade New", serif;
+      font-size: 23px;
+      line-height: 1.5;
+      margin-bottom: 4px;
+      color: #ecfdf5;
+    }
+
+    .arabic-salam {
+      font-family: "Amiri", "Traditional Arabic", "Scheherazade New", serif;
+      font-size: 21px;
+      line-height: 1.5;
+      margin-bottom: 10px;
+      color: #fde68a;
+    }
+
+    .hero-title {
+      margin: 0 0 6px;
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: -0.2px;
+    }
+
+    .hero-subtitle {
+      margin: 0;
+      font-size: 13px;
+      color: #d1fae5;
+      opacity: 0.95;
+    }
+
+    /* Компактная плашка 24-часового триала под зелёным баннером */
+    .trial-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 12.5px;
+      margin-bottom: 16px;
+      border: 1px solid #fcd34d;
+      background: #fffbeb;
+      color: #92400e;
+    }
+
+    .trial-banner.trial-active {
+      background: #ecfdf5;
+      border-color: #6ee7b7;
+      color: #065f46;
+    }
+
+    .trial-banner.trial-expired {
+      background: #f9fafb;
+      border-color: #e5e7eb;
+      color: #4b5563;
+    }
+
+    .trial-btn {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 13px;
+      border: none;
+      border-radius: 9px;
+      background: #0d6e4e;
+      color: #ffffff;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(13, 110, 78, 0.25);
+    }
+
+    .trial-btn:active {
+      transform: scale(0.97);
+    }
+
+    .trial-countdown {
+      font-variant-numeric: tabular-nums;
+      font-weight: 700;
+    }
+
+    /* Резервный вход для обычного браузера вне Telegram */
+    .browser-login-box {
+      display: none;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-bottom: 14px;
+      font-size: 12.5px;
+    }
+
+    .browser-login-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .browser-login-row input {
+      flex: 1;
+      padding: 7px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 13px;
+      background: transparent;
+      color: inherit;
+    }
+
+    .browser-login-row button {
+      padding: 7px 12px;
+      border-radius: 8px;
+      border: none;
+      background: #0d6e4e;
+      color: #fff;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--muted);
+      margin: 0 0 10px 2px;
+    }
+
+    .courses-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+
+    .course-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 14px 15px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+      transition: transform 0.15s ease, border-color 0.15s ease;
+      cursor: pointer;
+    }
+
+    .course-card:active {
+      transform: scale(0.99);
+    }
+
+    .course-card.unlocked:hover {
+      border-color: #10b981;
+    }
+
+    .course-card.locked {
+      opacity: 0.85;
+    }
+
+    .course-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      background: rgba(13, 110, 78, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    html[data-theme="dark"] .course-icon {
+      background: rgba(16, 185, 129, 0.15);
+    }
+
+    .course-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .course-title {
+      font-size: 15.5px;
+      font-weight: 700;
+      margin: 0 0 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .course-desc {
+      margin: 0;
+      font-size: 12.5px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .course-status {
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Верхняя панель: ID слева и единая кнопка День/Ночь справа -->
+    <div class="top-bar">
+      <div class="id-badge">
+        <span>Ваш ID: <strong id="userIdDisplay">...</strong></span>
+        <button type="button" class="copy-btn" id="copyIdBtn" onclick="copyUserId()">Копировать</button>
+      </div>
+      <div id="unifiedThemeSlot"></div>
+    </div>
+
+    <!-- Резервный блок ввода ID для обычного браузера вне Telegram -->
+    <div class="browser-login-box" id="browserLoginBox">
+      <div>🌐 <strong>Вход через браузер (без Telegram):</strong> если вам выдан персональный ID, введите его ниже:</div>
+      <div class="browser-login-row">
+        <input type="text" id="manualIdInput" placeholder="Например: 859435297" />
+        <button type="button" onclick="saveManualId()">Войти</button>
+      </div>
+    </div>
+
+    <!-- Зелёный баннер -->
+    <div class="hero-banner">
+      <div class="arabic-bismillah" dir="rtl">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+      <div class="arabic-salam" dir="rtl">السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ</div>
+      <h1 class="hero-title">Библиотека исламских тренажёров</h1>
+      <p class="hero-subtitle">Конспекты-шпаргалки, тематические тесты и итоговые зачёты для закрепления знаний</p>
+    </div>
+
+    <!-- Компактная плашка 24-часового триала -->
+    <div class="trial-banner trial-available" id="trialBanner">
+      <div id="trialBannerText">
+        🎁 <strong>Ознакомительный доступ на 24 часа:</strong> откройте все 6 курсов бесплатно для оценки
+      </div>
+      <button type="button" class="trial-btn" id="trialBannerBtn" onclick="handleActivateTrial()">Включить 24 ч →</button>
+    </div>
+
+    <div class="section-label" id="coursesCountLabel">ДОСТУПНЫЕ КУРСЫ (6)</div>
+    <div class="courses-grid" id="coursesGrid"></div>
+  </div>
+
+  <script>
+    const COURSES = [
+      {
+        code: "sira",
+        icon: "🕌",
+        title: "1. Сира Пророка ﷺ (Жизнеописание)",
+        desc: "7 этапов жизни Пророка ﷺ от рождения до прощального хаджа, ключевые события и тесты.",
+        url: "sira/index.html"
+      },
+      {
+        code: "nawawi",
+        icon: "📜",
+        title: "2. 40 хадисов имама Ан-Науауи",
+        desc: "Основы Ислама в 42 избранных хадисах: смысл, пользы и проверка запоминания.",
+        url: "nawawi/index.html"
+      },
+      {
+        code: "fiqh",
+        icon: "⚖️",
+        title: "3. Фикх аль-Ибада (Ханафитский мазхаб)",
+        desc: "16 глав, конспекты-шпаргалки по «Мухтасар аль-Кудури» и 240 тестовых вопросов.",
+        url: "fiqh/index.html"
+      },
+      {
+        code: "tajweed",
+        icon: "📖",
+        title: "4. Таджвид (Правила чтения Корана)",
+        desc: "10 глав (махрадж, сыфаты, нун/мим сакина, мадд, уакф), шпаргалки и 150 вопросов.",
+        url: "tajweed/index.html"
+      },
+      {
+        code: "adab",
+        icon: "🌿",
+        title: "5. Адаб и Ахляк (Исламская этика)",
+        desc: "10 глав о воспитании сердца, семье, культуре речи и этикете с опорой на Сунну (150 вопросов).",
+        url: "adab/index.html"
+      },
+      {
+        code: "aqeedah",
+        icon: "🕋",
+        title: "6. Акыда (Основы вероубеждения)",
+        desc: "10 глав по хадису Джибрииля и 6 столпам Имана, конспекты и 150 вопросов.",
+        url: "aqeedah/index.html"
+      }
+    ];
+
+    function getCurrentUid() {
+      if (window.MADRASAH_AUTH && typeof window.MADRASAH_AUTH.getUserId === "function") {
+        return window.MADRASAH_AUTH.getUserId();
+      }
+      return localStorage.getItem("madrasah_user_id") || "guest";
+    }
+
+    function copyUserId() {
+      const uid = getCurrentUid();
+      const btn = document.getElementById("copyIdBtn");
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(uid).then(() => {
+          btn.textContent = "Скопировано ✓";
+          setTimeout(() => (btn.textContent = "Копировать"), 1800);
+        });
+      } else {
+        const tmp = document.createElement("input");
+        tmp.value = uid;
+        document.body.appendChild(tmp);
+        tmp.select();
+        document.execCommand("copy");
+        document.body.removeChild(tmp);
+        btn.textContent = "Скопировано ✓";
+        setTimeout(() => (btn.textContent = "Копировать"), 1800);
+      }
+    }
+
+    function saveManualId() {
+      const val = (document.getElementById("manualIdInput").value || "").trim();
+      if (!val) return;
+      localStorage.setItem("madrasah_user_id", val);
+      window.location.href = "index.html?uid=" + encodeURIComponent(val);
+    }
+
+    function handleActivateTrial() {
+      if (typeof window.activateTrial === "function") {
+        window.activateTrial();
+      } else {
+        // Резервный запуск на случай, если auth.js ещё не успел инициализироваться
+        const uid = getCurrentUid();
+        localStorage.setItem("madrasah_trial_start_" + uid, String(Date.now()));
+        window.location.reload();
+      }
+    }
+
+    function renderCourses() {
+      const uid = getCurrentUid();
+      document.getElementById("userIdDisplay").textContent = uid;
+
+      // Если страница открыта в обычном браузере вне Telegram — показываем форму ввода ID
+      const isTg = !!(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData);
+      if (!isTg) {
+        document.getElementById("browserLoginBox").style.display = "block";
+      }
+
+      const allowed = window.MADRASAH_AUTH ? window.MADRASAH_AUTH.getAllowedCourses(uid) : [];
+      const grid = document.getElementById("coursesGrid");
+      grid.innerHTML = "";
+
+      COURSES.forEach((course) => {
+        const isUnlocked = allowed.includes(course.code);
+        const card = document.createElement("div");
+        card.className = "course-card " + (isUnlocked ? "unlocked" : "locked");
+
+        card.innerHTML = `
+          <div class="course-icon">${course.icon}</div>
+          <div class="course-info">
+            <h3 class="course-title">${course.title}</h3>
+            <p class="course-desc">${course.desc}</p>
+          </div>
+          <div class="course-status">${isUnlocked ? "➡️" : "🔒"}</div>
+        `;
+
+        card.onclick = () => {
+          if (isUnlocked) {
+            window.location.href = course.url + "?uid=" + encodeURIComponent(uid);
+          } else {
+            const trial = window.MADRASAH_AUTH ? window.MADRASAH_AUTH.getTrialState(uid) : { status: "available" };
+            if (trial.status === "available") {
+              if (confirm("Этот курс пока закрыт. Хотите бесплатно включить ознакомительный доступ ко всем 6 курсам на 24 часа?")) {
+                handleActivateTrial();
+              }
+            } else {
+              alert("Доступ закрыт. Скопируйте ваш ID (" + uid + ") вверху страницы и отправьте администратору.");
+            }
+          }
+        };
+
+        grid.appendChild(card);
+      });
+    }
+
+    window.renderCourses = renderCourses;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      renderCourses();
+    });
+  </script>
+</body>
+</html>
