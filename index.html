@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Библиотека тренажёров — Медресе</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg: #f4efe6;
+      --card: #ffffff;
+      --primary: #15603e;
+      --primary-dark: #0e442b;
+      --accent: #b89b5e;
+      --text: #1b2e24;
+      --muted: #526b5e;
+      --border: #d5e2da;
+      --soft: #eef5f0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 16px;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.5;
+    }
+
+    .wrap {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: #ffffff;
+      border-radius: 16px;
+      padding: 22px 20px;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(21, 96, 62, 0.22);
+      border: 1px solid rgba(184, 155, 94, 0.45);
+    }
+
+    .arabic-bismillah {
+      font-family: "Amiri", "Traditional Arabic", "Scheherazade New", serif;
+      font-size: 1.45rem;
+      color: #f3dfb3;
+      margin-bottom: 4px;
+      direction: rtl;
+    }
+
+    .arabic-salam {
+      font-family: "Amiri", "Traditional Arabic", "Scheherazade New", serif;
+      font-size: 1.25rem;
+      color: #ffffff;
+      margin-bottom: 10px;
+      direction: rtl;
+    }
+
+    .hero h1 {
+      margin: 0 0 6px 0;
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+
+    .hero p {
+      margin: 0;
+      font-size: 0.92rem;
+      color: #dcebe3;
+    }
+
+    .trial-strip {
+      margin-top: 10px;
+      background: #fffdf7;
+      border: 1px solid #e2cf9f;
+      border-radius: 10px;
+      padding: 9px 12px;
+      font-size: 0.82rem;
+      color: #4a3f24;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .trial-strip.active {
+      background: #eef7f2;
+      border-color: #a8d1bc;
+      color: #155739;
+    }
+
+    .trial-strip.expired {
+      background: #fdf4f4;
+      border-color: #e6bcbc;
+      color: #7a2b2b;
+    }
+
+    .trial-btn {
+      background: var(--accent);
+      color: #ffffff;
+      border: none;
+      border-radius: 7px;
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .trial-btn:hover {
+      opacity: 0.92;
+    }
+
+    .browser-login {
+      display: none;
+      margin-top: 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .browser-login-title {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .browser-login-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .browser-login-row input {
+      flex: 1;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.92rem;
+    }
+
+    .browser-login-row button {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 9px 14px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .courses-list {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .course-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+    }
+
+    .course-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.07);
+    }
+
+    .course-info {
+      flex: 1;
+    }
+
+    .course-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--soft);
+      padding: 2px 8px;
+      border-radius: 6px;
+      margin-bottom: 6px;
+    }
+
+    .course-title {
+      margin: 0 0 4px 0;
+      font-size: 1.06rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .course-desc {
+      margin: 0;
+      font-size: 0.86rem;
+      color: var(--muted);
+    }
+
+    .action-btn {
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    .action-btn.open {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .action-btn.open:hover {
+      background: var(--primary-dark);
+    }
+
+    .action-btn.locked {
+      background: #eceae4;
+      color: #6b685f;
+      border: 1px solid #d6d2c7;
+    }
+
+    .id-panel {
+      margin-top: 18px;
+      background: var(--card);
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .id-value {
+      font-weight: 700;
+      color: var(--text);
+      font-family: monospace;
+      font-size: 0.95rem;
+    }
+
+    .copy-btn {
+      background: var(--soft);
+      color: var(--primary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 14px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <div class="arabic-bismillah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+      <div class="arabic-salam">السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ</div>
+      <h1>Интерактивная библиотека знаний</h1>
+      <p>Конспекты-шпаргалки, аудиоматериалы и тестовые тренажёры по исламским наукам</p>
+    </div>
+
+    <div id="trialStrip" class="trial-strip"></div>
+
+    <div id="browserLoginBox" class="browser-login">
+      <div class="browser-login-title">🌐 Вход через браузер (без Telegram)</div>
+      <div class="browser-login-row">
+        <input type="text" id="manualIdInput" placeholder="Введите ваш ID или код доступа..." />
+        <button onclick="saveManualId()">Войти</button>
+      </div>
+    </div>
+
+    <div id="coursesList" class="courses-list"></div>
+
+    <div class="id-panel">
+      <div>Ваш ID доступа: <span id="userIdDisplay" class="id-value">определяется...</span></div>
+      <button id="copyIdBtn" class="copy-btn" onclick="copyUserId()">📋 Скопировать ID</button>
+    </div>
+
+    <div class="footer-note">
+      По вопросам доступа обращайтесь к администратору: <strong id="adminContactDisplay">@Rustam_abu_Aisha</strong>
+    </div>
+  </div>
+
+  <script>
+    const COURSES = [
+      {
+        code: "sira",
+        badge: "Курс 1 • Жизнеописание",
+        title: "Сира Пророка Мухаммада ﷺ",
+        desc: "7 этапов жизнеописания Пророка ﷺ, подробные конспекты и тестовые вопросы.",
+        url: "sira/index.html"
+      },
+      {
+        code: "nawawi",
+        badge: "Курс 2 • Хадисоведение",
+        title: "40 хадисов имама Ан-Науауи",
+        desc: "Арабский текст с огласовками, аудиочтение, перевод, разбор и тесты по хадисам.",
+        url: "nawawi/index.html"
+      },
+      {
+        code: "fiqh",
+        badge: "Курс 3 • Ханафитский фикх",
+        title: "Фикх аль-Ибада (Мухтасар аль-Кудури)",
+        desc: "16 глав по очищению и поклонению, шпаргалки и 240 проверочных вопросов.",
+        url: "fiqh/index.html"
+      },
+      {
+        code: "tajweed",
+        badge: "Курс 4 • Коран",
+        title: "Таджвид (Правила чтения Корана)",
+        desc: "10 глав по риуаяту Хафс ан Асым, таблицы правил и 150 тестовых вопросов.",
+        url: "tajweed/index.html"
+      },
+      {
+        code: "adab",
+        badge: "Курс 5 • Этика и нрав",
+        title: "Адаб и Ахляк (Исламская этика)",
+        desc: "10 глав по воспитанию души и благому нраву, шпаргалки и 150 вопросов.",
+        url: "adab/index.html"
+      },
+      {
+        code: "aqeedah",
+        badge: "Курс 6 • Вероубеждение",
+        title: "Акыда: Основы вероубеждения",
+        desc: "10 глав на основе хадиса Джибрииля и 6 столпов Имана, шпаргалки и 150 вопросов.",
+        url: "aqeedah/index.html"
+      }
+    ];
+
+    function loadAuthScript(callback) {
+      const script = document.createElement("script");
+      script.src = "auth.js?v=" + Date.now();
+      script.onload = callback;
+      script.onerror = callback;
+      document.head.appendChild(script);
+    }
+
+    function getResolvedUserId() {
+      let uid = null;
+      if (typeof getCurrentTelegramId === "function") {
+        uid = getCurrentTelegramId();
+      }
+      if (!uid) {
+        const saved = localStorage.getItem("madrasah_manual_id");
+        if (saved) uid = saved.trim();
+      }
+      return uid;
+    }
+
+    function saveManualId() {
+      const val = document.getElementById("manualIdInput").value.trim();
+      if (!val) return;
+      localStorage.setItem("madrasah_manual_id", val);
+      const url = new URL(window.location.href);
+      url.searchParams.set("id", val);
+      window.location.href = url.toString();
+    }
+
+    function copyUserId() {
+      const uid = getResolvedUserId();
+      if (!uid) return;
+      navigator.clipboard.writeText(uid);
+      const btn = document.getElementById("copyIdBtn");
+      btn.textContent = "Скопировано ✓";
+      setTimeout(() => {
+        btn.textContent = "📋 Скопировать ID";
+      }, 2000);
+    }
+
+    function activateTrial24h() {
+      let uid = getResolvedUserId();
+      if (!uid) {
+        uid = "guest_" + Math.random().toString(36).substring(2, 10);
+        localStorage.setItem("madrasah_manual_id", uid);
+      }
+      if (typeof startFreeTrial === "function") {
+        startFreeTrial(uid);
+      } else {
+        const key = "madrasah_trial_" + uid;
+        if (!localStorage.getItem(key)) {
+          localStorage.setItem(key, String(Date.now()));
+        }
+      }
+      renderCatalog();
+    }
+
+    function getTrialStatus(uid) {
+      if (!uid) return { state: "available", remainingMs: 0 };
+      if (typeof getTrialInfo === "function") {
+        return getTrialInfo(uid);
+      }
+      const key = "madrasah_trial_" + uid;
+      const started = Number(localStorage.getItem(key) || 0);
+      if (!started) return { state: "available", remainingMs: 0 };
+      const duration = 24 * 60 * 60 * 1000;
+      const elapsed = Date.now() - started;
+      if (elapsed < duration) {
+        return { state: "active", remainingMs: duration - elapsed };
+      }
+      return { state: "expired", remainingMs: 0 };
+    }
+
+    function formatRemaining(ms) {
+      const totalSec = Math.max(0, Math.floor(ms / 1000));
+      const h = Math.floor(totalSec / 3600);
+      const m = Math.floor((totalSec % 3600) / 60);
+      const s = totalSec % 60;
+      return `${String(h).padStart(2, "0")} ч ${String(m).padStart(2, "0")} мин ${String(s).padStart(2, "0")} сек`;
+    }
+
+    let trialTimerInterval = null;
+
+    function renderTrialStrip(uid, hasPermanentAll) {
+      const strip = document.getElementById("trialStrip");
+      if (trialTimerInterval) clearInterval(trialTimerInterval);
+
+      if (hasPermanentAll) {
+        strip.style.display = "none";
+        return;
+      }
+
+      const status = getTrialStatus(uid);
+      strip.style.display = "flex";
+      strip.className = "trial-strip";
+
+      if (status.state === "available") {
+        strip.innerHTML = `
+          <span>🎁 Пробный доступ на 24 часа: откройте все 6 курсов бесплатно для оценки</span>
+          <button class="trial-btn" onclick="activateTrial24h()">Включить 24 ч →</button>
+        `;
+      } else if (status.state === "active") {
+        strip.classList.add("active");
+        const updateTick = () => {
+          const current = getTrialStatus(uid);
+          if (current.state !== "active") {
+            renderCatalog();
+            return;
+          }
+          strip.innerHTML = `
+            <span>⏳ Пробный доступ (24 ч) активен • Осталось: <strong>${formatRemaining(current.remainingMs)}</strong></span>
+          `;
+        };
+        updateTick();
+        trialTimerInterval = setInterval(updateTick, 1000);
+      } else {
+        strip.classList.add("expired");
+        strip.innerHTML = `
+          <span>⌛ Ознакомительный доступ на 24 часа завершён. Для постоянного доступа отправьте свой ID администратору.</span>
+        `;
+      }
+    }
+
+    function renderCatalog() {
+      const isTg = Boolean(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user);
+      const uid = getResolvedUserId();
+
+      if (!isTg) {
+        document.getElementById("browserLoginBox").style.display = "block";
+        if (uid && !uid.startsWith("guest_")) {
+          document.getElementById("manualIdInput").value = uid;
+        }
+      }
+
+      document.getElementById("userIdDisplay").textContent = uid || "не определён";
+      if (typeof ADMIN_CONTACT !== "undefined") {
+        document.getElementById("adminContactDisplay").textContent = ADMIN_CONTACT;
+      }
+
+      const hasPermanentAll = typeof USER_ACCESS !== "undefined" && uid && Array.isArray(USER_ACCESS[uid]) && USER_ACCESS[uid].includes("all");
+      renderTrialStrip(uid, hasPermanentAll);
+
+      const listEl = document.getElementById("coursesList");
+      listEl.innerHTML = "";
+
+      COURSES.forEach((course) => {
+        let allowed = false;
+        if (typeof hasAccess === "function") {
+          allowed = hasAccess(uid, course.code);
+        } else {
+          const t = getTrialStatus(uid);
+          allowed = t.state === "active";
+        }
+
+        const targetUrl = uid ? `${course.url}?id=${encodeURIComponent(uid)}` : course.url;
+
+        const card = document.createElement("div");
+        card.className = "course-card";
+        card.innerHTML = `
+          <div class="course-info">
+            <span class="course-badge">${course.badge}</span>
+            <h2 class="course-title">${course.title}</h2>
+            <p class="course-desc">${course.desc}</p>
+          </div>
+          ${
+            allowed
+              ? `<a class="action-btn open" href="${targetUrl}">Открыть →</a>`
+              : `<button class="action-btn locked" onclick="handleLockedClick()">🔒 Закрыто</button>`
+          }
+        `;
+        listEl.appendChild(card);
+      });
+    }
+
+    function handleLockedClick() {
+      const uid = getResolvedUserId();
+      const status = getTrialStatus(uid);
+      if (status.state === "available") {
+        if (confirm("Включить бесплатный пробный доступ ко всем 6 курсам на 24 часа?")) {
+          activateTrial24h();
+        }
+      } else {
+        alert("Доступ закрыт. Скопируйте ваш ID внизу страницы и отправьте администратору для активации.");
+      }
+    }
+
+    loadAuthScript(() => {
+      renderCatalog();
+    });
+  </script>
+</body>
+</html>
