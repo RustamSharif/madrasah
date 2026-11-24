@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Интерактивные тренажёры — Библиотека знаний</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script>
+    document.write('<script src="auth.js?v=' + Date.now() + '"><\/script>');
+  </script>
+  <style>
+    :root {
+      --bg: #f4efe6;
+      --card: #ffffff;
+      --primary: #15603e;
+      --primary-dark: #0f472e;
+      --text: #1b2e24;
+      --muted: #5a7265;
+      --border: #d5e2da;
+      --gold: #c8963e;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 16px;
+      line-height: 1.5;
+    }
+    .container { max-width: 640px; margin: 0 auto; }
+
+    /* Зелёный баннер */
+    .hero {
+      background: linear-gradient(145deg, #15603e 0%, #0d452c 100%);
+      color: #fff;
+      border-radius: 18px;
+      padding: 24px 18px;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(21, 96, 62, 0.22);
+    }
+    .arabic-bismillah {
+      font-family: "Amiri", "Traditional Arabic", "Scheherazade New", serif;
+      font-size: 1.55rem;
+      color: #f3d999;
+      margin-bottom: 6px;
+      direction: rtl;
+    }
+    .arabic-salam {
+      font-family: "Amiri", "Traditional Arabic", "Scheherazade New", serif;
+      font-size: 1.65rem;
+      color: #ffffff;
+      margin-bottom: 12px;
+      direction: rtl;
+    }
+    .hero h1 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .hero p {
+      font-size: 0.9rem;
+      color: #d6ebe0;
+    }
+
+    /* Компактная строка триал-доступа под баннером */
+    .trial-strip {
+      margin-top: 10px;
+      background: #fef9e7;
+      border: 1px solid #e6c875;
+      border-radius: 12px;
+      padding: 9px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 0.82rem;
+      color: #6b4e00;
+    }
+    .trial-strip.active {
+      background: #eef8f2;
+      border-color: #a8d5ba;
+      color: #155736;
+    }
+    .trial-strip.expired {
+      background: #fdf3f3;
+      border-color: #e6c0c0;
+      color: #7d2a2a;
+    }
+    .trial-btn-small {
+      background: #d99b26;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 11px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .trial-btn-small:hover { background: #c2871b; }
+
+    /* Карточка ID */
+    .id-bar {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .id-label { font-size: 0.9rem; color: var(--muted); }
+    .id-label strong { color: var(--text); font-size: 1rem; letter-spacing: 0.5px; }
+    .copy-btn {
+      background: #f4f8f5;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 7px 12px;
+      border-radius: 9px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Резервный ввод ID в обычном браузере */
+    .browser-login {
+      background: var(--card);
+      border: 1px dashed var(--gold);
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-top: 12px;
+      font-size: 0.85rem;
+    }
+    .browser-login-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .browser-login input {
+      flex: 1;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .browser-login button {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Список курсов */
+    .courses {
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .course-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    }
+    .course-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .course-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .badge {
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .badge.open { background: #e3f4ea; color: #15603e; }
+    .badge.locked { background: #fef3e2; color: #9a6414; }
+    .course-desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .action-btn {
+      display: block;
+      width: 100%;
+      text-align: center;
+      padding: 11px;
+      border-radius: 11px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+    }
+    .action-btn.open {
+      background: var(--primary);
+      color: #fff;
+    }
+    .action-btn.open:hover { background: var(--primary-dark); }
+    .action-btn.locked {
+      background: #e9ecea;
+      color: #6c7a72;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="hero">
+      <div class="arabic-bismillah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+      <div class="arabic-salam">السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ</div>
+      <h1>Интерактивные тренажёры</h1>
+      <p>Знания, конспекты и тесты по исламским наукам</p>
+    </div>
+
+    <!-- Компактная строка триал-доступа прямо под зелёным баннером -->
+    <div id="trial-strip-container"></div>
+
+    <!-- Панель ID -->
+    <div class="id-bar">
+      <div class="id-label">Ваш ID: <strong id="display-id">...</strong></div>
+      <button class="copy-btn" id="copy-id-btn" onclick="copyUserId()">📋 Скопировать ID</button>
+    </div>
+
+    <!-- Поле ручного ввода ID, если открыто в обычном браузере без Telegram -->
+    <div id="browser-login-box" class="browser-login" style="display:none;">
+      <div>🌐 <strong>Вход через браузер:</strong> введите ваш персональный ID, чтобы открыть доступные курсы:</div>
+      <div class="browser-login-row">
+        <input type="text" id="manual-id-input" placeholder="Например: 859435297">
+        <button onclick="saveManualId()">Войти</button>
+      </div>
+    </div>
+
+    <!-- Карточки курсов -->
+    <div class="courses" id="courses-list"></div>
+  </div>
+
+  <script>
+    const COURSES = [
+      {
+        code: "sira",
+        title: "1. Сира Пророка Мухаммада ﷺ",
+        desc: "Жизнеописание Посланника Аллаха ﷺ: 7 ключевых этапов, хронология событий и проверочные тесты.",
+        url: "sira/index.html"
+      },
+      {
+        code: "nawawi",
+        title: "2. 40 хадисов имама ан-Науауи",
+        desc: "Интерактивное заучивание текстов хадисов с озвучкой, переводом, скрытием слов и карточками.",
+        url: "nawawi/index.html"
+      },
+      {
+        code: "fiqh",
+        title: "3. Фикх аль-Ибада (Ханафитский мазхаб)",
+        desc: "16 глав, конспекты-шпаргалки по «Мухтасар аль-Кудури» и 240 тестовых вопросов.",
+        url: "fiqh/index.html"
+      },
+      {
+        code: "tajweed",
+        title: "4. Таджвид (Правила чтения Корана)",
+        desc: "10 тем по риуаяту Хафс ан Асым: махрадж, сыфаты, нун/мим сакина, мадд, уакф и 150 вопросов.",
+        url: "tajweed/index.html"
+      },
+      {
+        code: "adab",
+        title: "5. Адаб и Ахляк (Исламская этика)",
+        desc: "10 глав по исламской нравственности, работе над сердцем и этикету в обществе + 150 вопросов.",
+        url: "adab/index.html"
+      }
+    ];
+
+    let currentUserId = null;
+    let trialTimerInterval = null;
+
+    function initCatalog() {
+      currentUserId = getCurrentTelegramId();
+      const idEl = document.getElementById("display-id");
+      const copyBtn = document.getElementById("copy-id-btn");
+
+      if (currentUserId) {
+        idEl.textContent = currentUserId;
+        copyBtn.style.display = "inline-block";
+      } else {
+        idEl.textContent = "гость (вне Telegram)";
+        copyBtn.style.display = "none";
+        document.getElementById("browser-login-box").style.display = "block";
+      }
+
+      renderTrialStrip();
+      renderCourses();
+    }
+
+    function saveManualId() {
+      const val = document.getElementById("manual-id-input").value;
+      const saved = setManualUserId(val);
+      if (saved) {
+        window.location.href = "index.html?id=" + encodeURIComponent(saved);
+      }
+    }
+
+    function copyUserId() {
+      if (!currentUserId) return;
+      navigator.clipboard.writeText(currentUserId);
+      const btn = document.getElementById("copy-id-btn");
+      btn.textContent = "Скопировано ✓";
+      setTimeout(() => { btn.textContent = "📋 Скопировать ID"; }, 2000);
+    }
+
+    function handleStartTrial() {
+      const targetId = currentUserId || "guest";
+      if (activateTrial(targetId)) {
+        renderTrialStrip();
+        renderCourses();
+      }
+    }
+
+    function renderTrialStrip() {
+      const container = document.getElementById("trial-strip-container");
+      if (trialTimerInterval) clearInterval(trialTimerInterval);
+
+      // Если у пользователя полный постоянный доступ — плашку не показываем
+      const allOpenPermanently = COURSES.every(c => hasPermanentAccess(currentUserId, c.code));
+      if (allOpenPermanently) {
+        container.innerHTML = "";
+        return;
+      }
+
+      const targetId = currentUserId || "guest";
+      const state = getTrialState(targetId);
+
+      if (state.status === "available") {
+        container.innerHTML = `
+          <div class="trial-strip">
+            <span>🎁 Пробный доступ на <strong>24 часа</strong> ко всем 5 курсам бесплатно</span>
+            <button class="trial-btn-small" onclick="handleStartTrial()">Включить 24 ч →</button>
+          </div>
+        `;
+      } else if (state.status === "active") {
+        const updateCountdown = () => {
+          const st = getTrialState(targetId);
+          if (st.status !== "active") {
+            clearInterval(trialTimerInterval);
+            renderTrialStrip();
+            renderCourses();
+            return;
+          }
+          container.innerHTML = `
+            <div class="trial-strip active">
+              <span>⏳ <strong>Пробный доступ (24 ч)</strong> • Осталось: <strong>${formatRemainingTime(st.remainingMs)}</strong></span>
+            </div>
+          `;
+        };
+        updateCountdown();
+        trialTimerInterval = setInterval(updateCountdown, 1000);
+      } else {
+        container.innerHTML = `
+          <div class="trial-strip expired">
+            <span>⌛ Пробный доступ на 24 часа завершён. Для постоянного доступа отправьте ID администратору (${ADMIN_CONTACT}).</span>
+          </div>
+        `;
+      }
+    }
+
+    function handleLockedClick() {
+      const targetId = currentUserId || "guest";
+      const state = getTrialState(targetId);
+      if (state.status === "available") {
+        if (confirm("Доступ к курсу закрыт. Хотите прямо сейчас включить бесплатный пробный доступ на 24 часа ко всем 5 курсам?")) {
+          handleStartTrial();
+        }
+      } else {
+        alert("Доступ к курсу закрыт. Скопируйте ваш ID выше и отправьте администратору (" + ADMIN_CONTACT + ").");
+      }
+    }
+
+    function renderCourses() {
+      const list = document.getElementById("courses-list");
+      list.innerHTML = "";
+
+      COURSES.forEach(course => {
+        const allowed = hasAccess(currentUserId, course.code);
+        const linkUrl = currentUserId
+          ? `${course.url}?id=${encodeURIComponent(currentUserId)}`
+          : course.url;
+
+        const card = document.createElement("div");
+        card.className = "course-card";
+        card.innerHTML = `
+          <div class="course-header">
+            <div class="course-title">${course.title}</div>
+            <span class="badge ${allowed ? "open" : "locked"}">${allowed ? "✓ Открыто" : "🔒 Закрыто"}</span>
+          </div>
+          <div class="course-desc">${course.desc}</div>
+          ${allowed
+            ? `<a class="action-btn open" href="${linkUrl}">Открыть →</a>`
+            : `<button class="action-btn locked" onclick="handleLockedClick()">🔒 Доступ закрыт</button>`
+          }
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    window.addEventListener("DOMContentLoaded", initCatalog);
+  </script>
+</body>
+</html>
