@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Интерактивная библиотека знаний</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script>
+    document.write('<script src="auth.js?v=' + Date.now() + '"><\/script>');
+  </script>
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      margin: 0;
+      padding: 16px 14px 36px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f6f4ee;
+      color: #1e293b;
+    }
+    .container {
+      max-width: 560px;
+      margin: 0 auto;
+    }
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+    .uid-text {
+      font-size: 13px;
+      color: #475569;
+      font-weight: 500;
+    }
+    .uid-text b {
+      color: #0f172a;
+      font-weight: 700;
+    }
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      color: #1e293b;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 11px;
+      border-radius: 9px;
+      cursor: pointer;
+    }
+    .copy-btn:active {
+      background: #e2e8f0;
+    }
+    .hero-banner {
+      background: linear-gradient(135deg, #0d6e4e 0%, #09523a 100%);
+      color: #ffffff;
+      border-radius: 20px;
+      padding: 24px 20px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(13, 110, 78, 0.22);
+      margin-bottom: 10px;
+    }
+    .arabic-bismillah {
+      font-family: "Traditional Arabic", "Amiri", "Scheherazade New", serif;
+      font-size: 21px;
+      color: #fde68a;
+      margin-bottom: 4px;
+      line-height: 1.5;
+    }
+    .arabic-salam {
+      font-family: "Traditional Arabic", "Amiri", "Scheherazade New", serif;
+      font-size: 25px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    .hero-title {
+      margin: 0 0 8px;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+    .hero-subtitle {
+      margin: 0;
+      font-size: 13.5px;
+      line-height: 1.45;
+      color: #d1fae5;
+    }
+    .trial-strip {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      color: #92400e;
+      border-radius: 12px;
+      padding: 9px 13px;
+      font-size: 12.5px;
+      margin-bottom: 14px;
+      line-height: 1.35;
+    }
+    .trial-strip.active {
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+      color: #065f46;
+      font-weight: 600;
+      justify-content: center;
+    }
+    .trial-strip.expired {
+      background: #fef2f2;
+      border-color: #fecaca;
+      color: #991b1b;
+    }
+    .trial-btn {
+      background: #d97706;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 11px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .browser-login-box {
+      display: none;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+    }
+    .browser-login-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #0d6e4e;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .browser-login-hint {
+      font-size: 12px;
+      color: #64748b;
+      margin: 0 0 10px;
+      line-height: 1.4;
+    }
+    .browser-login-row {
+      display: flex;
+      gap: 8px;
+    }
+    .browser-login-input {
+      flex: 1;
+      min-width: 0;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      font-size: 14px;
+      outline: none;
+    }
+    .browser-login-input:focus {
+      border-color: #0d6e4e;
+    }
+    .browser-login-submit {
+      background: #0d6e4e;
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      padding: 0 18px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .courses-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .course-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 15px 16px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 3px 10px rgba(15, 23, 42, 0.04);
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+      cursor: pointer;
+    }
+    .course-card:active {
+      transform: scale(0.99);
+    }
+    .course-card.locked {
+      opacity: 0.78;
+      background: #f8fafc;
+    }
+    .course-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .course-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .course-title {
+      margin: 0 0 4px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #0f172a;
+      line-height: 1.3;
+    }
+    .course-meta {
+      margin: 0;
+      font-size: 12.5px;
+      color: #64748b;
+      line-height: 1.35;
+    }
+    .course-action {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #ecfdf5;
+      color: #0d6e4e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .course-card.locked .course-action {
+      background: #f1f5f9;
+      color: #64748b;
+    }
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-backdrop.open {
+      display: flex;
+    }
+    .modal-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 24px 20px;
+      max-width: 390px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
+    }
+    .modal-title {
+      margin: 8px 0;
+      font-size: 18px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+    .modal-text {
+      margin: 0 0 18px;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #475569;
+    }
+    .modal-btn {
+      width: 100%;
+      background: #0d6e4e;
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 8px;
+    }
+    .modal-btn.secondary {
+      background: #f1f5f9;
+      color: #334155;
+      margin-bottom: 0;
+    }
+    .footer-note {
+      margin-top: 22px;
+      text-align: center;
+      font-size: 12px;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="top-bar">
+      <div class="uid-text">Ваш ID: <b id="uidDisplay">...</b></div>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <button class="copy-btn" id="logoutBrowserBtn" style="display:none;" onclick="logoutBrowserId()">Сменить ID</button>
+        <button class="copy-btn" id="copyIdBtn" onclick="copyUserId()">📋 Скопировать ID</button>
+      </div>
+    </div>
+
+    <div class="hero-banner">
+      <div class="arabic-bismillah" dir="rtl">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+      <div class="arabic-salam" dir="rtl">السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ</div>
+      <h1 class="hero-title">Интерактивная библиотека знаний</h1>
+      <p class="hero-subtitle">Учебные конспекты-шпаргалки и проверочные тесты по основным исламским дисциплинам</p>
+    </div>
+
+    <div id="trialStrip" class="trial-strip"></div>
+
+    <div id="browserLoginBox" class="browser-login-box">
+      <div class="browser-login-title">🌐 Вход через браузер (без Telegram и VPN)</div>
+      <p class="browser-login-hint">
+        Для доступа через обычный браузер введите ваш персональный ID, который был подключён администратором в Telegram.
+      </p>
+      <div class="browser-login-row">
+        <input id="manualUidInput" class="browser-login-input" type="text" inputmode="numeric" placeholder="Введите ваш цифровой ID" />
+        <button class="browser-login-submit" onclick="submitBrowserLogin()">Войти</button>
+      </div>
+    </div>
+
+    <div class="courses-list" id="coursesList"></div>
+
+    <div class="footer-note">Выберите дисциплину для изучения конспектов и прохождения тестов</div>
+  </div>
+
+  <div id="accessModal" class="modal-backdrop">
+    <div class="modal-card">
+      <div style="font-size:40px;">🔒</div>
+      <h3 class="modal-title" id="modalTitle">Доступ закрыт</h3>
+      <p class="modal-text" id="modalText"></p>
+      <button class="modal-btn" id="modalPrimaryBtn">Понятно</button>
+      <button class="modal-btn secondary" id="modalSecondaryBtn" style="display:none;">Закрыть</button>
+    </div>
+  </div>
+
+  <script>
+    const COURSES = [
+      {
+        code: "sira",
+        num: 1,
+        title: "Сира Пророка ﷺ",
+        meta: "Жизнеописание Посланника Аллаха ﷺ • 7 глав • 105 вопросов",
+        url: "sira/index.html",
+        icon: "🕌",
+        iconBg: "#fef3c7"
+      },
+      {
+        code: "nawawi",
+        num: 2,
+        title: "40 хадисов Ан-Науауи",
+        meta: "Матн, перевод, разбор и карточки • 42 хадиса • 126 вопросов",
+        url: "nawawi/index.html",
+        icon: "📜",
+        iconBg: "#dbeafe"
+      },
+      {
+        code: "fiqh",
+        num: 3,
+        title: "Фикх аль-Ибада",
+        meta: "По «Мухтасар аль-Кудури» • 16 глав • 240 вопросов",
+        url: "fiqh/index.html",
+        icon: "⚖️",
+        iconBg: "#d1fae5"
+      },
+      {
+        code: "tajweed",
+        num: 4,
+        title: "Таджвид",
+        meta: "Правила чтения Корана (Хафс ан Асым) • 10 глав • 150 вопросов",
+        url: "tajweed/index.html",
+        icon: "📖",
+        iconBg: "#e0e7ff"
+      },
+      {
+        code: "adab",
+        num: 5,
+        title: "Адаб и Ахляк",
+        meta: "Исламская этика и нравственность • 10 глав • 150 вопросов",
+        url: "adab/index.html",
+        icon: "🌿",
+        iconBg: "#dcfce7"
+      },
+      {
+        code: "aqeedah",
+        num: 6,
+        title: "Акыда",
+        meta: "Основы вероубеждения и 6 столпов Имана • 10 глав • 150 вопросов",
+        url: "aqeedah/index.html",
+        icon: "🧭",
+        iconBg: "#fae8ff"
+      },
+      {
+        code: "arabic",
+        num: 7,
+        title: "Арабский язык",
+        meta: "Сарф, Нахв и лексика Корана • 10 уроков • 150 вопросов",
+        url: "arabic/index.html",
+        icon: "🖋️",
+        iconBg: "#ffedd5"
+      }
+    ];
+
+    const ARROW_SVG = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>`;
+    const LOCK_SVG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`;
+
+    let trialInterval = null;
+
+    function initTelegram() {
+      if (window.Telegram && window.Telegram.WebApp) {
+        try {
+          window.Telegram.WebApp.ready();
+          window.Telegram.WebApp.expand();
+        } catch (e) {}
+      }
+    }
+
+    function copyUserId() {
+      const uid = window.LibAuth.getUserId();
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(uid).then(() => {
+          const btn = document.getElementById("copyIdBtn");
+          btn.textContent = "✅ Скопировано";
+          setTimeout(() => {
+            btn.textContent = "📋 Скопировать ID";
+          }, 1800);
+        });
+      } else {
+        alert("Ваш ID: " + uid);
+      }
+    }
+
+    function submitBrowserLogin() {
+      const input = document.getElementById("manualUidInput");
+      if (window.LibAuth.setManualUserId(input.value)) {
+        renderAll();
+      } else {
+        alert("Пожалуйста, введите корректный цифровой ID.");
+      }
+    }
+
+    function logoutBrowserId() {
+      window.LibAuth.clearManualUserId();
+      renderAll();
+    }
+
+    function activateTrial() {
+      if (window.LibAuth.startTrial24h()) {
+        renderAll();
+      }
+    }
+
+    function openModal(title, text, primaryLabel, onPrimary, showSecondary) {
+      const modal = document.getElementById("accessModal");
+      document.getElementById("modalTitle").textContent = title;
+      document.getElementById("modalText").textContent = text;
+      const pBtn = document.getElementById("modalPrimaryBtn");
+      const sBtn = document.getElementById("modalSecondaryBtn");
+      pBtn.textContent = primaryLabel || "Понятно";
+      pBtn.onclick = () => {
+        modal.classList.remove("open");
+        if (typeof onPrimary === "function") onPrimary();
+      };
+      if (showSecondary) {
+        sBtn.style.display = "block";
+        sBtn.onclick = () => modal.classList.remove("open");
+      } else {
+        sBtn.style.display = "none";
+      }
+      modal.classList.add("open");
+    }
+
+    function renderTrialStrip() {
+      const strip = document.getElementById("trialStrip");
+      const state = window.LibAuth.getTrialState();
+
+      if (trialInterval) {
+        clearInterval(trialInterval);
+        trialInterval = null;
+      }
+
+      if (state.status === "permanent" || state.status === "browser_restricted") {
+        strip.style.display = "none";
+        return;
+      }
+
+      strip.style.display = "flex";
+      strip.className = "trial-strip";
+
+      if (state.status === "available") {
+        strip.innerHTML = `
+          <span>🎁 Ознакомительный доступ на 24 часа ко всем курсам</span>
+          <button class="trial-btn" onclick="activateTrial()">Включить 24 ч →</button>
+        `;
+      } else if (state.status === "active") {
+        strip.classList.add("active");
+        const updateTimer = () => {
+          const cur = window.LibAuth.getTrialState();
+          if (cur.status !== "active") {
+            renderAll();
+            return;
+          }
+          strip.textContent = "⏳ Пробный доступ активен • Осталось: " + window.LibAuth.formatRemaining(cur.remainingMs);
+        };
+        updateTimer();
+        trialInterval = setInterval(updateTimer, 1000);
+      } else if (state.status === "expired") {
+        strip.classList.add("expired");
+        strip.textContent = "⌛ Пробный 24-часовой доступ завершён. Отправьте ваш ID администратору для подключения.";
+      }
+    }
+
+    function renderCourses() {
+      const list = document.getElementById("coursesList");
+      const uid = window.LibAuth.getUserId();
+      list.innerHTML = "";
+
+      COURSES.forEach((c) => {
+        const unlocked = window.LibAuth.hasCourseAccess(c.code);
+        const card = document.createElement("div");
+        card.className = "course-card" + (unlocked ? "" : " locked");
+        card.innerHTML = `
+          <div class="course-icon" style="background:${c.iconBg};">${c.icon}</div>
+          <div class="course-info">
+            <h2 class="course-title">${c.num}. ${c.title}</h2>
+            <p class="course-meta">${c.meta}</p>
+          </div>
+          <div class="course-action">${unlocked ? ARROW_SVG : LOCK_SVG}</div>
+        `;
+        card.onclick = () => {
+          if (unlocked) {
+            const sep = c.url.includes("?") ? "&" : "?";
+            window.location.href = uid && uid !== "guest" ? `${c.url}${sep}uid=${encodeURIComponent(uid)}` : c.url;
+            return;
+          }
+          const st = window.LibAuth.getTrialState();
+          if (st.status === "available") {
+            openModal(
+              "Ознакомительный доступ",
+              "Вы можете включить бесплатный доступ на 24 часа ко всем курсам библиотеки прямо сейчас.",
+              "Включить на 24 часа →",
+              () => activateTrial(),
+              true
+            );
+          } else if (st.status === "browser_restricted") {
+            openModal(
+              "Требуется персональный ID",
+              "В обычном браузере вход возможен только по подключённому цифровому ID. Введите ваш ID в поле под баннером или откройте библиотеку через Telegram.",
+              "Понятно",
+              null,
+              false
+            );
+          } else {
+            openModal(
+              "Доступ ограничен",
+              "Для открытия этого курса отправьте ваш ID (" + uid + ") администратору.",
+              "Скопировать ID",
+              () => copyUserId(),
+              true
+            );
+          }
+        };
+        list.appendChild(card);
+      });
+    }
+
+    function renderAll() {
+      const uid = window.LibAuth.getUserId();
+      const inTg = window.LibAuth.isTelegramEnvironment();
+      document.getElementById("uidDisplay").textContent = uid;
+
+      const loginBox = document.getElementById("browserLoginBox");
+      const logoutBtn = document.getElementById("logoutBrowserBtn");
+
+      if (!inTg) {
+        if (uid === "guest") {
+          loginBox.style.display = "block";
+          logoutBtn.style.display = "none";
+        } else {
+          loginBox.style.display = "none";
+          logoutBtn.style.display = "inline-flex";
+        }
+      } else {
+        loginBox.style.display = "none";
+        logoutBtn.style.display = "none";
+      }
+
+      renderTrialStrip();
+      renderCourses();
+    }
+
+    initTelegram();
+    renderAll();
+    setTimeout(renderAll, 350);
+    window.LibAuth.syncServerTime(() => renderAll());
+  </script>
+</body>
+</html>
