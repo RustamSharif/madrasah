@@ -2,7 +2,7 @@
 (function () {
   // ==================== 1. СПИСОК ПОЛЬЗОВАТЕЛЕЙ ====================
   const ALLOWED_USERS = {
-    "859435297": ["all"], // Администратор
+    //"859435297": ["all"], // Администратор
   };
 
   const ALL_COURSES = ["sira", "nawawi", "fiqh", "tajweed", "adab", "aqeedah"];
