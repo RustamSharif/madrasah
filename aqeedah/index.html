@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Акыда: Основы вероубеждения — Тренажёр</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script>
+    document.write('<script src="../auth.js?v=' + Date.now() + '"><\/script>');
+  </script>
+  <script>
+    if (typeof protectCoursePage === "function") {
+      protectCoursePage("aqeedah", "Акыда: Основы вероубеждения");
+    }
+  </script>
+  <style>
+    :root {
+      --bg: #f4efe6;
+      --card: #ffffff;
+      --text: #1b2e24;
+      --muted: #526b5e;
+      --primary: #15603e;
+      --primary-hover: #0f492f;
+      --accent: #c59b27;
+      --border: #d5e2da;
+      --ok-bg: #e6f4ec;
+      --ok-border: #2e8b57;
+      --err-bg: #fdecea;
+      --err-border: #c0392b;
+      --cheat-bg: #f8fbf9;
+    }
+    body.dark {
+      --bg: #121c17;
+      --card: #1b2821;
+      --text: #e6efe9;
+      --muted: #9eb3a7;
+      --primary: #279663;
+      --primary-hover: #1f7a50;
+      --accent: #dfb547;
+      --border: #2c4035;
+      --ok-bg: #173827;
+      --ok-border: #2ea86b;
+      --err-bg: #3b1c1a;
+      --err-border: #d9534f;
+      --cheat-bg: #16221b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      padding: 16px;
+    }
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .nav-btn {
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-btn:hover { border-color: var(--primary); }
+    .header-card {
+      background: linear-gradient(135deg, #15603e 0%, #0d422a 100%);
+      color: #ffffff;
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 22px rgba(21, 96, 62, 0.16);
+    }
+    .header-card h1 {
+      margin: 0 0 6px 0;
+      font-size: 1.35rem;
+    }
+    .header-card p {
+      margin: 0 0 12px 0;
+      font-size: 0.92rem;
+      opacity: 0.92;
+    }
+    .stats-pill {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.16);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .chapter-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .chapter-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.03);
+    }
+    .chapter-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .chapter-title {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text);
+    }
+    .chapter-badge {
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: var(--cheat-bg);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .chapter-badge.done {
+      background: var(--ok-bg);
+      border-color: var(--ok-border);
+      color: var(--primary);
+    }
+    .chapter-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      border: none;
+      border-radius: 10px;
+      padding: 9px 14px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.15s ease;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      flex: 1;
+      min-width: 140px;
+    }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-outline {
+      background: var(--cheat-bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-outline:hover { border-color: var(--primary); }
+    .exam-card {
+      margin-top: 18px;
+      background: var(--card);
+      border: 2px solid var(--accent);
+      border-radius: 16px;
+      padding: 18px;
+      text-align: center;
+    }
+    .exam-card h2 {
+      margin: 0 0 6px 0;
+      font-size: 1.15rem;
+    }
+    .exam-card p {
+      margin: 0 0 14px 0;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+    .cheat-box {
+      background: var(--cheat-bg);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-top: 12px;
+      font-size: 0.94rem;
+    }
+    .cheat-box h3 {
+      margin-top: 0;
+      color: var(--primary);
+      font-size: 1.08rem;
+    }
+    .cheat-box ul, .cheat-box ol {
+      padding-left: 20px;
+      margin: 8px 0;
+    }
+    .cheat-box li { margin-bottom: 6px; }
+    .q-progress {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.86rem;
+      color: var(--muted);
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    .q-text {
+      font-size: 1.08rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+    .opt-btn {
+      text-align: left;
+      background: var(--cheat-bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 12px 14px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      line-height: 1.4;
+    }
+    .opt-btn:hover:not(:disabled) { border-color: var(--primary); }
+    .opt-btn.correct {
+      background: var(--ok-bg);
+      border-color: var(--ok-border);
+      font-weight: 600;
+    }
+    .opt-btn.wrong {
+      background: var(--err-bg);
+      border-color: var(--err-border);
+    }
+    .explanation {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 11px;
+      background: var(--cheat-bg);
+      border: 1px solid var(--border);
+      font-size: 0.92rem;
+    }
+    .footer-note {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin: 22px 0 10px 0;
+    }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <a id="backBtn" href="../index.html" class="nav-btn">← Все курсы</a>
+      <button id="themeBtn" class="nav-btn" type="button">🌓 Тема</button>
+    </div>
+
+    <div id="menuView">
+      <div class="header-card">
+        <h1>Акыда: Основы вероубеждения</h1>
+        <p>Хадис Джибрииля и 6 столпов Имана с опорой на Коран и достоверную Сунну</p>
+        <div id="globalStats" class="stats-pill">Загрузка материалов...</div>
+      </div>
+
+      <div id="chapterList" class="chapter-list"></div>
+
+      <div class="exam-card">
+        <h2>🎓 Итоговый зачёт по курсу (40 вопросов)</h2>
+        <p>Случайная выборка вопросов из всех 10 разделов вероубеждения для проверки усвоения материала.</p>
+        <button class="btn btn-primary" type="button" onclick="startFinalExam()">Начать итоговый зачёт →</button>
+      </div>
+    </div>
+
+    <div id="cheatView" class="hidden">
+      <div class="panel">
+        <button class="btn btn-outline" type="button" onclick="showMenu()">← К списку глав</button>
+        <div id="cheatContent" class="cheat-box"></div>
+        <div style="margin-top: 14px; display: flex; gap: 10px;">
+          <button id="cheatStartQuizBtn" class="btn btn-primary" type="button">Перейти к тесту по главе →</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="quizView" class="hidden">
+      <div class="panel">
+        <div class="q-progress">
+          <span id="quizHeaderTitle">Глава</span>
+          <span id="quizCounter">1 / 15</span>
+        </div>
+        <div style="margin-bottom: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
+          <button class="btn btn-outline" type="button" onclick="showMenu()">✕ Выйти</button>
+          <button id="inQuizCheatBtn" class="btn btn-outline" type="button" onclick="toggleInQuizCheat()">📖 Шпаргалка</button>
+        </div>
+        <div id="inQuizCheatBox" class="cheat-box hidden" style="margin-bottom: 14px;"></div>
+
+        <div id="questionArea">
+          <div id="qText" class="q-text"></div>
+          <div id="optionsList" class="options"></div>
+          <div id="explanationBox" class="explanation hidden"></div>
+          <div style="margin-top: 14px;">
+            <button id="nextBtn" class="btn btn-primary hidden" type="button" onclick="nextQuestion()">Следующий вопрос →</button>
+          </div>
+        </div>
+
+        <div id="resultArea" class="hidden" style="text-align: center; padding: 10px 0;">
+          <h2 id="resTitle" style="margin-bottom: 8px;">Результат</h2>
+          <p id="resScore" style="font-size: 1.1rem; font-weight: 700;"></p>
+          <p id="resMsg" style="color: var(--muted);"></p>
+          <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 14px;">
+            <button id="retryBtn" class="btn btn-outline" type="button">Пройти заново</button>
+            <button class="btn btn-primary" type="button" onclick="showMenu()">К списку глав</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-note">@sira_exam_bot</div>
+  </div>
+
+  <script>
+    window.AQEEDAH_DATA = {
+      chapters: {},
+      cheatsheets: {},
+      questions: []
+    };
+
+    const CHAPTER_META = [
+      { num: 1, title: "Хадис Джибрииля: Ислам, Иман и Ихсан", keys: ["джибриил", "ислам, иман", "сущность имана"] },
+      { num: 2, title: "Вера в Аллаха: Единственность в Господстве и Поклонении", keys: ["господств", "поклонен", "рубубия", "улюхия"] },
+      { num: 3, title: "Вера в Аллаха: Прекрасные Имена и Высочайшие Атрибуты", keys: ["имена", "атрибут", "сыфат"] },
+      { num: 4, title: "Вера в Ангелов (аль-Маляика)", keys: ["ангел", "маляика"] },
+      { num: 5, title: "Вера в Ниспосланные Писания (аль-Кутуб)", keys: ["писани", "кутуб"] },
+      { num: 6, title: "Вера в Пророков и Посланников (ар-Русуль)", keys: ["пророк", "посланник", "русуль"] },
+      { num: 7, title: "Последний день: Смерть, Барзах и Признаки Часа", keys: ["барзах", "признаки часа", "смерть"] },
+      { num: 8, title: "Последний день: Воскрешение, Расчёт, Рай и Ад", keys: ["воскрешен", "расчёт", "рай и ад"] },
+      { num: 9, title: "Вера в Предопределение (аль-Кадар)", keys: ["предопределен", "кадар"] },
+      { num: 10, title: "Сохранение Имана и дела, нарушающие Единобожие", keys: ["сохранение имана", "нарушающие", "единобожие"] }
+    ];
+
+    function resolveChapterNum(numOrTitle) {
+      if (typeof numOrTitle === "number" && numOrTitle >= 1 && numOrTitle <= 10) return numOrTitle;
+      const str = String(numOrTitle || "").toLowerCase();
+      const numMatch = str.match(/^(\d+)\./);
+      if (numMatch) {
+        const n = Number(numMatch[1]);
+        if (n >= 1 && n <= 10) return n;
+      }
+      for (const m of CHAPTER_META) {
+        if (m.keys.some(k => str.includes(k))) return m.num;
+      }
+      return null;
+    }
+
+    window.registerAqeedahChapter = function(a, b, c, d) {
+      let num = null, title = "", cheat = "", qs = [];
+      if (typeof a === "object" && a !== null) {
+        num = resolveChapterNum(a.num || a.chapter || a.title);
+        title = a.title || "";
+        cheat = a.cheatsheet || a.cheat || a.summary || a.content || "";
+        qs = Array.isArray(a.questions) ? a.questions : [];
+      } else if (typeof a === "number") {
+        num = a;
+        if (Array.isArray(c)) {
+          title = b || "";
+          qs = c;
+          cheat = typeof d === "string" ? d : "";
+        } else {
+          title = b || "";
+          cheat = typeof c === "string" ? c : "";
+          qs = Array.isArray(d) ? d : [];
+        }
+      } else if (typeof a === "string") {
+        num = resolveChapterNum(a);
+        title = a;
+        if (Array.isArray(b)) {
+          qs = b;
+          cheat = typeof c === "string" ? c : "";
+        } else {
+          cheat = typeof b === "string" ? b : "";
+          qs = Array.isArray(c) ? c : [];
+        }
+      }
+
+      if (!num) return;
+      const meta = CHAPTER_META[num - 1];
+      const finalTitle = meta ? meta.title : title;
+      if (!window.AQEEDAH_DATA.chapters[num]) {
+        window.AQEEDAH_DATA.chapters[num] = { title: finalTitle, cheatsheet: "", questions: [] };
+      }
+      if (cheat && typeof cheat === "string" && cheat.trim().length > 0) {
+        window.AQEEDAH_DATA.chapters[num].cheatsheet = cheat;
+      }
+      if (qs.length > 0) {
+        const cleanQs = qs.map(q => ({
+          q: q.q || q.question || "",
+          options: q.options || q.a || [],
+          correct: typeof q.correct === "number" ? q.correct : (typeof q.answer === "number" ? q.answer : 0),
+          explanation: q.explanation || q.exp || "",
+          chapterNum: num,
+          chapterTitle: finalTitle
+        }));
+        window.AQEEDAH_DATA.chapters[num].questions = cleanQs;
+      }
+    };
+  </script>
+
+  <script>
+    const vTag = "v5_" + Date.now();
+    document.write('<script src="aqeedah_part1.js?' + vTag + '"><\/script>');
+    document.write('<script src="aqeedah_part2.js?' + vTag + '"><\/script>');
+    document.write('<script src="aqeedah_part3a.js?' + vTag + '"><\/script>');
+    document.write('<script src="aqeedah_part3b.js?' + vTag + '"><\/script>');
+    document.write('<script src="aqeedah_cheats_4_8.js?' + vTag + '"><\/script>');
+  </script>
+
+  <script>
+    function normalizeAllAqeedahData() {
+      const data = window.AQEEDAH_DATA;
+      // Scan legacy cheatsheets object if any
+      if (data.cheatsheets) {
+        Object.keys(data.cheatsheets).forEach(key => {
+          const val = data.cheatsheets[key];
+          if (typeof val !== "string" || !val.trim()) return;
+          const num = resolveChapterNum(Number(key) || key);
+          if (num) {
+            if (!data.chapters[num]) {
+              data.chapters[num] = { title: CHAPTER_META[num - 1].title, cheatsheet: val, questions: [] };
+            } else if (!data.chapters[num].cheatsheet) {
+              data.chapters[num].cheatsheet = val;
+            }
+          }
+        });
+      }
+      // Scan legacy flat questions array if any
+      if (Array.isArray(data.questions) && data.questions.length > 0) {
+        data.questions.forEach(q => {
+          const num = resolveChapterNum(q.chapterNum || q.chapter || q.topic || q.category);
+          if (num) {
+            if (!data.chapters[num]) {
+              data.chapters[num] = { title: CHAPTER_META[num - 1].title, cheatsheet: "", questions: [] };
+            }
+            const qText = q.q || q.question || "";
+            if (!data.chapters[num].questions.some(ex => ex.q === qText)) {
+              data.chapters[num].questions.push({
+                q: qText,
+                options: q.options || q.a || [],
+                correct: typeof q.correct === "number" ? q.correct : (typeof q.answer === "number" ? q.answer : 0),
+                explanation: q.explanation || q.exp || "",
+                chapterNum: num,
+                chapterTitle: CHAPTER_META[num - 1].title
+              });
+            }
+          }
+        });
+      }
+      // Explicitly apply guaranteed cheat sheets for chapters 4..8
+      if (window.AQEEDAH_CHEATS_4_8) {
+        Object.keys(window.AQEEDAH_CHEATS_4_8).forEach(k => {
+          const num = Number(k);
+          const html = window.AQEEDAH_CHEATS_4_8[num];
+          if (!data.chapters[num]) {
+            data.chapters[num] = { title: CHAPTER_META[num - 1].title, cheatsheet: html, questions: [] };
+          } else {
+            data.chapters[num].cheatsheet = html;
+          }
+        });
+      }
+    }
+
+    const PROGRESS_KEY = "aqeedah_progress_v1";
+    function getProgress() {
+      try { return JSON.parse(localStorage.getItem(PROGRESS_KEY) || "{}"); } catch (e) { return {}; }
+    }
+    function saveProgress(num, pct) {
+      const p = getProgress();
+      if (!p[num] || pct > p[num]) {
+        p[num] = pct;
+        localStorage.setItem(PROGRESS_KEY, JSON.stringify(p));
+      }
+    }
+
+    // Theme & Back Link
+    (function initUI() {
+      if (localStorage.getItem("madrasah_theme") === "dark") {
+        document.body.classList.add("dark");
+      }
+      document.getElementById("themeBtn").onclick = () => {
+        document.body.classList.toggle("dark");
+        localStorage.setItem("madrasah_theme", document.body.classList.contains("dark") ? "dark" : "light");
+      };
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get("id");
+      if (id) {
+        document.getElementById("backBtn").href = "../index.html?id=" + encodeURIComponent(id);
+      }
+    })();
+
+    let currentQuestions = [];
+    let currentIndex = 0;
+    let score = 0;
+    let activeChapterNum = null;
+
+    function renderMenu() {
+      normalizeAllAqeedahData();
+      const list = document.getElementById("chapterList");
+      list.innerHTML = "";
+      const prog = getProgress();
+      let totalCheats = 0;
+      let totalQuestions = 0;
+
+      CHAPTER_META.forEach(meta => {
+        const ch = window.AQEEDAH_DATA.chapters[meta.num] || { title: meta.title, cheatsheet: "", questions: [] };
+        const hasCheat = Boolean(ch.cheatsheet && ch.cheatsheet.trim().length > 0);
+        const qCount = ch.questions.length;
+        if (hasCheat) totalCheats++;
+        totalQuestions += qCount;
+
+        const pct = prog[meta.num];
+        const card = document.createElement("div");
+        card.className = "chapter-card";
+        card.innerHTML = `
+          <div class="chapter-top">
+            <div class="chapter-title">${meta.num}. ${meta.title}</div>
+            <div class="chapter-badge ${pct >= 80 ? 'done' : ''}">${pct !== undefined ? 'Лучший: ' + pct + '%' : qCount + ' вопр.'}</div>
+          </div>
+          <div class="chapter-actions">
+            ${hasCheat ? `<button class="btn btn-outline" type="button" onclick="openCheat(${meta.num})">📖 Шпаргалка</button>` : ''}
+            <button class="btn btn-primary" type="button" onclick="startChapterQuiz(${meta.num})">Тест (${qCount}) →</button>
+          </div>
+        `;
+        list.appendChild(card);
+      });
+
+      document.getElementById("globalStats").textContent =
+        `10 глав • ${totalCheats} шпаргалок • ${totalQuestions} вопросов`;
+    }
+
+    function showMenu() {
+      document.getElementById("menuView").classList.remove("hidden");
+      document.getElementById("cheatView").classList.add("hidden");
+      document.getElementById("quizView").classList.add("hidden");
+      renderMenu();
+      window.scrollTo(0, 0);
+    }
+
+    function openCheat(num) {
+      const ch = window.AQEEDAH_DATA.chapters[num];
+      if (!ch || !ch.cheatsheet) return;
+      document.getElementById("cheatContent").innerHTML = ch.cheatsheet;
+      document.getElementById("cheatStartQuizBtn").onclick = () => startChapterQuiz(num);
+      document.getElementById("menuView").classList.add("hidden");
+      document.getElementById("quizView").classList.add("hidden");
+      document.getElementById("cheatView").classList.remove("hidden");
+      window.scrollTo(0, 0);
+    }
+
+    function shuffle(arr) {
+      const copy = arr.slice();
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function startChapterQuiz(num) {
+      const ch = window.AQEEDAH_DATA.chapters[num];
+      if (!ch || !ch.questions.length) {
+        alert("Вопросы для этой главы пока не загружены.");
+        return;
+      }
+      activeChapterNum = num;
+      currentQuestions = shuffle(ch.questions);
+      currentIndex = 0;
+      score = 0;
+
+      document.getElementById("quizHeaderTitle").textContent = `Глава ${num}. ${ch.title}`;
+      const inCheatBtn = document.getElementById("inQuizCheatBtn");
+      const inCheatBox = document.getElementById("inQuizCheatBox");
+      inCheatBox.classList.add("hidden");
+      if (ch.cheatsheet && ch.cheatsheet.trim()) {
+        inCheatBtn.classList.remove("hidden");
+        inCheatBox.innerHTML = ch.cheatsheet;
+      } else {
+        inCheatBtn.classList.add("hidden");
+      }
+
+      document.getElementById("menuView").classList.add("hidden");
+      document.getElementById("cheatView").classList.add("hidden");
+      document.getElementById("quizView").classList.remove("hidden");
+      document.getElementById("questionArea").classList.remove("hidden");
+      document.getElementById("resultArea").classList.add("hidden");
+      renderQuestion();
+      window.scrollTo(0, 0);
+    }
+
+    function startFinalExam() {
+      let pool = [];
+      CHAPTER_META.forEach(m => {
+        const ch = window.AQEEDAH_DATA.chapters[m.num];
+        if (ch && ch.questions) pool = pool.concat(ch.questions);
+      });
+      if (!pool.length) {
+        alert("Вопросы курса ещё не загружены.");
+        return;
+      }
+      activeChapterNum = null;
+      currentQuestions = shuffle(pool).slice(0, 40);
+      currentIndex = 0;
+      score = 0;
+
+      document.getElementById("quizHeaderTitle").textContent = "🎓 Итоговый зачёт (40 вопросов)";
+      document.getElementById("inQuizCheatBtn").classList.add("hidden");
+      document.getElementById("inQuizCheatBox").classList.add("hidden");
+
+      document.getElementById("menuView").classList.add("hidden");
+      document.getElementById("cheatView").classList.add("hidden");
+      document.getElementById("quizView").classList.remove("hidden");
+      document.getElementById("questionArea").classList.remove("hidden");
+      document.getElementById("resultArea").classList.add("hidden");
+      renderQuestion();
+      window.scrollTo(0, 0);
+    }
+
+    function toggleInQuizCheat() {
+      const box = document.getElementById("inQuizCheatBox");
+      const q = currentQuestions[currentIndex];
+      if (!activeChapterNum && q && q.chapterNum) {
+        const ch = window.AQEEDAH_DATA.chapters[q.chapterNum];
+        if (ch && ch.cheatsheet) box.innerHTML = ch.cheatsheet;
+      }
+      box.classList.toggle("hidden");
+    }
+
+    function renderQuestion() {
+      const q = currentQuestions[currentIndex];
+      document.getElementById("quizCounter").textContent = `${currentIndex + 1} / ${currentQuestions.length}`;
+      document.getElementById("qText").textContent = q.q;
+
+      const inCheatBtn = document.getElementById("inQuizCheatBtn");
+      const inCheatBox = document.getElementById("inQuizCheatBox");
+      inCheatBox.classList.add("hidden");
+      const chNum = activeChapterNum || q.chapterNum;
+      const chObj = chNum ? window.AQEEDAH_DATA.chapters[chNum] : null;
+      if (chObj && chObj.cheatsheet && chObj.cheatsheet.trim()) {
+        inCheatBtn.classList.remove("hidden");
+        inCheatBox.innerHTML = chObj.cheatsheet;
+      } else {
+        inCheatBtn.classList.add("hidden");
+      }
+
+      const optsDiv = document.getElementById("optionsList");
+      optsDiv.innerHTML = "";
+      q.options.forEach((opt, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "opt-btn";
+        btn.type = "button";
+        btn.textContent = opt;
+        btn.onclick = () => selectAnswer(idx);
+        optsDiv.appendChild(btn);
+      });
+
+      document.getElementById("explanationBox").classList.add("hidden");
+      document.getElementById("nextBtn").classList.add("hidden");
+    }
+
+    function selectAnswer(chosenIdx) {
+      const q = currentQuestions[currentIndex];
+      const buttons = document.querySelectorAll("#optionsList .opt-btn");
+      buttons.forEach((b, idx) => {
+        b.disabled = true;
+        if (idx === q.correct) b.classList.add("correct");
+        if (idx === chosenIdx && chosenIdx !== q.correct) b.classList.add("wrong");
+      });
+
+      if (chosenIdx === q.correct) score++;
+
+      const expBox = document.getElementById("explanationBox");
+      if (q.explanation) {
+        expBox.innerHTML = `<strong>Пояснение:</strong> ${q.explanation}`;
+        expBox.classList.remove("hidden");
+      }
+      const nextBtn = document.getElementById("nextBtn");
+      nextBtn.textContent = currentIndex + 1 < currentQuestions.length ? "Следующий вопрос →" : "Завершить тест →";
+      nextBtn.classList.remove("hidden");
+    }
+
+    function nextQuestion() {
+      currentIndex++;
+      if (currentIndex < currentQuestions.length) {
+        renderQuestion();
+      } else {
+        finishQuiz();
+      }
+    }
+
+    function finishQuiz() {
+      const pct = Math.round((score / currentQuestions.length) * 100);
+      if (activeChapterNum) {
+        saveProgress(activeChapterNum, pct);
+      }
+      document.getElementById("questionArea").classList.add("hidden");
+      document.getElementById("inQuizCheatBtn").classList.add("hidden");
+      document.getElementById("inQuizCheatBox").classList.add("hidden");
+      document.getElementById("resultArea").classList.remove("hidden");
+
+      document.getElementById("resTitle").textContent = pct >= 80 ? "Ма шаа Аллах! Отличный результат" : "Тест завершён";
+      document.getElementById("resScore").textContent = `Правильных ответов: ${score} из ${currentQuestions.length} (${pct}%)`;
+      document.getElementById("resMsg").textContent = pct >= 80
+        ? "Материал главы усвоен уверенно."
+        : "Рекомендуем повторить шпаргалку по теме и пройти тест ещё раз.";
+      document.getElementById("retryBtn").onclick = () => {
+        if (activeChapterNum) startChapterQuiz(activeChapterNum);
+        else startFinalExam();
+      };
+    }
+
+    document.addEventListener("DOMContentLoaded", renderMenu);
+  </script>
+</body>
+</html>
