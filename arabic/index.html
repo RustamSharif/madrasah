@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Арабский язык — Сарф, Нахв и лексика Корана</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="../style.css?v=20261128" />
+  <script src="../auth.js?v=20261128"></script>
+  <script>
+    if (typeof protectCoursePage === "function") {
+      protectCoursePage("arabic");
+    }
+  </script>
+  <style>
+    [dir="rtl"], [lang="ar"], .ar {
+      font-family: "Traditional Arabic", "Scheherazade New", "Amiri", "Geeza Pro", "Arabic Typesetting", Tahoma, serif;
+      font-size: 1.38em;
+      line-height: 1.85;
+      direction: rtl;
+      unicode-bidi: isolate;
+    }
+
+    .course-header {
+      background: linear-gradient(145deg, #1F523F 0%, #183E30 100%);
+      color: #F4F7F4;
+      border: 1px solid #48735E;
+      border-radius: 16px;
+      padding: 20px 18px;
+      margin-bottom: 16px;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(14, 22, 17, 0.25);
+    }
+
+    .hero-ar {
+      font-size: 23px;
+      text-align: center;
+      margin-bottom: 6px;
+      color: #D7E5DC;
+      direction: rtl;
+    }
+
+    .course-header h1 {
+      margin: 0 0 6px;
+      font-size: 21px;
+      font-weight: 700;
+      color: #F6F8F3;
+      line-height: 1.3;
+    }
+
+    .course-header p {
+      margin: 0 0 12px;
+      font-size: 13.5px;
+      color: #CFE0D6;
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+    }
+
+    .hero-badge {
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      color: #F4F7F4;
+      padding: 5px 12px;
+      border-radius: 999px;
+    }
+
+    .top-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #E5ECE6;
+      color: #1A281F;
+      border: 1px solid #8FA695;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 13.5px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .progress-pill {
+      background: #E5ECE6;
+      border: 1px solid #8FA695;
+      padding: 6px 13px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #1F523F;
+    }
+
+    .chapters-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .chapter-card {
+      background: #E5ECE6;
+      border: 1px solid #8FA695;
+      border-radius: 14px;
+      padding: 15px 16px;
+      color: #1A281F;
+      box-shadow: 0 3px 10px rgba(14, 22, 17, 0.16);
+    }
+
+    .chapter-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .chapter-num {
+      flex-shrink: 0;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: #D3DFD5;
+      border: 1px solid #96AC9B;
+      color: #1F523F;
+      font-weight: 700;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .chapter-num.done {
+      background: #C7DFC9;
+      border-color: #4D7C55;
+      color: #16301B;
+    }
+
+    .chapter-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .chapter-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #18261D;
+      margin-bottom: 4px;
+      line-height: 1.35;
+    }
+
+    .chapter-meta {
+      font-size: 13px;
+      color: #435749;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .score-tag {
+      background: #C7DFC9;
+      color: #16301B;
+      border: 1px solid #6B9474;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+
+    .chapter-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-cheat {
+      background: #D3DFD5;
+      color: #1A281F;
+      border: 1px solid #8FA695;
+    }
+
+    .btn-test {
+      background: #1F523F;
+      color: #F4F7F4;
+    }
+
+    .btn-test:disabled, .btn-cheat:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .exam-card {
+      background: #E5ECE6;
+      border: 1.5px solid #48735E;
+      border-radius: 14px;
+      padding: 18px 16px;
+      box-shadow: 0 3px 10px rgba(14, 22, 17, 0.16);
+    }
+
+    .exam-card h3 {
+      font-size: 17px;
+      color: #1F523F;
+      margin: 0 0 6px;
+    }
+
+    .exam-card p {
+      font-size: 13.5px;
+      color: #435749;
+      margin: 0 0 14px;
+    }
+
+    .btn-exam {
+      width: 100%;
+      background: #1F523F;
+      color: #F4F7F4;
+      font-size: 15px;
+      padding: 13px;
+    }
+
+    .view { display: none; }
+    .view.active { display: block; }
+
+    .sheet-card, .quiz-card, .result-card {
+      background: #E5ECE6;
+      border: 1px solid #8FA695;
+      border-radius: 16px;
+      padding: 20px 18px;
+      color: #1A281F;
+      box-shadow: 0 4px 14px rgba(14, 22, 17, 0.18);
+    }
+
+    .sheet-card h2 {
+      font-size: 18.5px;
+      color: #1F523F;
+      margin: 0 0 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #9BB0A0;
+    }
+
+    .sheet-body {
+      font-size: 15px;
+      color: #1A281F;
+      line-height: 1.65;
+    }
+
+    .sheet-body h3, .sheet-body h4 {
+      color: #1F523F;
+      margin: 16px 0 8px;
+      font-size: 16.5px;
+    }
+
+    .sheet-body p { margin: 0 0 10px; }
+    .sheet-body ul, .sheet-body ol { padding-left: 20px; margin: 0 0 12px; }
+    .sheet-body li { margin-bottom: 6px; }
+
+    .sheet-body table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 14px;
+      display: block;
+      overflow-x: auto;
+      background: #F2F6F3;
+      border-radius: 8px;
+    }
+
+    .sheet-body th, .sheet-body td {
+      border: 1px solid #9BB0A0;
+      padding: 8px 10px;
+      text-align: left;
+    }
+
+    .sheet-body th {
+      background: #D3DFD5;
+      color: #18261D;
+      font-weight: 700;
+    }
+
+    .sheet-footer {
+      margin-top: 18px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .quiz-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #1F523F;
+    }
+
+    .progress-bar-wrap {
+      width: 100%;
+      height: 8px;
+      background: #C9D6CC;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: #1F523F;
+      width: 0%;
+      transition: width 0.25s ease;
+    }
+
+    .question-text {
+      font-size: 17px;
+      font-weight: 700;
+      color: #18261D;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option-btn {
+      width: 100%;
+      text-align: left;
+      background: #DCE5DD;
+      border: 1.5px solid #9BB0A0;
+      border-radius: 12px;
+      padding: 13px 14px;
+      font-size: 15px;
+      color: #1A281F;
+      cursor: pointer;
+      line-height: 1.45;
+    }
+
+    .option-btn.correct {
+      background: #C7DFC9 !important;
+      border-color: #4D7C55 !important;
+      color: #16301B !important;
+      font-weight: 700;
+    }
+
+    .option-btn.wrong {
+      background: #E8CECA !important;
+      border-color: #A85B52 !important;
+      color: #421814 !important;
+    }
+
+    .option-btn:disabled { cursor: default; }
+
+    .explanation-box {
+      margin-top: 14px;
+      padding: 13px 14px;
+      border-radius: 12px;
+      background: #D6E1D8;
+      border-left: 4px solid #1F523F;
+      font-size: 14px;
+      color: #1A281F;
+      display: none;
+    }
+
+    .explanation-box.show { display: block; }
+
+    .quiz-controls {
+      margin-top: 16px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .result-card { text-align: center; padding: 26px 20px; }
+    .result-emoji { font-size: 46px; margin-bottom: 10px; }
+    .result-score { font-size: 30px; font-weight: 800; color: #1F523F; margin: 8px 0; }
+    .result-msg { font-size: 15px; color: #435749; margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- VIEW 1: CHAPTERS MENU -->
+    <div id="view-menu" class="view active">
+      <div class="top-nav">
+        <a id="back-to-catalog" href="../index.html" class="btn-back">Назад</a>
+        <div id="overall-progress" class="progress-pill">Пройдено: 0 / 10</div>
+      </div>
+
+      <div class="course-header">
+        <div class="hero-ar" lang="ar" dir="rtl">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+        <h1>Арабский язык (Сарф и Нахв)</h1>
+        <p>Базовая грамматика, спряжение глаголов, отглагольные формы и ключевая лексика Священного Корана</p>
+        <div class="hero-stats">
+          <span class="hero-badge" id="stat-chapters">10 уроков</span>
+          <span class="hero-badge" id="stat-sheets">0 шпаргалок</span>
+          <span class="hero-badge" id="stat-questions">0 вопросов</span>
+        </div>
+      </div>
+
+      <div id="chapters-container" class="chapters-list"></div>
+
+      <div class="exam-card">
+        <h3>🎓 Итоговый зачёт по курсу (40 вопросов)</h3>
+        <p>Случайная выборка из всех 10 уроков курса: грамматика, глаголы прошедшего и настоящего времени, породы и словарь Корана.</p>
+        <button id="btn-start-exam" class="btn btn-exam" onclick="startFinalExam()">🎓 Начать итоговый зачёт</button>
+      </div>
+    </div>
+
+    <!-- VIEW 2: CHEATSHEET -->
+    <div id="view-sheet" class="view">
+      <div class="top-nav">
+        <button class="btn-back" onclick="showMenu()">Назад</button>
+        <button class="btn btn-test" style="padding: 8px 14px; font-size: 13.5px;" onclick="startQuizFromSheet()">📝 Тест</button>
+      </div>
+      <div class="sheet-card">
+        <h2 id="sheet-title">Конспект урока</h2>
+        <div id="sheet-content" class="sheet-body"></div>
+        <div class="sheet-footer">
+          <button class="btn btn-cheat" style="flex:1;" onclick="showMenu()">Назад</button>
+          <button class="btn btn-test" style="flex:2;" onclick="startQuizFromSheet()">📝 Пройти тест (15 вопросов)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 3: QUIZ -->
+    <div id="view-quiz" class="view">
+      <div class="top-nav">
+        <button class="btn-back" onclick="showMenu()">Назад</button>
+        <button id="btn-quiz-sheet" class="btn-back" onclick="openSheetDuringQuiz()">📖 Шпаргалка</button>
+      </div>
+      <div class="quiz-card">
+        <div class="quiz-top">
+          <span id="quiz-chapter-label">Урок 1</span>
+          <span id="quiz-counter">Вопрос 1 из 15</span>
+        </div>
+        <div class="progress-bar-wrap">
+          <div id="quiz-progress-bar" class="progress-bar-fill"></div>
+        </div>
+        <div id="quiz-question" class="question-text"></div>
+        <div id="quiz-options" class="options-list"></div>
+        <div id="quiz-explanation" class="explanation-box"></div>
+        <div class="quiz-controls">
+          <button id="btn-next-q" class="btn btn-test" style="width:100%; display:none;" onclick="nextQuestion()">Следующий вопрос</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 4: RESULT -->
+    <div id="view-result" class="view">
+      <div class="result-card">
+        <div id="result-emoji" class="result-emoji">🌟</div>
+        <h2 id="result-title">Урок завершён!</h2>
+        <div id="result-score" class="result-score">15 / 15</div>
+        <p id="result-msg" class="result-msg">Отличный результат!</p>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <button class="btn btn-test" onclick="retryQuiz()">🔄 Пройти ещё раз</button>
+          <button class="btn btn-cheat" onclick="showMenu()">Назад</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.ARABIC_DATA = window.ARABIC_DATA || {
+      chapters: {},
+      cheatsheets: {},
+      questions: []
+    };
+
+    const CHAPTER_META = [
+      { id: 1, title: "Алфавит, огласовки (харакаты) и три части речи", keys: ["алфавит", "огласовк", "харакат", "части речи", "исм"] },
+      { id: 2, title: "Определённость (Ма'рифа и Накира) и род имён", keys: ["определённост", "определенност", "ма'рифа", "накира", "род"] },
+      { id: 3, title: "Число имён: единственное, двойственное и множественное", keys: ["число", "двойствен", "множествен", "мусанна", "джам"] },
+      { id: 4, title: "Местоимения (Дамаир) и указательные имена", keys: ["местоимен", "дамаир", "указательн", "ишара"] },
+      { id: 5, title: "Изафетная связка (Идафа) и определение (На'т)", keys: ["изафет", "идафа", "определени", "на'т"] },
+      { id: 6, title: "Предлоги родительного падежа и падежи (И'раб)", keys: ["предлог", "джарр", "падеж", "и'раб"] },
+      { id: 7, title: "Именное предложение, частица «Инна» и глагол «Кана»", keys: ["именное", "инна", "кана", "джумля"] },
+      { id: 8, title: "Глагол прошедшего времени (аль-Мади) и его спряжение", keys: ["прошедш", "мади", "спряжен"] },
+      { id: 9, title: "Настоящее-будущее время (аль-Мудари') и приказ (аль-Амр)", keys: ["настоящ", "будущ", "мудари", "приказ", "амр"] },
+      { id: 10, title: "Породы глаголов, отглагольные производные и лексика Корана", keys: ["пород", "аузан", "производн", "лексик", "словарь", "масдар"] }
+    ];
+
+    function resolveChapterId(numOrTitle, maybeTitle) {
+      if (typeof numOrTitle === "number" && numOrTitle >= 1 && numOrTitle <= 10) {
+        return numOrTitle;
+      }
+      const combined = (String(numOrTitle || "") + " " + String(maybeTitle || "")).toLowerCase();
+      const numMatch = combined.match(/(?:урок|глава)\s*(\d+)/i);
+      if (numMatch) {
+        const parsed = parseInt(numMatch[1], 10);
+        if (parsed >= 1 && parsed <= 10) return parsed;
+      }
+      for (let i = 0; i < CHAPTER_META.length; i++) {
+        const meta = CHAPTER_META[i];
+        if (meta.keys.some(k => combined.includes(k))) {
+          return meta.id;
+        }
+      }
+      return null;
+    }
+
+    function normalizeQuestion(qObj, chapterId) {
+      const qText = qObj.question || qObj.q || qObj.text || "";
+      const opts = qObj.options || qObj.a || qObj.answers || [];
+      let corr = typeof qObj.correct === "number" ? qObj.correct : (typeof qObj.c === "number" ? qObj.c : 0);
+      const exp = qObj.explanation || qObj.exp || qObj.comment || "";
+      return {
+        chapterId: chapterId,
+        question: qText,
+        options: opts,
+        correct: corr,
+        explanation: exp
+      };
+    }
+
+    window.registerArabicChapter = function(a, b, c, d) {
+      let chId = null;
+      let title = "";
+      let sheet = "";
+      let qs = [];
+
+      if (typeof a === "object" && a !== null) {
+        chId = resolveChapterId(a.id || a.chapter || a.num, a.title || a.name);
+        title = a.title || a.name || "";
+        sheet = a.cheatsheet || a.cheat || a.summary || a.content || "";
+        qs = a.questions || a.tests || [];
+      } else if (typeof a === "number") {
+        chId = a;
+        title = typeof b === "string" ? b : "";
+        if (Array.isArray(c)) {
+          qs = c;
+          sheet = typeof d === "string" ? d : "";
+        } else {
+          sheet = typeof c === "string" ? c : "";
+          qs = Array.isArray(d) ? d : [];
+        }
+      } else if (typeof a === "string") {
+        chId = resolveChapterId(a, b);
+        title = a;
+        if (Array.isArray(b)) {
+          qs = b;
+          sheet = typeof c === "string" ? c : "";
+        } else {
+          sheet = typeof b === "string" ? b : "";
+          qs = Array.isArray(c) ? c : [];
+        }
+      }
+
+      if (!chId) return;
+      window.ARABIC_DATA.chapters[chId] = {
+        id: chId,
+        title: title || CHAPTER_META[chId - 1].title,
+        cheatsheet: sheet,
+        questions: qs.map(item => normalizeQuestion(item, chId))
+      };
+    };
+  </script>
+  <script src="arabic_part1.js?v=20261128"></script>
+  <script src="arabic_part2.js?v=20261128"></script>
+  <script src="arabic_part3a.js?v=20261128"></script>
+  <script src="arabic_part3b.js?v=20261128"></script>
+
+  <script>
+    const STORAGE_KEY = "madrasah_arabic_progress_v1";
+    let chaptersMap = {};
+    let currentChapterId = null;
+    let currentQuestions = [];
+    let currentIndex = 0;
+    let score = 0;
+    let isExamMode = false;
+    let slotCounter = 0;
+    let activeOptions = [];
+
+    function buildBalancedOptions(q) {
+      const opts = Array.isArray(q.options) ? q.options : [];
+      const corrIdx = typeof q.correct === "number" ? q.correct : 0;
+      const items = opts.map((text, idx) => ({
+        text: text,
+        isCorrect: idx === corrIdx
+      }));
+      if (items.length <= 1) return items;
+
+      const correctItem = items.find(it => it.isCorrect) || items[0];
+      const wrongItems = items.filter(it => it !== correctItem);
+
+      for (let i = wrongItems.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const tmp = wrongItems[i];
+        wrongItems[i] = wrongItems[j];
+        wrongItems[j] = tmp;
+      }
+
+      const targetSlot = (slotCounter + Math.floor(Math.random() * items.length)) % items.length;
+      slotCounter++;
+
+      const result = [];
+      let wPtr = 0;
+      for (let i = 0; i < items.length; i++) {
+        if (i === targetSlot) result.push(correctItem);
+        else result.push(wrongItems[wPtr++]);
+      }
+      return result;
+    }
+
+    function syncAllData() {
+      chaptersMap = {};
+      CHAPTER_META.forEach(meta => {
+        chaptersMap[meta.id] = {
+          id: meta.id,
+          title: meta.title,
+          cheatsheet: "",
+          questions: []
+        };
+      });
+
+      if (window.ARABIC_DATA && window.ARABIC_DATA.chapters) {
+        Object.keys(window.ARABIC_DATA.chapters).forEach(key => {
+          const item = window.ARABIC_DATA.chapters[key];
+          const chId = resolveChapterId(item.id || key, item.title);
+          if (chId && chaptersMap[chId]) {
+            if (item.cheatsheet) chaptersMap[chId].cheatsheet = item.cheatsheet;
+            if (Array.isArray(item.questions) && item.questions.length > 0) {
+              chaptersMap[chId].questions = item.questions.map(q => normalizeQuestion(q, chId));
+            }
+          }
+        });
+      }
+
+      if (window.ARABIC_DATA && window.ARABIC_DATA.cheatsheets) {
+        Object.keys(window.ARABIC_DATA.cheatsheets).forEach(key => {
+          const chId = resolveChapterId(key, key);
+          if (chId && chaptersMap[chId] && !chaptersMap[chId].cheatsheet) {
+            chaptersMap[chId].cheatsheet = window.ARABIC_DATA.cheatsheets[key];
+          }
+        });
+      }
+
+      if (window.ARABIC_DATA && Array.isArray(window.ARABIC_DATA.questions)) {
+        window.ARABIC_DATA.questions.forEach(q => {
+          const chId = resolveChapterId(q.chapterId || q.chapter, q.chapter);
+          if (chId && chaptersMap[chId]) {
+            const norm = normalizeQuestion(q, chId);
+            const exists = chaptersMap[chId].questions.some(ex => ex.question === norm.question);
+            if (!exists && norm.question) {
+              chaptersMap[chId].questions.push(norm);
+            }
+          }
+        });
+      }
+    }
+
+    function getProgress() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveChapterScore(chId, bestScore, total) {
+      const prog = getProgress();
+      const prev = prog[chId] ? prog[chId].score : 0;
+      if (bestScore >= prev) {
+        prog[chId] = { score: bestScore, total: total };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(prog));
+      }
+    }
+
+    function renderMenu() {
+      syncAllData();
+      const prog = getProgress();
+      const container = document.getElementById("chapters-container");
+      container.innerHTML = "";
+
+      let totalSheets = 0;
+      let totalQuestions = 0;
+      let completedCount = 0;
+
+      CHAPTER_META.forEach(meta => {
+        const ch = chaptersMap[meta.id];
+        const hasSheet = Boolean(ch.cheatsheet && ch.cheatsheet.trim().length > 0);
+        const qCount = ch.questions.length;
+        if (hasSheet) totalSheets++;
+        totalQuestions += qCount;
+
+        const saved = prog[meta.id];
+        const isDone = saved && saved.score >= Math.ceil(saved.total * 0.7);
+        if (isDone) completedCount++;
+
+        const card = document.createElement("div");
+        card.className = "chapter-card";
+        card.innerHTML = `
+          <div class="chapter-header">
+            <div class="chapter-num ${isDone ? 'done' : ''}">${isDone ? '✓' : meta.id}</div>
+            <div class="chapter-info">
+              <div class="chapter-title">${meta.title}</div>
+              <div class="chapter-meta">
+                <span>${hasSheet ? '📖 Шпаргалка' : '⏳ Конспект'}</span>
+                <span>•</span>
+                <span>Вопросов: ${qCount}</span>
+                ${saved ? `<span class="score-tag">Лучший: ${saved.score}/${saved.total}</span>` : ''}
+              </div>
+            </div>
+          </div>
+          <div class="chapter-actions">
+            <button class="btn btn-cheat" ${hasSheet ? '' : 'disabled'} onclick="openSheet(${meta.id})">📖 Шпаргалка</button>
+            <button class="btn btn-test" ${qCount > 0 ? '' : 'disabled'} onclick="startChapterQuiz(${meta.id})">📝 Тест (${qCount})</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      document.getElementById("stat-sheets").textContent = totalSheets + " шпаргалок";
+      document.getElementById("stat-questions").textContent = totalQuestions + " вопросов";
+      document.getElementById("overall-progress").textContent = "Пройдено: " + completedCount + " / 10";
+
+      const examBtn = document.getElementById("btn-start-exam");
+      examBtn.disabled = totalQuestions < 10;
+    }
+
+    function switchView(viewId) {
+      document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+      document.getElementById(viewId).classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function showMenu() {
+      renderMenu();
+      switchView("view-menu");
+    }
+
+    function openSheet(chId) {
+      currentChapterId = chId;
+      const ch = chaptersMap[chId];
+      document.getElementById("sheet-title").textContent = "Урок " + chId + ". " + ch.title;
+      document.getElementById("sheet-content").innerHTML = ch.cheatsheet || "<p>Конспект скоро появится.</p>";
+      switchView("view-sheet");
+    }
+
+    function startQuizFromSheet() {
+      if (currentChapterId) {
+        startChapterQuiz(currentChapterId);
+      }
+    }
+
+    function openSheetDuringQuiz() {
+      if (!isExamMode && currentChapterId && chaptersMap[currentChapterId] && chaptersMap[currentChapterId].cheatsheet) {
+        openSheet(currentChapterId);
+      }
+    }
+
+    function startChapterQuiz(chId) {
+      isExamMode = false;
+      currentChapterId = chId;
+      const ch = chaptersMap[chId];
+      currentQuestions = ch.questions.slice();
+      currentIndex = 0;
+      score = 0;
+
+      document.getElementById("quiz-chapter-label").textContent = "Урок " + chId;
+      const sheetBtn = document.getElementById("btn-quiz-sheet");
+      sheetBtn.style.display = ch.cheatsheet ? "inline-flex" : "none";
+
+      renderQuestion();
+      switchView("view-quiz");
+    }
+
+    function startFinalExam() {
+      isExamMode = true;
+      currentChapterId = null;
+      let pool = [];
+      CHAPTER_META.forEach(meta => {
+        pool = pool.concat(chaptersMap[meta.id].questions);
+      });
+      for (let i = pool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const temp = pool[i];
+        pool[i] = pool[j];
+        pool[j] = temp;
+      }
+      currentQuestions = pool.slice(0, 40);
+      currentIndex = 0;
+      score = 0;
+
+      document.getElementById("quiz-chapter-label").textContent = "🎓 Итоговый зачёт";
+      document.getElementById("btn-quiz-sheet").style.display = "none";
+
+      renderQuestion();
+      switchView("view-quiz");
+    }
+
+    function renderQuestion() {
+      const total = currentQuestions.length;
+      const q = currentQuestions[currentIndex];
+      activeOptions = buildBalancedOptions(q);
+
+      document.getElementById("quiz-counter").textContent = "Вопрос " + (currentIndex + 1) + " из " + total;
+      document.getElementById("quiz-progress-bar").style.width = ((currentIndex / total) * 100) + "%";
+      document.getElementById("quiz-question").innerHTML = q.question;
+
+      const optionsBox = document.getElementById("quiz-options");
+      optionsBox.innerHTML = "";
+
+      activeOptions.forEach((optItem, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.innerHTML = optItem.text;
+        btn.onclick = () => selectAnswer(idx);
+        optionsBox.appendChild(btn);
+      });
+
+      const expBox = document.getElementById("quiz-explanation");
+      expBox.classList.remove("show");
+      expBox.innerHTML = "";
+
+      const nextBtn = document.getElementById("btn-next-q");
+      nextBtn.style.display = "none";
+      nextBtn.textContent = (currentIndex + 1 < total) ? "Следующий вопрос" : "Завершить тест";
+    }
+
+    function selectAnswer(selectedIndex) {
+      const q = currentQuestions[currentIndex];
+      const buttons = document.querySelectorAll("#quiz-options .option-btn");
+      const chosen = activeOptions[selectedIndex];
+
+      buttons.forEach((btn, idx) => {
+        btn.disabled = true;
+        if (activeOptions[idx] && activeOptions[idx].isCorrect) {
+          btn.classList.add("correct");
+        } else if (idx === selectedIndex) {
+          btn.classList.add("wrong");
+        }
+      });
+
+      if (chosen && chosen.isCorrect) {
+        score++;
+      }
+
+      if (q.explanation) {
+        const expBox = document.getElementById("quiz-explanation");
+        expBox.innerHTML = "<strong>Разбор:</strong> " + q.explanation;
+        expBox.classList.add("show");
+      }
+
+      document.getElementById("btn-next-q").style.display = "inline-flex";
+    }
+
+    function nextQuestion() {
+      currentIndex++;
+      if (currentIndex < currentQuestions.length) {
+        renderQuestion();
+      } else {
+        finishQuiz();
+      }
+    }
+
+    function finishQuiz() {
+      const total = currentQuestions.length;
+      const pct = Math.round((score / total) * 100);
+
+      if (!isExamMode && currentChapterId) {
+        saveChapterScore(currentChapterId, score, total);
+      }
+
+      document.getElementById("result-title").textContent = isExamMode
+        ? "Итоговый зачёт завершён!"
+        : ("Урок " + currentChapterId + " завершён!");
+      document.getElementById("result-score").textContent = score + " / " + total + " (" + pct + "%)";
+
+      if (pct >= 85) {
+        document.getElementById("result-emoji").textContent = "🏆";
+        document.getElementById("result-msg").textContent = "Ма ша Аллах! Превосходное усвоение грамматики и глагольных форм.";
+      } else if (pct >= 65) {
+        document.getElementById("result-emoji").textContent = "🌟";
+        document.getElementById("result-msg").textContent = "Хороший результат! Загляните в шпаргалку по сложным моментам для закрепления.";
+      } else {
+        document.getElementById("result-emoji").textContent = "📖";
+        document.getElementById("result-msg").textContent = "Рекомендуем повторить конспект-шпаргалку урока и пройти тест ещё раз.";
+      }
+
+      switchView("view-result");
+    }
+
+    function retryQuiz() {
+      if (isExamMode) {
+        startFinalExam();
+      } else if (currentChapterId) {
+        startChapterQuiz(currentChapterId);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+      const uid = typeof getCurrentUserId === "function" ? getCurrentUserId() : (new URLSearchParams(window.location.search).get("uid") || "");
+      if (uid && uid !== "guest") {
+        document.getElementById("back-to-catalog").href = "../index.html?uid=" + encodeURIComponent(uid);
+      }
+      renderMenu();
+    });
+  </script>
+</body>
+</html>
