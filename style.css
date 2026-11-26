@@ -1,0 +1,362 @@
+/* Единый визуальный стандарт библиотеки: палитра «Болотно-зелёное сукно» */
+:root {
+  --bg-baize: #364B3D;
+  --emerald-dark: #183E30;
+  --emerald-main: #1F523F;
+  --emerald-hover: #174031;
+  --surface-card: #E5ECE6;
+  --surface-item: #DCE5DD;
+  --surface-soft: #D3DFD5;
+  --border-sage: #8FA695;
+  --text-main: #1A281F;
+  --text-muted: #435749;
+  --text-light: #F4F7F4;
+  --correct-bg: #C7DFC9;
+  --correct-border: #4D7C55;
+  --correct-text: #16301B;
+  --wrong-bg: #E8CECA;
+  --wrong-border: #A85B52;
+  --wrong-text: #421814;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--bg-baize);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cdefs%3E%3Cpattern id='w' width='4' height='4' patternUnits='userSpaceOnUse'%3E%3Cpath d='M0 0h2v2H0zm2 2h2v2H2z' fill='%2318261D' fill-opacity='0.16'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='80' height='80' fill='url(%23w)'/%3E%3Cg fill='none' stroke='%239AB8A1' stroke-width='0.75' stroke-opacity='0.15'%3E%3Cpolygon points='40,4 50,16 66,14 64,30 76,40 64,50 66,66 50,64 40,76 30,64 14,66 16,50 4,40 16,30 14,14 30,16'/%3E%3Ccircle cx='40' cy='40' r='14'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: repeat;
+  color: var(--text-main);
+  line-height: 1.55;
+  min-height: 100vh;
+}
+
+.container, .wrap {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px 14px 40px;
+}
+
+/* Верхняя навигация и единая кнопка «Назад» */
+.top-nav, .top-bar, .topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.nav-btn, .btn-nav, .btn-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background-color: var(--surface-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-sage);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13.5px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(14, 22, 17, 0.14);
+}
+
+.nav-btn:hover, .btn-nav:hover, .btn-back:hover {
+  background-color: var(--surface-item);
+}
+
+/* Изумрудно-болотная шапка курсов */
+.header, .course-header, .hero, .hero-banner {
+  background: linear-gradient(145deg, var(--emerald-main) 0%, var(--emerald-dark) 100%);
+  color: var(--text-light);
+  border: 1px solid #48735E;
+  border-bottom: 1px solid #48735E;
+  border-radius: 16px;
+  padding: 22px 18px;
+  margin-bottom: 16px;
+  text-align: center;
+  box-shadow: 0 6px 18px rgba(14, 22, 17, 0.24);
+}
+
+.header h1, .course-header h1, .hero h1, .hero-banner h1 {
+  margin: 0 0 6px;
+  font-size: 21px;
+  font-weight: 700;
+  color: var(--text-light);
+  line-height: 1.3;
+}
+
+.header p, .course-header p, .hero p, .hero-banner p {
+  margin: 0 0 12px;
+  font-size: 13.5px;
+  color: #D4E3DA;
+  line-height: 1.45;
+}
+
+.stats-bar, .hero-stats {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.stat-pill, .hero-badge, .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: var(--text-light);
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+/* Матовые светло-шалфейные карточки */
+.card, .panel, .sheet-card, .quiz-card, .result-card, .progress-wrap {
+  background-color: var(--surface-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-sage);
+  border-radius: 16px;
+  padding: 18px 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 14px rgba(14, 22, 17, 0.16);
+}
+
+.chapter-list, .chapters-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Единый макет карточек глав для всех курсов (как в Акыде и Сире) */
+.chapter-row, .chapter-card, .module-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  gap: 12px !important;
+  background-color: var(--surface-card);
+  border: 1px solid var(--border-sage);
+  border-radius: 14px;
+  padding: 15px 16px;
+  box-shadow: 0 3px 10px rgba(14, 22, 17, 0.12);
+}
+
+.chapter-info {
+  width: 100%;
+}
+
+.chapter-title {
+  margin: 4px 0 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.35;
+}
+
+.chapter-meta {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.chapter-num {
+  display: inline-block;
+  background-color: var(--emerald-main);
+  color: var(--text-light);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 8px;
+}
+
+.chapter-score-badge, .score-tag {
+  display: inline-block;
+  background-color: var(--correct-bg);
+  color: var(--correct-text);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 8px;
+  margin-left: 6px;
+}
+
+/* Единая сетка кнопок «📖 Шпаргалка» и «📝 Тест» на всю ширину 50/50 */
+.chapter-actions {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) !important;
+  gap: 10px !important;
+  width: 100% !important;
+  margin-top: 2px;
+}
+
+.chapter-actions .btn,
+.chapter-actions button {
+  width: 100% !important;
+  min-height: 42px;
+  padding: 10px 14px !important;
+  border-radius: 10px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.1s ease;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn-primary, .btn-test {
+  background-color: var(--emerald-main) !important;
+  color: var(--text-light) !important;
+  border: 1px solid var(--emerald-main) !important;
+}
+
+.btn-primary:hover, .btn-test:hover {
+  background-color: var(--emerald-hover) !important;
+}
+
+.btn-cheat, .btn-secondary, .btn-outline {
+  background-color: var(--surface-soft) !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--border-sage) !important;
+}
+
+.btn-cheat:hover, .btn-secondary:hover, .btn-outline:hover {
+  background-color: #C7D6C9 !important;
+}
+
+.btn-final, .btn-exam {
+  width: 100%;
+  justify-content: center;
+  padding: 14px 16px;
+  font-size: 15px;
+  background-color: var(--emerald-main) !important;
+  color: var(--text-light) !important;
+  border: 1px solid #48735E !important;
+  border-radius: 12px;
+  margin-top: 10px;
+}
+
+/* Варианты ответов и разбор */
+.options-list, .options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.option-btn, .opt-btn {
+  width: 100%;
+  text-align: left;
+  background-color: var(--surface-item);
+  color: var(--text-main);
+  border: 1.5px solid var(--border-sage);
+  border-radius: 12px;
+  padding: 13px 15px;
+  font-size: 15px;
+  line-height: 1.45;
+  cursor: pointer;
+}
+
+.option-btn:hover:not(:disabled), .opt-btn:hover:not(:disabled) {
+  border-color: var(--emerald-main);
+  background-color: var(--surface-soft);
+}
+
+.option-btn.correct, .opt-btn.correct {
+  background-color: var(--correct-bg) !important;
+  border-color: var(--correct-border) !important;
+  color: var(--correct-text) !important;
+  font-weight: 700;
+}
+
+.option-btn.wrong, .opt-btn.wrong {
+  background-color: var(--wrong-bg) !important;
+  border-color: var(--wrong-border) !important;
+  color: var(--wrong-text) !important;
+}
+
+.explanation-box, .exp-box {
+  margin-top: 16px;
+  padding: 14px 16px;
+  background-color: var(--surface-soft);
+  border-left: 4px solid var(--emerald-main);
+  border-radius: 10px;
+  font-size: 14.5px;
+  color: var(--text-main);
+}
+
+/* Арабский текст */
+[dir="rtl"], [lang="ar"], .ar {
+  font-family: "Amiri", "Traditional Arabic", "Scheherazade New", "Noto Naskh Arabic", serif;
+  font-size: 1.4em;
+  line-height: 1.85;
+  direction: rtl;
+}
+
+/* Модальное окно шпаргалки */
+.modal-overlay, .modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(14, 22, 17, 0.68);
+  z-index: 9999;
+  padding: 14px;
+  overflow-y: auto;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-card, .modal-box {
+  background-color: var(--surface-card);
+  color: var(--text-main);
+  max-width: 680px;
+  width: 100%;
+  max-height: 86vh;
+  overflow-y: auto;
+  border-radius: 16px;
+  padding: 20px 18px;
+  border: 1px solid var(--border-sage);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+/* Аудиоплеер в курсе 40 хадисов */
+audio {
+  color-scheme: light;
+  background-color: #F2F6F3;
+  border-radius: 10px;
+  width: 100%;
+}
+
+/* Скрытие старых переключателей темы */
+#theme-btn, #themeToggleBtn, .btn-theme {
+  display: none !important;
+}
