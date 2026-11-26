@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Таджвид — Правила чтения Священного Корана</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="../style.css?v=20261126b">
+  <script src="../auth.js?v=20261126b"></script>
+  <script>
+    if (typeof protectCoursePage === "function") {
+      protectCoursePage("tajweed");
+    }
+  </script>
+</head>
+<body>
+
+<div class="container">
+  <div class="top-nav">
+    <a href="../index.html" id="back-catalog-btn" class="back-btn">Назад</a>
+  </div>
+
+  <div class="course-header">
+    <h1>Таджвид</h1>
+    <p>Правила чтения Священного Корана (риуаят Хафс ан Асым)</p>
+    <div class="stats-bar">
+      <span class="stat-pill">📚 10 глав</span>
+      <span class="stat-pill" id="total-q-pill">📝 150 вопросов</span>
+      <span class="stat-pill">📖 10 шпаргалок</span>
+    </div>
+  </div>
+
+  <!-- Главное меню глав -->
+  <div id="menu-screen" class="surface-card">
+    <div class="chapter-list" id="chapter-list"></div>
+    <button class="btn btn-final" onclick="startFinalExam()">🎓 Итоговый зачёт (40 случайных вопросов по всему курсу)</button>
+  </div>
+
+  <!-- Экран прохождения теста -->
+  <div id="quiz-screen" class="surface-card" style="display: none;">
+    <div class="quiz-top">
+      <span class="progress-text" id="progress-text">Вопрос 1 из 15</span>
+      <div style="display:flex; gap:8px;">
+        <button class="btn btn-cheat" id="in-quiz-cheat-btn" onclick="openCurrentCheat()">📖 Шпаргалка</button>
+        <button class="nav-btn" onclick="returnToMenu()">В меню</button>
+      </div>
+    </div>
+    <div class="topic-badge" id="q-topic"></div>
+    <div class="question-text" id="q-text"></div>
+    <div class="options-list" id="q-options"></div>
+    <div class="explanation-box" id="q-explanation">
+      <div id="q-exp-text"></div>
+      <span class="source-tag" id="q-source"></span>
+    </div>
+    <div class="quiz-footer">
+      <span style="font-weight:600; font-size:13.5px;" id="score-live">Правильно: 0</span>
+      <button class="btn btn-primary" id="next-btn" style="display:none;" onclick="nextQuestion()">Следующий вопрос</button>
+    </div>
+  </div>
+
+  <!-- Экран результатов -->
+  <div id="result-screen" class="surface-card" style="display: none;">
+    <div class="result-box">
+      <h2 id="res-title" style="margin:0 0 6px;">Тест завершён!</h2>
+      <div class="result-percent" id="res-percent">0%</div>
+      <p id="res-details" style="font-size:16px; font-weight:600; margin:6px 0;"></p>
+      <p id="res-msg" style="color:var(--text-muted); margin-bottom:18px; font-size:14px;"></p>
+      <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="restartCurrentQuiz()">🔄 Пройти ещё раз</button>
+        <button class="nav-btn" onclick="returnToMenu()">К списку глав</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Модальное окно шпаргалки -->
+<div class="modal-overlay" id="cheat-modal" onclick="if(event.target===this) closeCheat()">
+  <div class="modal-card">
+    <div class="modal-header">
+      <strong style="font-size:15.5px;">📖 Конспект-шпаргалка</strong>
+      <button class="nav-btn" onclick="closeCheat()">Закрыть</button>
+    </div>
+    <div class="modal-body" id="cheat-body"></div>
+  </div>
+</div>
+
+<script>
+  window.TAJWEED_DATA = { cheatsheets: {}, questions: [] };
+</script>
+<script src="tajweed_part1.js"></script>
+<script src="tajweed_part2.js"></script>
+<script src="tajweed_part3a.js"></script>
+<script src="tajweed_part3b.js"></script>
+<script src="tajweed_part3c.js"></script>
+
+<script>
+  const CHAPTERS = [
+    { id: "Введение", title: "1. Введение в таджвид, Истиаза и Басмаля" },
+    { id: "Махрадж 1", title: "2. Махрадж (часть 1): Аль-Джауф, Аль-Хальк и корень языка" },
+    { id: "Махрадж 2", title: "3. Махрадж (часть 2): Язык, губы и Аль-Хайшум" },
+    { id: "Сыфаты", title: "4. Сыфаты (качества арабских букв)" },
+    { id: "Нун сакина", title: "5. Правила Нун сакина и Танвина (Изхар, Идгам, Икляб, Ихфа)" },
+    { id: "Мим сакина", title: "6. Правила Мим сакина и удвоенных Нун и Мим (Гунна)" },
+    { id: "Мадд", title: "7. Правила Мадд (естественное и производные удлинения)" },
+    { id: "Тафхим и Таркик", title: "8. Твёрдость и мягкость (правила букв Ра, Лям и Алиф)" },
+    { id: "Виды Идгама", title: "9. Виды Идгама и Лям аль-Та'риф (Шамсия и Камария)" },
+    { id: "Уакф и Хамза", title: "10. Правила остановки (Уакф), знаки в мусхафе и Хамзатуль-уасль" }
+  ];
+
+  let currentChapter = null;
+  let isFinalExam = false;
+  let currentQuestions = [];
+  let currentIndex = 0;
+  let score = 0;
+  let slotCursor = 0;
+
+  function buildBalancedOptions(q) {
+    const opts = Array.isArray(q.options) ? q.options : [];
+    const items = opts.map((text, idx) => ({
+      text: text,
+      isCorrect: idx === q.correct
+    }));
+    const correctItem = items.find(x => x.isCorrect) || items[0];
+    const wrongItems = items.filter(x => !x.isCorrect);
+    for (let i = wrongItems.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [wrongItems[i], wrongItems[j]] = [wrongItems[j], wrongItems[i]];
+    }
+    const targetSlot = items.length > 0 ? (slotCursor % items.length) : 0;
+    slotCursor++;
+    const result = [];
+    let wPtr = 0;
+    for (let i = 0; i < items.length; i++) {
+      if (i === targetSlot) result.push(correctItem);
+      else result.push(wrongItems[wPtr++]);
+    }
+    return result;
+  }
+
+  function initApp() {
+    const uid = typeof getCurrentUserId === "function" ? getCurrentUserId() : "guest";
+    const backBtn = document.getElementById("back-catalog-btn");
+    if (backBtn && uid && uid !== "guest") {
+      backBtn.href = "../index.html?uid=" + encodeURIComponent(uid);
+    }
+    const totalQ = (window.TAJWEED_DATA && window.TAJWEED_DATA.questions) ? window.TAJWEED_DATA.questions.length : 0;
+    if (totalQ > 0) {
+      document.getElementById("total-q-pill").textContent = `📝 ${totalQ} вопросов`;
+    }
+    renderMenu();
+  }
+
+  function getSavedProgress() {
+    try {
+      return JSON.parse(localStorage.getItem("tajweed_progress") || "{}");
+    } catch (e) { return {}; }
+  }
+
+  function saveChapterProgress(chapterId, pct) {
+    const prog = getSavedProgress();
+    if (!prog[chapterId] || pct > prog[chapterId]) {
+      prog[chapterId] = pct;
+      localStorage.setItem("tajweed_progress", JSON.stringify(prog));
+    }
+  }
+
+  function renderMenu() {
+    const list = document.getElementById("chapter-list");
+    const prog = getSavedProgress();
+    const allQ = window.TAJWEED_DATA.questions || [];
+    const cheats = window.TAJWEED_DATA.cheatsheets || {};
+
+    list.innerHTML = CHAPTERS.map(ch => {
+      const count = allQ.filter(q => q.chapter === ch.id).length;
+      const hasCheat = Boolean(cheats[ch.id]);
+      const bestPct = prog[ch.id];
+      return `
+        <div class="chapter-row">
+          <div class="chapter-info">
+            <span class="chapter-num">${count} вопр.</span>
+            ${bestPct !== undefined ? `<span class="chapter-score-badge">Лучший: ${bestPct}%</span>` : ""}
+            <div class="chapter-title">${ch.title}</div>
+          </div>
+          <div class="chapter-actions">
+            ${hasCheat ? `<button class="btn btn-cheat" onclick="openCheat('${ch.id}')">📖 Шпаргалка</button>` : ""}
+            <button class="btn btn-primary" onclick="startQuiz('${ch.id}')">📝 Тест</button>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  function openCheat(chapterId) {
+    const html = (window.TAJWEED_DATA.cheatsheets && window.TAJWEED_DATA.cheatsheets[chapterId]) || "<p>Конспект для этой главы готовится.</p>";
+    document.getElementById("cheat-body").innerHTML = html;
+    document.getElementById("cheat-modal").style.display = "flex";
+  }
+
+  function openCurrentCheat() {
+    if (currentChapter) openCheat(currentChapter);
+  }
+
+  function closeCheat() {
+    document.getElementById("cheat-modal").style.display = "none";
+  }
+
+  function startQuiz(chapterId) {
+    const allQ = window.TAJWEED_DATA.questions || [];
+    const filtered = allQ.filter(q => q.chapter === chapterId);
+    if (!filtered.length) {
+      alert("Вопросы для этой главы пока не загружены.");
+      return;
+    }
+    currentChapter = chapterId;
+    isFinalExam = false;
+    slotCursor = Math.floor(Math.random() * 4);
+    currentQuestions = [...filtered].sort(() => Math.random() - 0.5);
+    currentIndex = 0;
+    score = 0;
+
+    document.getElementById("in-quiz-cheat-btn").style.display = window.TAJWEED_DATA.cheatsheets[chapterId] ? "inline-flex" : "none";
+    document.getElementById("menu-screen").style.display = "none";
+    document.getElementById("result-screen").style.display = "none";
+    document.getElementById("quiz-screen").style.display = "block";
+    renderQuestion();
+  }
+
+  function startFinalExam() {
+    const allQ = window.TAJWEED_DATA.questions || [];
+    if (!allQ.length) return;
+    currentChapter = null;
+    isFinalExam = true;
+    slotCursor = Math.floor(Math.random() * 4);
+    currentQuestions = [...allQ].sort(() => Math.random() - 0.5).slice(0, 40);
+    currentIndex = 0;
+    score = 0;
+
+    document.getElementById("in-quiz-cheat-btn").style.display = "none";
+    document.getElementById("menu-screen").style.display = "none";
+    document.getElementById("result-screen").style.display = "none";
+    document.getElementById("quiz-screen").style.display = "block";
+    renderQuestion();
+  }
+
+  function restartCurrentQuiz() {
+    if (isFinalExam) startFinalExam();
+    else if (currentChapter) startQuiz(currentChapter);
+  }
+
+  function renderQuestion() {
+    const q = currentQuestions[currentIndex];
+    document.getElementById("progress-text").textContent = `Вопрос ${currentIndex + 1} из ${currentQuestions.length}`;
+    document.getElementById("score-live").textContent = `Правильно: ${score}`;
+    document.getElementById("q-topic").textContent = isFinalExam ? `${q.chapter} • ${q.topic}` : q.topic;
+    document.getElementById("q-text").innerHTML = q.question;
+
+    const expBox = document.getElementById("q-explanation");
+    expBox.style.display = "none";
+    document.getElementById("next-btn").style.display = "none";
+
+    const optsEl = document.getElementById("q-options");
+    optsEl.innerHTML = "";
+    const shuffledOptions = buildBalancedOptions(q);
+
+    shuffledOptions.forEach((optObj) => {
+      const btn = document.createElement("button");
+      btn.className = "option-btn";
+      btn.innerHTML = optObj.text;
+      btn.dataset.correct = optObj.isCorrect ? "1" : "0";
+      btn.onclick = () => selectAnswer(btn);
+      optsEl.appendChild(btn);
+    });
+  }
+
+  function selectAnswer(btn) {
+    const q = currentQuestions[currentIndex];
+    const allBtns = document.querySelectorAll("#q-options .option-btn");
+    allBtns.forEach(b => b.disabled = true);
+
+    if (btn.dataset.correct === "1") {
+      btn.classList.add("correct");
+      score++;
+    } else {
+      btn.classList.add("wrong");
+      allBtns.forEach(b => {
+        if (b.dataset.correct === "1") b.classList.add("correct");
+      });
+    }
+
+    document.getElementById("score-live").textContent = `Правильно: ${score}`;
+    document.getElementById("q-exp-text").innerHTML = q.explanation;
+    document.getElementById("q-source").textContent = "Раздел: " + q.source;
+    document.getElementById("q-explanation").style.display = "block";
+
+    const nextBtn = document.getElementById("next-btn");
+    nextBtn.style.display = "inline-flex";
+    nextBtn.textContent = (currentIndex === currentQuestions.length - 1) ? "Завершить тест" : "Следующий вопрос";
+  }
+
+  function nextQuestion() {
+    currentIndex++;
+    if (currentIndex < currentQuestions.length) {
+      renderQuestion();
+    } else {
+      finishQuiz();
+    }
+  }
+
+  function finishQuiz() {
+    document.getElementById("quiz-screen").style.display = "none";
+    document.getElementById("result-screen").style.display = "block";
+
+    const pct = Math.round((score / currentQuestions.length) * 100);
+    if (!isFinalExam && currentChapter) {
+      saveChapterProgress(currentChapter, pct);
+    } else if (isFinalExam) {
+      saveChapterProgress("FINAL_EXAM", pct);
+    }
+
+    document.getElementById("res-title").textContent = isFinalExam ? "Итоговый зачёт завершён!" : "Глава пройдена!";
+    document.getElementById("res-percent").textContent = pct + "%";
+    document.getElementById("res-details").textContent = `Правильных ответов: ${score} из ${currentQuestions.length}`;
+
+    let msg = "Рекомендуем открыть конспект-шпаргалку по этой теме и пройти тест повторно.";
+    if (pct === 100) msg = "МашаАллах! Безупречный результат, правила усвоены полностью.";
+    else if (pct >= 80) msg = "Отличный результат! Вы уверенно знаете правила таджвида по этой теме.";
+    else if (pct >= 60) msg = "Хороший результат, но стоит повторить отдельные исключения и примеры в шпаргалке.";
+    document.getElementById("res-msg").textContent = msg;
+  }
+
+  function returnToMenu() {
+    document.getElementById("quiz-screen").style.display = "none";
+    document.getElementById("result-screen").style.display = "none";
+    document.getElementById("menu-screen").style.display = "block";
+    renderMenu();
+  }
+
+  window.addEventListener("DOMContentLoaded", initApp);
+</script>
+</body>
+</html>
