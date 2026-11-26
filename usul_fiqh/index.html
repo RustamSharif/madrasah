@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Усуль аль-Фикх и история законодательства</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="../style.css?v=20261129" />
+  <script src="../auth.js?v=20261129"></script>
+  <style>
+    .progress-bar-bg {
+      width: 100%;
+      height: 8px;
+      background: #C7D4C9;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: #1F523F;
+      width: 0%;
+      transition: width 0.25s ease;
+    }
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .explanation-box {
+      margin-top: 14px;
+      padding: 13px 14px;
+      background: #DCE5DD;
+      border-left: 4px solid #1F523F;
+      border-radius: 10px;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #1A281F;
+    }
+    .cheat-content h3, .cheat-content h4 {
+      color: #1F523F;
+      margin: 14px 0 6px;
+    }
+    .cheat-content p, .cheat-content li {
+      font-size: 14.5px;
+      line-height: 1.55;
+    }
+    .cheat-content ul {
+      padding-left: 18px;
+    }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="top-nav">
+      <a href="../index.html" id="backLink" class="back-btn">Назад</a>
+    </div>
+
+    <div class="header">
+      <h1>Усуль аль-Фикх и история законодательства</h1>
+      <p>Шесть периодов становления фикха и методология Ханафитского мазхаба</p>
+      <div class="stats-bar">
+        <span class="stat-pill" id="statSummary">10 глав • 10 шпаргалок • 150 вопросов</span>
+        <span class="stat-pill" id="statProgress">Пройдено: 0 / 10</span>
+      </div>
+    </div>
+
+    <div id="menuView">
+      <div id="chaptersList"></div>
+      <div class="card" style="text-align:center;margin-top:16px;">
+        <h3 style="margin:0 0 6px;font-size:17px;">Итоговый зачёт по курсу</h3>
+        <p style="margin:0 0 12px;font-size:13.5px;color:#435749;">30 случайных вопросов из всех загруженных глав курса</p>
+        <button type="button" class="btn btn-primary" id="finalExamBtn" onclick="startFinalExam()">🎓 Начать итоговый зачёт</button>
+      </div>
+    </div>
+
+    <div id="quizView" class="hidden">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:13px;font-weight:700;color:#1F523F;">
+          <span id="quizChapterLabel">Глава</span>
+          <span id="quizCounter">Вопрос 1 / 15</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="quizProgressFill"></div>
+        </div>
+        <div id="questionText" style="font-size:16.5px;font-weight:700;line-height:1.45;margin-bottom:10px;"></div>
+        <div class="options-list" id="optionsContainer"></div>
+        <div id="explanationBox" class="explanation-box hidden"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;">
+          <button type="button" class="btn btn-cheat" onclick="exitQuiz()">К списку глав</button>
+          <button type="button" class="btn btn-primary hidden" id="nextBtn" onclick="nextQuestion()">Дальше</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="resultView" class="hidden">
+      <div class="card" style="text-align:center;">
+        <div style="font-size:42px;margin-bottom:8px;" id="resultEmoji">🏆</div>
+        <h2 style="margin:0 0 6px;font-size:20px;" id="resultTitle">Тест завершён</h2>
+        <p style="margin:0 0 14px;font-size:15px;color:#435749;" id="resultScoreText"></p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <button type="button" class="btn btn-cheat" onclick="retryQuiz()">Пройти заново</button>
+          <button type="button" class="btn btn-primary" onclick="exitQuiz()">К списку глав</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="cheatModal" class="modal-overlay" style="display: none;" onclick="if(event.target===this) closeCheatModal()">
+    <div class="modal-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px solid #8FA695;padding-bottom:8px;">
+        <h3 style="margin:0;font-size:17px;color:#1F523F;" id="cheatModalTitle">📖 Конспект-шпаргалка</h3>
+        <button type="button" class="btn btn-cheat" style="width:auto;padding:5px 12px;" onclick="closeCheatModal()">Закрыть</button>
+      </div>
+      <div id="cheatModalBody" class="cheat-content"></div>
+    </div>
+  </div>
+
+  <script>
+    window.USUL_FIQH_CHAPTERS = [];
+    window.registerUsulFiqhPart = function(items) {
+      if (Array.isArray(items)) {
+        items.forEach(function(item) {
+          if (item && item.id) {
+            var idx = window.USUL_FIQH_CHAPTERS.findIndex(function(x) { return x.id === item.id; });
+            if (idx >= 0) window.USUL_FIQH_CHAPTERS[idx] = item;
+            else window.USUL_FIQH_CHAPTERS.push(item);
+          }
+        });
+      }
+    };
+  </script>
+  <script src="usul_fiqh_part1.js?v=2"></script>
+  <script src="usul_fiqh_part2.js?v=2"></script>
+  <script src="usul_fiqh_part3.js?v=2"></script>
+  <script src="usul_fiqh_part4.js?v=2"></script>
+
+  <script>
+    var CHAPTERS_META = [
+      { id: 1, title: "1-й и 2-й периоды ташри'а: Эпоха Пророка ﷺ и праведных халифов", sub: "Положение арабов, Мекка и Медина, сбор Корана, иджма', ар-ра'й и причины разногласий сахабов" },
+      { id: 2, title: "3-й период ташри'а: Эпоха табиинов (до начала II века хиджры)", sub: "Секта хавариджей, рассеивание учёных, борьба с выдумщиками хадисов, школы Хиджаза и Ирака" },
+      { id: 3, title: "4-й период ташри'а: Расцвет фикха и академия имама Абу Ханифы", sub: "Факторы золотого века, кодификация фикха и тафсира, четыре имама и метод шуры Абу Ханифы" },
+      { id: 4, title: "Великие ученики Абу Ханифы и кодификация мазхаба", sub: "Абу Юсуф, Мухаммад аш-Шайбани, Зуфар и свод трудов Захир ар-Ривая" },
+      { id: 5, title: "5-й и 6-й периоды ташри'а: Тарджих, победа мазхабов и эпоха таклида", sub: "Выведение причин (та'лиль), взвешивание мнений до падения Багдада и причины таклида" },
+      { id: 6, title: "Шариатские постановления (Аль-Ахкам ат-Таклифийя)", sub: "Ханафитское разграничение фарда и ваджиба, макруха тахриман и танзихан" },
+      { id: 7, title: "Коран и Сунна как главные источники права", sub: "Виды ясности текстов и ханафитское деление хадисов на мутаватир, машхур и ахад" },
+      { id: 8, title: "Единогласие учёных (Иджма') и суждение по аналогии (Кыяс)", sub: "Условия действительности иджма', четыре столпа кыяса и определение причины ('илля)" },
+      { id: 9, title: "Дополнительные доводы: Истихсан и 'Урф", sub: "Предпочтение более сильного скрытого довода и роль добрых обычаев народа" },
+      { id: 10, title: "Правила толкования текстов и устранения противоречий", sub: "Общее и частное ('Амм и Хасс), отмена норм (Насх) и согласование доводов" }
+    ];
+    var STORAGE_KEY = "madrasah_usul_fiqh_scores_v2";
+    var currentQuestions = [];
+    var currentIndex = 0;
+    var currentScore = 0;
+    var currentMode = "chapter";
+    var currentChapterId = null;
+    var answeredCurrent = false;
+    var targetCorrectSlot = 0;
+
+    function getScores() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); }
+      catch (e) { return {}; }
+    }
+
+    function saveScore(chapId, score, total) {
+      var scores = getScores();
+      var prev = scores[chapId];
+      if (!prev || score >= prev.score) {
+        scores[chapId] = { score: score, total: total };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(scores));
+      }
+    }
+
+    function getLoadedChapter(id) {
+      return window.USUL_FIQH_CHAPTERS.find(function(c) { return Number(c.id) === Number(id); });
+    }
+
+    function renderChapters() {
+      var scores = getScores();
+      var totalChapters = CHAPTERS_META.length;
+      var loadedCount = 0;
+      var totalQuestions = 0;
+      var passedCount = 0;
+
+      var html = CHAPTERS_META.map(function(meta) {
+        var loaded = getLoadedChapter(meta.id);
+        var qCount = loaded && Array.isArray(loaded.questions) ? loaded.questions.length : 0;
+        if (qCount > 0) {
+          loadedCount++;
+          totalQuestions += qCount;
+        }
+        var saved = scores[meta.id];
+        if (saved && saved.score >= Math.ceil(saved.total * 0.7)) passedCount++;
+
+        var badgeHtml = saved
+          ? '<span style="font-size:12px;font-weight:700;color:#16793E;">Результат: ' + saved.score + ' / ' + saved.total + '</span>'
+          : '<span style="font-size:12px;font-weight:700;color:#1F523F;">' + (qCount > 0 ? 'Вопросов: ' + qCount : 'Ожидает загрузки') + '</span>';
+
+        return '<div class="chapter-card">' +
+          '<div class="chapter-info">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +
+              '<span style="font-size:12px;font-weight:700;color:#435749;">Глава ' + meta.id + '</span>' +
+              badgeHtml +
+            '</div>' +
+            '<div class="chapter-title">' + meta.title + '</div>' +
+            '<div class="chapter-meta">' + meta.sub + '</div>' +
+          '</div>' +
+          '<div class="chapter-actions">' +
+            '<button type="button" class="btn btn-cheat" ' + (qCount === 0 ? 'disabled style="opacity:0.55;"' : '') + ' onclick="openCheatSheet(' + meta.id + ')">📖 Шпаргалка</button>' +
+            '<button type="button" class="btn btn-primary" ' + (qCount === 0 ? 'disabled style="opacity:0.55;"' : '') + ' onclick="startChapterQuiz(' + meta.id + ')">📝 Тест</button>' +
+          '</div>' +
+        '</div>';
+      }).join("");
+
+      document.getElementById("chaptersList").innerHTML = html;
+      document.getElementById("statSummary").textContent = loadedCount + " из " + totalChapters + " глав • " + totalQuestions + " вопросов";
+      document.getElementById("statProgress").textContent = "Пройдено: " + passedCount + " / " + totalChapters;
+    }
+
+    function openCheatSheet(id) {
+      var meta = CHAPTERS_META.find(function(m) { return m.id === id; });
+      var loaded = getLoadedChapter(id);
+      if (!loaded) return;
+      document.getElementById("cheatModalTitle").textContent = "📖 " + (meta ? meta.title : "Конспект");
+      document.getElementById("cheatModalBody").innerHTML = loaded.summary || "<p>Конспект подготавливается.</p>";
+      document.getElementById("cheatModal").style.display = "flex";
+    }
+
+    function closeCheatModal() {
+      document.getElementById("cheatModal").style.display = "none";
+    }
+
+    function shuffleArray(arr) {
+      var copy = arr.slice();
+      for (var i = copy.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var tmp = copy[i];
+        copy[i] = copy[j];
+        copy[j] = tmp;
+      }
+      return copy;
+    }
+
+    function startChapterQuiz(id) {
+      var loaded = getLoadedChapter(id);
+      var meta = CHAPTERS_META.find(function(m) { return m.id === id; });
+      if (!loaded || !Array.isArray(loaded.questions) || loaded.questions.length === 0) return;
+
+      currentMode = "chapter";
+      currentChapterId = id;
+      currentQuestions = shuffleArray(loaded.questions);
+      currentIndex = 0;
+      currentScore = 0;
+      targetCorrectSlot = Math.floor(Math.random() * 4);
+
+      document.getElementById("quizChapterLabel").textContent = meta ? ("Глава " + meta.id) : "Тест";
+      document.getElementById("menuView").classList.add("hidden");
+      document.getElementById("resultView").classList.add("hidden");
+      document.getElementById("quizView").classList.remove("hidden");
+      renderQuestion();
+    }
+
+    function startFinalExam() {
+      var pool = [];
+      window.USUL_FIQH_CHAPTERS.forEach(function(ch) {
+        if (Array.isArray(ch.questions)) {
+          ch.questions.forEach(function(q) { pool.push(q); });
+        }
+      });
+      if (pool.length === 0) return;
+
+      currentMode = "exam";
+      currentChapterId = null;
+      currentQuestions = shuffleArray(pool).slice(0, Math.min(30, pool.length));
+      currentIndex = 0;
+      currentScore = 0;
+      targetCorrectSlot = Math.floor(Math.random() * 4);
+
+      document.getElementById("quizChapterLabel").textContent = "🎓 Итоговый зачёт";
+      document.getElementById("menuView").classList.add("hidden");
+      document.getElementById("resultView").classList.add("hidden");
+      document.getElementById("quizView").classList.remove("hidden");
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      answeredCurrent = false;
+      var qObj = currentQuestions[currentIndex];
+      var total = currentQuestions.length;
+
+      document.getElementById("quizCounter").textContent = "Вопрос " + (currentIndex + 1) + " / " + total;
+      document.getElementById("quizProgressFill").style.width = Math.round(((currentIndex) / total) * 100) + "%";
+      document.getElementById("questionText").textContent = qObj.q;
+
+      var expBox = document.getElementById("explanationBox");
+      expBox.classList.add("hidden");
+      expBox.innerHTML = "";
+      document.getElementById("nextBtn").classList.add("hidden");
+
+      var mappedOptions = qObj.options.map(function(optText, idx) {
+        return { text: optText, isCorrect: idx === Number(qObj.correct) };
+      });
+
+      var correctOpt = mappedOptions.find(function(o) { return o.isCorrect; });
+      var wrongOpts = shuffleArray(mappedOptions.filter(function(o) { return !o.isCorrect; }));
+      var slot = (targetCorrectSlot + currentIndex) % mappedOptions.length;
+      var finalOptions = [];
+      var wIdx = 0;
+      for (var i = 0; i < mappedOptions.length; i++) {
+        if (i === slot && correctOpt) finalOptions.push(correctOpt);
+        else finalOptions.push(wrongOpts[wIdx++]);
+      }
+
+      var container = document.getElementById("optionsContainer");
+      container.innerHTML = "";
+      finalOptions.forEach(function(opt) {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "option-btn";
+        btn.textContent = opt.text;
+        btn.onclick = function() { handleAnswer(btn, opt.isCorrect, finalOptions, qObj.explanation); };
+        container.appendChild(btn);
+      });
+    }
+
+    function handleAnswer(clickedBtn, isCorrect, finalOptions, explanation) {
+      if (answeredCurrent) return;
+      answeredCurrent = true;
+
+      var allBtns = document.querySelectorAll("#optionsContainer .option-btn");
+      allBtns.forEach(function(b, idx) {
+        b.disabled = true;
+        if (finalOptions[idx].isCorrect) b.classList.add("correct");
+      });
+
+      if (isCorrect) {
+        currentScore++;
+      } else {
+        clickedBtn.classList.add("wrong");
+      }
+
+      if (explanation) {
+        var expBox = document.getElementById("explanationBox");
+        expBox.innerHTML = "<strong>Разбор:</strong> " + explanation;
+        expBox.classList.remove("hidden");
+      }
+
+      document.getElementById("quizProgressFill").style.width = Math.round(((currentIndex + 1) / currentQuestions.length) * 100) + "%";
+      document.getElementById("nextBtn").classList.remove("hidden");
+    }
+
+    function nextQuestion() {
+      currentIndex++;
+      if (currentIndex < currentQuestions.length) {
+        renderQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+      var total = currentQuestions.length;
+      var pct = Math.round((currentScore / total) * 100);
+      if (currentMode === "chapter" && currentChapterId !== null) {
+        saveScore(currentChapterId, currentScore, total);
+      }
+
+      document.getElementById("resultEmoji").textContent = pct >= 80 ? "🏆" : (pct >= 60 ? "📘" : "🔄");
+      document.getElementById("resultTitle").textContent = pct >= 80 ? "Отличный результат!" : (pct >= 60 ? "Хороший результат!" : "Стоит повторить шпаргалку");
+      document.getElementById("resultScoreText").textContent = "Верных ответов: " + currentScore + " из " + total + " (" + pct + "%)";
+
+      document.getElementById("quizView").classList.add("hidden");
+      document.getElementById("resultView").classList.remove("hidden");
+    }
+
+    function retryQuiz() {
+      if (currentMode === "chapter" && currentChapterId !== null) startChapterQuiz(currentChapterId);
+      else startFinalExam();
+    }
+
+    function exitQuiz() {
+      document.getElementById("quizView").classList.add("hidden");
+      document.getElementById("resultView").classList.add("hidden");
+      document.getElementById("menuView").classList.remove("hidden");
+      renderChapters();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+      var uid = new URLSearchParams(window.location.search).get("uid");
+      if (uid) {
+        document.getElementById("backLink").href = "../index.html?uid=" + encodeURIComponent(uid);
+      }
+      if (typeof protectCoursePage === "function") {
+        protectCoursePage("usul_fiqh");
+      }
+      renderChapters();
+    });
+  </script>
+</body>
+</html>
