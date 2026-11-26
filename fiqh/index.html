@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Фикх аль-Ибада (Мухтасар аль-Кудури)</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="../style.css?v=20261126">
+    <script src="../auth.js?v=20261126"></script>
+    <script>
+        if (typeof protectCoursePage === "function") {
+            protectCoursePage("fiqh", "Фикх аль-Ибада (Ханафитский мазхаб)");
+        }
+    </script>
+    <style>
+        .course-wrap {
+            max-width: 760px;
+            margin: 0 auto;
+        }
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 16px;
+            background: #E5ECE6;
+            color: #1A281F;
+            border: 1px solid #8FA695;
+            border-radius: 12px;
+            font-size: 13.5px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .back-btn:hover {
+            background: #D8E3DA;
+            border-color: #1F523F;
+        }
+        .course-hero {
+            background: linear-gradient(145deg, #1F523F 0%, #183E30 100%);
+            color: #F4F7F4;
+            padding: 22px 18px;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 18px;
+            border: 1px solid #48735E;
+            box-shadow: 0 6px 18px rgba(14, 22, 17, 0.24);
+        }
+        .course-hero h1 {
+            margin: 0 0 6px;
+            font-size: 22px;
+            font-weight: 700;
+            color: #F4F7F4;
+        }
+        .course-hero p {
+            margin: 0;
+            font-size: 13.5px;
+            color: #CFE0D6;
+            line-height: 1.45;
+        }
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+            background: transparent;
+        }
+        .stat-pill {
+            background: rgba(255, 255, 255, 0.14);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            color: #F4F7F4;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12.5px;
+            font-weight: 600;
+        }
+        .chapters-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .chapter-card {
+            background: #E5ECE6;
+            border: 1px solid #8FA695;
+            border-radius: 15px;
+            padding: 16px;
+            box-shadow: 0 3px 10px rgba(14, 22, 17, 0.15);
+        }
+        .chapter-meta-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+        .q-count-pill {
+            display: inline-block;
+            background: #2C5E43;
+            color: #F4F7F4;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 8px;
+        }
+        .best-pill {
+            display: inline-block;
+            background: #D1E2D5;
+            color: #1B4732;
+            border: 1px solid #8FA695;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 2px 9px;
+            border-radius: 8px;
+        }
+        .chapter-title {
+            margin: 0 0 12px;
+            font-size: 16.5px;
+            font-weight: 700;
+            color: #18261D;
+            line-height: 1.35;
+        }
+        .chapter-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .chapter-actions.single-btn {
+            grid-template-columns: 1fr;
+        }
+        .btn-cheat {
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid #8FA695;
+            background: #DCE5DD;
+            color: #1A281F;
+            font-size: 13.5px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .btn-cheat:hover {
+            background: #CFDCD1;
+        }
+        .btn-test {
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: none;
+            background: #1F523F;
+            color: #F4F7F4;
+            font-size: 13.5px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .btn-test:hover {
+            background: #183E30;
+        }
+        .final-section-label {
+            margin: 18px 2px 10px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: #D7E2D9;
+        }
+        .final-card {
+            background: #E5ECE6;
+            border: 1.5px solid #9E8A58;
+            border-radius: 15px;
+            padding: 16px;
+            box-shadow: 0 4px 12px rgba(14, 22, 17, 0.18);
+        }
+        .final-pill {
+            display: inline-block;
+            background: #7A2E2E;
+            color: #FFF;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        .btn-final-start {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: none;
+            background: #1F523F;
+            color: #F4F7F4;
+            font-size: 14.5px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .quiz-panel {
+            background: #E5ECE6;
+            border: 1px solid #8FA695;
+            border-radius: 16px;
+            padding: 20px 18px;
+            box-shadow: 0 4px 14px rgba(14, 22, 17, 0.18);
+        }
+        .quiz-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding-bottom: 12px;
+            margin-bottom: 14px;
+            border-bottom: 1px solid #B7C7BB;
+        }
+        .progress-text {
+            font-weight: 700;
+            font-size: 14px;
+            color: #1F523F;
+        }
+        .progress-track {
+            width: 100%;
+            height: 8px;
+            background: #C9D6CC;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: #1F523F;
+            transition: width 0.25s ease;
+        }
+        .topic-badge {
+            display: inline-block;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: #5C4B18;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .question-text {
+            font-size: 17.5px;
+            font-weight: 700;
+            color: #18261D;
+            margin-bottom: 16px;
+            line-height: 1.45;
+        }
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .option-btn {
+            padding: 13px 15px;
+            font-size: 15.5px;
+            text-align: left;
+            background: #DCE5DD;
+            color: #1A281F;
+            border: 1.5px solid #9BB0A0;
+            border-radius: 12px;
+            cursor: pointer;
+            line-height: 1.45;
+            transition: background-color 0.15s, border-color 0.15s;
+        }
+        .option-btn:hover:not(:disabled) {
+            border-color: #1F523F;
+            background: #D1DDD3;
+        }
+        .option-btn:disabled {
+            cursor: default;
+        }
+        .option-btn.correct {
+            background: #C7DFC9;
+            border-color: #3D7347;
+            color: #123018;
+            font-weight: 700;
+        }
+        .option-btn.wrong {
+            background: #E8CECA;
+            border-color: #A85B52;
+            color: #421814;
+        }
+        .explanation-box {
+            display: none;
+            margin-top: 16px;
+            padding: 14px 15px;
+            background: #D6E1D8;
+            border-left: 4px solid #1F523F;
+            border-radius: 8px;
+            font-size: 14.5px;
+            color: #1A281F;
+            line-height: 1.5;
+        }
+        .source-tag {
+            display: block;
+            font-size: 12.5px;
+            color: #435749;
+            margin-top: 6px;
+            font-style: italic;
+        }
+        .quiz-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 18px;
+            gap: 10px;
+        }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(14, 22, 17, 0.72);
+            z-index: 1000;
+            padding: 14px;
+            overflow-y: auto;
+            align-items: flex-start;
+            justify-content: center;
+        }
+        .modal-card {
+            background: #E5ECE6;
+            color: #1A281F;
+            max-width: 720px;
+            width: 100%;
+            border-radius: 16px;
+            padding: 20px 18px;
+            margin: 16px auto;
+            border: 1.5px solid #8FA695;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #B7C7BB;
+            padding-bottom: 12px;
+            margin-bottom: 14px;
+            gap: 10px;
+        }
+        .modal-body h3 {
+            margin-top: 0;
+            color: #1F523F;
+            font-size: 17px;
+        }
+        .modal-body ul, .modal-body ol {
+            padding-left: 20px;
+        }
+        .modal-body li {
+            margin-bottom: 8px;
+        }
+        .result-box {
+            text-align: center;
+            padding: 10px 0;
+        }
+        .result-percent {
+            font-size: 38px;
+            font-weight: 800;
+            color: #1F523F;
+            margin: 8px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="course-wrap">
+    <div class="top-nav">
+        <a href="../index.html" id="back-catalog-btn" class="back-btn">Назад</a>
+    </div>
+
+    <div class="course-hero">
+        <h1>Фикх аль-Ибада</h1>
+        <p>Интерактивный курс и конспекты по «Мухтасар аль-Кудури» (Ханафитский мазхаб)</p>
+        <div class="stats-bar">
+            <span class="stat-pill">📚 16 глав</span>
+            <span class="stat-pill" id="total-q-pill">📝 240 вопросов</span>
+            <span class="stat-pill">📖 16 шпаргалок</span>
+        </div>
+    </div>
+
+    <!-- Главное меню глав -->
+    <div id="menu-screen">
+        <div class="chapters-stack" id="chapter-list"></div>
+
+        <div class="final-section-label">Итоговая аттестация</div>
+        <div class="final-card">
+            <span class="final-pill" id="final-best-pill">Итоговый зачёт • 40 вопросов</span>
+            <div class="chapter-title">Общий экзамен по всему курсу Фикха</div>
+            <p style="margin:0 0 14px;font-size:13.5px;color:#435749;">Сводная проверка знаний по всем 16 разделам поклонения в ханафитском мазхабе.</p>
+            <button class="btn-final-start" onclick="startFinalExam()">🎓 Начать итоговый зачёт</button>
+        </div>
+    </div>
+
+    <!-- Экран прохождения теста -->
+    <div id="quiz-screen" class="quiz-panel" style="display: none;">
+        <div class="quiz-top">
+            <span class="progress-text" id="progress-text">Вопрос 1 из 15</span>
+            <div style="display:flex; gap:8px;">
+                <button class="btn-cheat" id="in-quiz-cheat-btn" onclick="openCurrentCheat()">📖 Шпаргалка</button>
+                <button class="back-btn" onclick="returnToMenu()">В меню</button>
+            </div>
+        </div>
+        <div class="progress-track">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        <div class="topic-badge" id="q-topic"></div>
+        <div class="question-text" id="q-text"></div>
+        <div class="options-list" id="q-options"></div>
+        <div class="explanation-box" id="q-explanation">
+            <div id="q-exp-text"></div>
+            <span class="source-tag" id="q-source"></span>
+        </div>
+        <div class="quiz-footer">
+            <span style="font-weight:700; font-size:14px; color:#1F523F;" id="score-live">Верно: 0</span>
+            <button class="btn-test" id="next-btn" style="display:none; padding:11px 18px;" onclick="nextQuestion()">Следующий вопрос</button>
+        </div>
+    </div>
+
+    <!-- Экран результатов -->
+    <div id="result-screen" class="quiz-panel" style="display: none;">
+        <div class="result-box">
+            <h2 id="res-title" style="margin:0 0 6px;color:#18261D;">Тест завершён!</h2>
+            <div class="result-percent" id="res-percent">0%</div>
+            <p id="res-details" style="font-size:16px; font-weight:700; margin:0 0 8px;"></p>
+            <p id="res-msg" style="color:#435749; font-size:14px; margin:0 0 20px;"></p>
+            <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+                <button class="btn-test" style="padding:11px 18px;" onclick="restartCurrentQuiz()">🔄 Пройти ещё раз</button>
+                <button class="back-btn" onclick="returnToMenu()">К списку глав</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно шпаргалки -->
+<div class="modal-overlay" id="cheat-modal" onclick="if(event.target===this) closeCheat()">
+    <div class="modal-card">
+        <div class="modal-header">
+            <strong style="font-size:16px;color:#1F523F;">📖 Конспект-шпаргалка</strong>
+            <button class="back-btn" onclick="closeCheat()">Закрыть</button>
+        </div>
+        <div class="modal-body" id="cheat-body"></div>
+    </div>
+</div>
+
+<!-- Подключаем все части базы данных -->
+<script>
+    window.FIQH_DATA = { cheatsheets: {}, questions: [] };
+</script>
+<script src="fiqh_part1.js?v=20261126"></script>
+<script src="fiqh_cheats_1_4.js?v=20261126"></script>
+<script src="fiqh_part2.js?v=20261126"></script>
+<script src="fiqh_part3a.js?v=20261126"></script>
+<script src="fiqh_part3b.js?v=20261126"></script>
+<script src="fiqh_part4a.js?v=20261126"></script>
+<script src="fiqh_part4b.js?v=20261126"></script>
+
+<script>
+    const CHAPTERS = [
+        { id: "Тахарат", title: "1. Тахарат (Чистота и виды вод)" },
+        { id: "Вуду", title: "2. Вуду (Малое омовение и масх)" },
+        { id: "Гусль", title: "3. Гусль (Полное омовение)" },
+        { id: "Тайаммум", title: "4. Тайаммум (Очищение чистой землёй)" },
+        { id: "Намаз (Основы)", title: "5. Намаз: условия, времена и арканы" },
+        { id: "Намаз (Сунны)", title: "6. Намаз: сунны, адабы и макрухи" },
+        { id: "Намаз (Нарушения и Сахв)", title: "7. Нарушения намаза и Суджуд Сахв" },
+        { id: "Джамаат", title: "8. Джамаат (Коллективный намаз)" },
+        { id: "Мусафир", title: "9. Мусафир (Намаз путника)" },
+        { id: "Джума и Ид", title: "10. Джума и Ид (Пятничный и праздничный намазы)" },
+        { id: "Джаназа", title: "11. Джаназа (Заупокойная молитва)" },
+        { id: "Пост", title: "12. Пост (Саум в Рамадан и каффара)" },
+        { id: "Закят", title: "13. Закят (Нисаб, виды имущества и Фитр)" },
+        { id: "Хадж", title: "14. Хадж (Ихрам, Арафат, Таваф и Са'й)" },
+        { id: "Азан", title: "15. Азан и Икамат" },
+        { id: "Удхия", title: "16. Жертвоприношение (Удхия / Курбан)" }
+    ];
+
+    let currentChapter = null;
+    let isFinalExam = false;
+    let currentQuestions = [];
+    let currentIndex = 0;
+    let score = 0;
+    let slotCounter = 0;
+
+    function buildBalancedOptions(options, correctIdx) {
+        if (!Array.isArray(options) || options.length < 2) {
+            return { options: options || [], correctIndex: 0 };
+        }
+        const safeCorrect = (typeof correctIdx === "number" && correctIdx >= 0 && correctIdx < options.length) ? correctIdx : 0;
+        if (typeof shuffleAnswerOptions === "function") {
+            const res = shuffleAnswerOptions(options, safeCorrect, slotCounter++);
+            return { options: res.options, correctIndex: res.correctIndex };
+        }
+        const correctVal = options[safeCorrect];
+        const others = options.filter((_, idx) => idx !== safeCorrect);
+        for (let i = others.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [others[i], others[j]] = [others[j], others[i]];
+        }
+        const targetSlot = (slotCounter + Math.floor(Math.random() * options.length)) % options.length;
+        slotCounter++;
+        const mixed = [];
+        let p = 0;
+        for (let i = 0; i < options.length; i++) {
+            mixed.push(i === targetSlot ? correctVal : others[p++]);
+        }
+        return { options: mixed, correctIndex: targetSlot };
+    }
+
+    function initApp() {
+        const uid = (typeof getCurrentUserId === "function") ? getCurrentUserId() : (new URLSearchParams(window.location.search).get("uid") || new URLSearchParams(window.location.search).get("id") || "");
+        if (uid && uid !== "guest") {
+            document.getElementById("back-catalog-btn").href = "../index.html?uid=" + encodeURIComponent(uid);
+        }
+        const totalQ = (window.FIQH_DATA && window.FIQH_DATA.questions) ? window.FIQH_DATA.questions.length : 0;
+        if (totalQ > 0) {
+            document.getElementById("total-q-pill").textContent = `📝 ${totalQ} вопросов`;
+        }
+        renderMenu();
+    }
+
+    function getSavedProgress() {
+        try {
+            return JSON.parse(localStorage.getItem("fiqh_progress") || "{}");
+        } catch (e) { return {}; }
+    }
+
+    function saveChapterProgress(chapterId, pct) {
+        const prog = getSavedProgress();
+        if (!prog[chapterId] || pct > prog[chapterId]) {
+            prog[chapterId] = pct;
+            localStorage.setItem("fiqh_progress", JSON.stringify(prog));
+        }
+    }
+
+    function renderMenu() {
+        const list = document.getElementById("chapter-list");
+        const prog = getSavedProgress();
+        const allQ = window.FIQH_DATA.questions || [];
+        const cheats = window.FIQH_DATA.cheatsheets || {};
+
+        if (prog["FINAL_EXAM"] !== undefined) {
+            document.getElementById("final-best-pill").textContent = `Итоговый зачёт • 40 вопросов • Лучший: ${prog["FINAL_EXAM"]}%`;
+        }
+
+        list.innerHTML = CHAPTERS.map(ch => {
+            const count = allQ.filter(q => q.chapter === ch.id).length;
+            const hasCheat = Boolean(cheats[ch.id]);
+            const bestPct = prog[ch.id];
+            return `
+                <div class="chapter-card">
+                    <div class="chapter-meta-row">
+                        <span class="q-count-pill">${count} вопросов</span>
+                        ${bestPct !== undefined ? `<span class="best-pill">Лучший: ${bestPct}%</span>` : ""}
+                    </div>
+                    <div class="chapter-title">${ch.title}</div>
+                    <div class="chapter-actions ${hasCheat ? "" : "single-btn"}">
+                        ${hasCheat ? `<button class="btn-cheat" onclick="openCheat('${ch.id}')">📖 Шпаргалка</button>` : ""}
+                        <button class="btn-test" onclick="startQuiz('${ch.id}')">📝 Тест</button>
+                    </div>
+                </div>
+            `;
+        }).join("");
+    }
+
+    function openCheat(chapterId) {
+        const html = (window.FIQH_DATA.cheatsheets && window.FIQH_DATA.cheatsheets[chapterId]) || "<p>Конспект для этой главы готовится.</p>";
+        document.getElementById("cheat-body").innerHTML = html;
+        document.getElementById("cheat-modal").style.display = "flex";
+    }
+
+    function openCurrentCheat() {
+        if (currentChapter) openCheat(currentChapter);
+    }
+
+    function closeCheat() {
+        document.getElementById("cheat-modal").style.display = "none";
+    }
+
+    function prepareQuizQuestions(rawList) {
+        const shuffled = [...rawList].sort(() => Math.random() - 0.5);
+        return shuffled.map(item => {
+            const balanced = buildBalancedOptions(item.options, item.correct);
+            return {
+                ...item,
+                shuffledOptions: balanced.options,
+                shuffledCorrect: balanced.correctIndex
+            };
+        });
+    }
+
+    function startQuiz(chapterId) {
+        const allQ = window.FIQH_DATA.questions || [];
+        const filtered = allQ.filter(q => q.chapter === chapterId);
+        if (!filtered.length) {
+            alert("Вопросы для этой главы пока не загружены.");
+            return;
+        }
+        currentChapter = chapterId;
+        isFinalExam = false;
+        currentQuestions = prepareQuizQuestions(filtered);
+        currentIndex = 0;
+        score = 0;
+
+        document.getElementById("in-quiz-cheat-btn").style.display = window.FIQH_DATA.cheatsheets[chapterId] ? "inline-flex" : "none";
+        document.getElementById("menu-screen").style.display = "none";
+        document.getElementById("result-screen").style.display = "none";
+        document.getElementById("quiz-screen").style.display = "block";
+        renderQuestion();
+    }
+
+    function startFinalExam() {
+        const allQ = window.FIQH_DATA.questions || [];
+        if (!allQ.length) return;
+        currentChapter = null;
+        isFinalExam = true;
+        const picked = [...allQ].sort(() => Math.random() - 0.5).slice(0, 40);
+        currentQuestions = prepareQuizQuestions(picked);
+        currentIndex = 0;
+        score = 0;
+
+        document.getElementById("in-quiz-cheat-btn").style.display = "none";
+        document.getElementById("menu-screen").style.display = "none";
+        document.getElementById("result-screen").style.display = "none";
+        document.getElementById("quiz-screen").style.display = "block";
+        renderQuestion();
+    }
+
+    function restartCurrentQuiz() {
+        if (isFinalExam) startFinalExam();
+        else if (currentChapter) startQuiz(currentChapter);
+    }
+
+    function renderQuestion() {
+        const q = currentQuestions[currentIndex];
+        document.getElementById("progress-text").textContent = `Вопрос ${currentIndex + 1} из ${currentQuestions.length}`;
+        document.getElementById("progress-bar").style.width = `${(currentIndex / currentQuestions.length) * 100}%`;
+        document.getElementById("score-live").textContent = `Верно: ${score}`;
+        document.getElementById("q-topic").textContent = isFinalExam ? `${q.chapter} • ${q.topic}` : q.topic;
+        document.getElementById("q-text").textContent = q.question;
+
+        const expBox = document.getElementById("q-explanation");
+        expBox.style.display = "none";
+        document.getElementById("next-btn").style.display = "none";
+
+        const optsEl = document.getElementById("q-options");
+        optsEl.innerHTML = "";
+        q.shuffledOptions.forEach((opt, idx) => {
+            const btn = document.createElement("button");
+            btn.className = "option-btn";
+            btn.textContent = opt;
+            btn.onclick = () => selectAnswer(idx, btn);
+            optsEl.appendChild(btn);
+        });
+    }
+
+    function selectAnswer(idx, btn) {
+        const q = currentQuestions[currentIndex];
+        const allBtns = document.querySelectorAll("#q-options .option-btn");
+        allBtns.forEach(b => b.disabled = true);
+
+        if (idx === q.shuffledCorrect) {
+            btn.classList.add("correct");
+            score++;
+        } else {
+            btn.classList.add("wrong");
+            if (allBtns[q.shuffledCorrect]) allBtns[q.shuffledCorrect].classList.add("correct");
+        }
+
+        document.getElementById("score-live").textContent = `Верно: ${score}`;
+        document.getElementById("q-exp-text").textContent = q.explanation;
+        document.getElementById("q-source").textContent = q.source ? ("Источник: " + q.source) : "";
+        document.getElementById("q-explanation").style.display = "block";
+
+        const nextBtn = document.getElementById("next-btn");
+        nextBtn.style.display = "inline-flex";
+        nextBtn.textContent = (currentIndex === currentQuestions.length - 1) ? "Завершить тест" : "Следующий вопрос";
+    }
+
+    function nextQuestion() {
+        currentIndex++;
+        if (currentIndex < currentQuestions.length) {
+            renderQuestion();
+        } else {
+            finishQuiz();
+        }
+    }
+
+    function finishQuiz() {
+        document.getElementById("progress-bar").style.width = "100%";
+        document.getElementById("quiz-screen").style.display = "none";
+        document.getElementById("result-screen").style.display = "block";
+
+        const pct = Math.round((score / currentQuestions.length) * 100);
+        if (!isFinalExam && currentChapter) {
+            saveChapterProgress(currentChapter, pct);
+        } else if (isFinalExam) {
+            saveChapterProgress("FINAL_EXAM", pct);
+        }
+
+        document.getElementById("res-title").textContent = isFinalExam ? "Итоговый зачёт завершён!" : "Глава пройдена!";
+        document.getElementById("res-percent").textContent = pct + "%";
+        document.getElementById("res-details").textContent = `Правильных ответов: ${score} из ${currentQuestions.length}`;
+
+        let msg = "Рекомендуем открыть конспект-шпаргалку по этой теме и пройти тест повторно.";
+        if (pct === 100) msg = "Ма ша Аллах! Безупречный результат, материал усвоен полностью.";
+        else if (pct >= 80) msg = "Отличный результат! Вы уверенно владеете основными положениями.";
+        else if (pct >= 60) msg = "Хороший уровень, но стоит повторить отдельные детали в шпаргалке.";
+        document.getElementById("res-msg").textContent = msg;
+    }
+
+    function returnToMenu() {
+        document.getElementById("quiz-screen").style.display = "none";
+        document.getElementById("result-screen").style.display = "none";
+        document.getElementById("menu-screen").style.display = "block";
+        renderMenu();
+    }
+
+    window.addEventListener("DOMContentLoaded", initApp);
+</script>
+</body>
+</html>
