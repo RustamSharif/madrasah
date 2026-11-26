@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Таджвид — Правила чтения Священного Корана</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="../style.css">
+    <script src="../auth.js"></script>
+    <script>
+        if (typeof protectCoursePage === "function") {
+            protectCoursePage("tajwid");
+        }
+    </script>
+    <style>
+        .ar {
+            font-family: "Traditional Arabic", "Amiri", "Scheherazade New", "Noto Naskh Arabic", serif;
+            font-size: 1.45em;
+            direction: rtl;
+            unicode-bidi: isolate;
+            padding: 0 4px;
+            color: #163E2F;
+            font-weight: 700;
+        }
+        .chapter-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .chapter-row {
+            background: #DCE5DD;
+            border: 1px solid #9BB0A0;
+            border-radius: 14px;
+            padding: 14px 16px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .chapter-info {
+            flex: 1;
+            min-width: 220px;
+        }
+        .chapter-num {
+            display: inline-block;
+            background: #1F523F;
+            color: #F4F7F4;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 7px;
+            margin-bottom: 5px;
+        }
+        .chapter-score-badge {
+            display: inline-block;
+            background: #C7DFC9;
+            color: #16301B;
+            border: 1px solid #88AD8E;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 2px 9px;
+            border-radius: 7px;
+            margin-left: 6px;
+        }
+        .chapter-title {
+            font-size: 1.06rem;
+            font-weight: 700;
+            margin: 0;
+            color: #18261D;
+        }
+        .chapter-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .btn-cheat {
+            background: #6B5620;
+            color: #F8F6F0;
+            border: none;
+        }
+        .btn-cheat:hover {
+            background: #574518;
+        }
+        .btn-final {
+            width: 100%;
+            justify-content: center;
+            padding: 14px;
+            font-size: 1.02rem;
+            background: #7A2E28;
+            color: #F9F5F4;
+            border: none;
+            margin-top: 12px;
+        }
+        .btn-final:hover {
+            background: #63241F;
+        }
+        .quiz-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #9BB0A0;
+        }
+        .progress-text {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #1F523F;
+        }
+        .topic-badge {
+            display: inline-block;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #6B5620;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .question-text {
+            font-size: 1.14rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            line-height: 1.55;
+            color: #18261D;
+        }
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .option-btn {
+            padding: 13px 15px;
+            font-size: 1rem;
+            text-align: left;
+            background: #DCE5DD;
+            color: #1A281F;
+            border: 1.5px solid #9BB0A0;
+            border-radius: 12px;
+            cursor: pointer;
+            line-height: 1.45;
+            transition: background-color 0.15s, border-color 0.15s;
+        }
+        .option-btn:hover:not(:disabled) {
+            border-color: #1F523F;
+            background: #D0DDD2;
+        }
+        .option-btn:disabled {
+            cursor: default;
+        }
+        .option-btn.correct {
+            background: #C7DFC9;
+            border-color: #4D7C55;
+            color: #16301B;
+            font-weight: 600;
+        }
+        .option-btn.wrong {
+            background: #E8CECA;
+            border-color: #A85B52;
+            color: #421814;
+        }
+        .explanation-box {
+            display: none;
+            margin-top: 16px;
+            padding: 14px 16px;
+            background: #D6E1D8;
+            border-left: 4px solid #1F523F;
+            border-radius: 8px;
+            font-size: 0.96rem;
+            line-height: 1.6;
+            color: #1A281F;
+        }
+        .source-tag {
+            display: block;
+            font-size: 0.84rem;
+            color: #435749;
+            margin-top: 8px;
+            font-style: italic;
+        }
+        .quiz-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 18px;
+            gap: 10px;
+        }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(14, 22, 17, 0.72);
+            z-index: 1000;
+            padding: 16px;
+            overflow-y: auto;
+            align-items: flex-start;
+            justify-content: center;
+        }
+        .modal-card {
+            background: #E5ECE6;
+            color: #1A281F;
+            max-width: 720px;
+            width: 100%;
+            border-radius: 16px;
+            padding: 22px;
+            margin: 20px auto;
+            border: 1px solid #8FA695;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #9BB0A0;
+            padding-bottom: 12px;
+            margin-bottom: 14px;
+            gap: 10px;
+        }
+        .modal-body h3 {
+            margin-top: 0;
+            color: #1F523F;
+            font-size: 1.15rem;
+        }
+        .modal-body ul, .modal-body ol {
+            padding-left: 20px;
+        }
+        .modal-body li {
+            margin-bottom: 9px;
+            line-height: 1.6;
+        }
+        .result-box {
+            text-align: center;
+            padding: 10px 0;
+        }
+        .result-percent {
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: #1F523F;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="top-nav">
+        <a href="../index.html" id="back-catalog-btn" class="back-btn">Назад</a>
+    </div>
+
+    <div class="header">
+        <h1>Таджвид</h1>
+        <p>Правила чтения Священного Корана (риуаят Хафс ан Асым)</p>
+        <div class="stats-bar">
+            <span class="stat-pill">📚 10 глав</span>
+            <span class="stat-pill" id="total-q-pill">📝 150 вопросов</span>
+            <span class="stat-pill">📖 10 шпаргалок</span>
+        </div>
+    </div>
+
+    <!-- Главное меню глав -->
+    <div id="menu-screen" class="card">
+        <div class="chapter-list" id="chapter-list"></div>
+        <button class="btn btn-final" onclick="startFinalExam()">🎓 Итоговый зачёт (40 случайных вопросов по всему курсу)</button>
+    </div>
+
+    <!-- Экран прохождения теста -->
+    <div id="quiz-screen" class="card" style="display: none;">
+        <div class="quiz-top">
+            <span class="progress-text" id="progress-text">Вопрос 1 из 15</span>
+            <div style="display:flex; gap:8px;">
+                <button class="btn btn-cheat" id="in-quiz-cheat-btn" onclick="openCurrentCheat()">📖 Шпаргалка</button>
+                <button class="back-btn" onclick="returnToMenu()">В меню</button>
+            </div>
+        </div>
+        <div class="topic-badge" id="q-topic"></div>
+        <div class="question-text" id="q-text"></div>
+        <div class="options-list" id="q-options"></div>
+        <div class="explanation-box" id="q-explanation">
+            <div id="q-exp-text"></div>
+            <span class="source-tag" id="q-source"></span>
+        </div>
+        <div class="quiz-footer">
+            <span style="font-weight:600; font-size:0.95rem;" id="score-live">Правильно: 0</span>
+            <button class="btn btn-primary" id="next-btn" style="display:none;" onclick="nextQuestion()">Следующий вопрос</button>
+        </div>
+    </div>
+
+    <!-- Экран результатов -->
+    <div id="result-screen" class="card" style="display: none;">
+        <div class="result-box">
+            <h2 id="res-title" style="margin-top:0;color:#1F523F;">Тест завершён!</h2>
+            <div class="result-percent" id="res-percent">0%</div>
+            <p id="res-details" style="font-size:1.1rem; font-weight:600;"></p>
+            <p id="res-msg" style="color:#435749; margin-bottom:20px;"></p>
+            <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+                <button class="btn btn-primary" onclick="restartCurrentQuiz()">Пройти ещё раз</button>
+                <button class="back-btn" onclick="returnToMenu()">К списку глав</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно шпаргалки -->
+<div class="modal-overlay" id="cheat-modal" onclick="if(event.target===this) closeCheat()">
+    <div class="modal-card">
+        <div class="modal-header">
+            <strong style="font-size:1.05rem;color:#1F523F;">📖 Конспект-шпаргалка</strong>
+            <button class="back-btn" onclick="closeCheat()">Закрыть</button>
+        </div>
+        <div class="modal-body" id="cheat-body"></div>
+    </div>
+</div>
+
+<script>
+    window.TAJWEED_DATA = { cheatsheets: {}, questions: [] };
+</script>
+<script src="tajweed_part1.js"></script>
+<script src="tajweed_part2.js"></script>
+<script src="tajweed_part3a.js"></script>
+<script src="tajweed_part3b.js"></script>
+<script src="tajweed_part3c.js"></script>
+
+<script>
+    const CHAPTERS = [
+        { id: "Введение", title: "1. Введение в таджвид, Истиаза и Басмаля" },
+        { id: "Махрадж 1", title: "2. Махрадж (часть 1): Аль-Джауф, Аль-Хальк и корень языка" },
+        { id: "Махрадж 2", title: "3. Махрадж (часть 2): Язык, губы и Аль-Хайшум" },
+        { id: "Сыфаты", title: "4. Сыфаты (качества арабских букв)" },
+        { id: "Нун сакина", title: "5. Правила Нун сакина и Танвина (Изхар, Идгам, Икляб, Ихфа)" },
+        { id: "Мим сакина", title: "6. Правила Мим сакина и удвоенных Нун и Мим (Гунна)" },
+        { id: "Мадд", title: "7. Правила Мадд (естественное и производные удлинения)" },
+        { id: "Тафхим и Таркик", title: "8. Твёрдость и мягкость (правила букв Ра, Лям и Алиф)" },
+        { id: "Виды Идгама", title: "9. Виды Идгама и Лям аль-Та'риф (Шамсия и Камария)" },
+        { id: "Уакф и Хамза", title: "10. Правила остановки (Уакф), знаки в мусхафе и Хамзатуль-уасль" }
+    ];
+
+    let currentChapter = null;
+    let isFinalExam = false;
+    let currentQuestions = [];
+    let currentIndex = 0;
+    let score = 0;
+    let slotCursor = Math.floor(Math.random() * 4);
+
+    function initApp() {
+        const uid = (typeof getCurrentUserId === "function") ? getCurrentUserId() : null;
+        if (uid && uid !== "guest") {
+            document.getElementById("back-catalog-btn").href = "../index.html?uid=" + encodeURIComponent(uid);
+        }
+        const totalQ = (window.TAJWEED_DATA && window.TAJWEED_DATA.questions) ? window.TAJWEED_DATA.questions.length : 0;
+        if (totalQ > 0) {
+            document.getElementById("total-q-pill").textContent = `📝 ${totalQ} вопросов`;
+        }
+        renderMenu();
+    }
+
+    function getSavedProgress() {
+        try {
+            return JSON.parse(localStorage.getItem("tajweed_progress") || "{}");
+        } catch (e) { return {}; }
+    }
+
+    function saveChapterProgress(chapterId, pct) {
+        const prog = getSavedProgress();
+        if (!prog[chapterId] || pct > prog[chapterId]) {
+            prog[chapterId] = pct;
+            localStorage.setItem("tajweed_progress", JSON.stringify(prog));
+        }
+    }
+
+    function renderMenu() {
+        const list = document.getElementById("chapter-list");
+        const prog = getSavedProgress();
+        const allQ = window.TAJWEED_DATA.questions || [];
+        const cheats = window.TAJWEED_DATA.cheatsheets || {};
+
+        list.innerHTML = CHAPTERS.map(ch => {
+            const count = allQ.filter(q => q.chapter === ch.id).length;
+            const hasCheat = Boolean(cheats[ch.id]);
+            const bestPct = prog[ch.id];
+            return `
+                <div class="chapter-row">
+                    <div class="chapter-info">
+                        <span class="chapter-num">${count} вопр.</span>
+                        ${bestPct !== undefined ? `<span class="chapter-score-badge">Лучший: ${bestPct}%</span>` : ""}
+                        <div class="chapter-title">${ch.title}</div>
+                    </div>
+                    <div class="chapter-actions">
+                        ${hasCheat ? `<button class="btn btn-cheat" onclick="openCheat('${ch.id}')">📖 Шпаргалка</button>` : ""}
+                        <button class="btn btn-primary" onclick="startQuiz('${ch.id}')">📝 Тест</button>
+                    </div>
+                </div>
+            `;
+        }).join("");
+    }
+
+    function openCheat(chapterId) {
+        const html = (window.TAJWEED_DATA.cheatsheets && window.TAJWEED_DATA.cheatsheets[chapterId]) || "<p>Конспект для этой главы готовится.</p>";
+        document.getElementById("cheat-body").innerHTML = html;
+        document.getElementById("cheat-modal").style.display = "flex";
+    }
+
+    function openCurrentCheat() {
+        if (currentChapter) openCheat(currentChapter);
+    }
+
+    function closeCheat() {
+        document.getElementById("cheat-modal").style.display = "none";
+    }
+
+    function shuffleArray(arr) {
+        const copy = [...arr];
+        for (let i = copy.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+    }
+
+    function buildBalancedOptions(q) {
+        const rawOpts = Array.isArray(q.options) ? q.options : [];
+        const correctIdx = (typeof q.correct === "number" && q.correct >= 0 && q.correct < rawOpts.length) ? q.correct : 0;
+
+        const items = rawOpts.map((html, idx) => ({
+            html: html,
+            isCorrect: idx === correctIdx
+        }));
+
+        if (items.length < 2) return items;
+
+        const rightItem = items.find(it => it.isCorrect);
+        const wrongItems = shuffleArray(items.filter(it => !it.isCorrect));
+
+        const targetPos = slotCursor % items.length;
+        slotCursor = (slotCursor + 1 + Math.floor(Math.random() * (items.length - 1))) % items.length;
+
+        const result = [];
+        let wPtr = 0;
+        for (let i = 0; i < items.length; i++) {
+            if (i === targetPos) {
+                result.push(rightItem);
+            } else {
+                result.push(wrongItems[wPtr++]);
+            }
+        }
+        return result;
+    }
+
+    function startQuiz(chapterId) {
+        const allQ = window.TAJWEED_DATA.questions || [];
+        const filtered = allQ.filter(q => q.chapter === chapterId);
+        if (!filtered.length) {
+            alert("Вопросы для этой главы пока не загружены.");
+            return;
+        }
+        currentChapter = chapterId;
+        isFinalExam = false;
+        currentQuestions = shuffleArray(filtered);
+        currentIndex = 0;
+        score = 0;
+
+        document.getElementById("in-quiz-cheat-btn").style.display = window.TAJWEED_DATA.cheatsheets[chapterId] ? "inline-flex" : "none";
+        document.getElementById("menu-screen").style.display = "none";
+        document.getElementById("result-screen").style.display = "none";
+        document.getElementById("quiz-screen").style.display = "block";
+        renderQuestion();
+    }
+
+    function startFinalExam() {
+        const allQ = window.TAJWEED_DATA.questions || [];
+        if (!allQ.length) return;
+        currentChapter = null;
+        isFinalExam = true;
+        currentQuestions = shuffleArray(allQ).slice(0, 40);
+        currentIndex = 0;
+        score = 0;
+
+        document.getElementById("in-quiz-cheat-btn").style.display = "none";
+        document.getElementById("menu-screen").style.display = "none";
+        document.getElementById("result-screen").style.display = "none";
+        document.getElementById("quiz-screen").style.display = "block";
+        renderQuestion();
+    }
+
+    function restartCurrentQuiz() {
+        if (isFinalExam) startFinalExam();
+        else if (currentChapter) startQuiz(currentChapter);
+    }
+
+    function renderQuestion() {
+        const q = currentQuestions[currentIndex];
+        document.getElementById("progress-text").textContent = `Вопрос ${currentIndex + 1} из ${currentQuestions.length}`;
+        document.getElementById("score-live").textContent = `Правильно: ${score}`;
+        document.getElementById("q-topic").textContent = isFinalExam ? `${q.chapter} • ${q.topic}` : q.topic;
+        document.getElementById("q-text").innerHTML = q.question;
+
+        const expBox = document.getElementById("q-explanation");
+        expBox.style.display = "none";
+        document.getElementById("next-btn").style.display = "none";
+
+        const optsEl = document.getElementById("q-options");
+        optsEl.innerHTML = "";
+
+        const preparedOptions = buildBalancedOptions(q);
+        preparedOptions.forEach((optObj) => {
+            const btn = document.createElement("button");
+            btn.className = "option-btn";
+            btn.innerHTML = optObj.html;
+            btn.dataset.correct = optObj.isCorrect ? "1" : "0";
+            btn.onclick = () => selectAnswer(btn);
+            optsEl.appendChild(btn);
+        });
+    }
+
+    function selectAnswer(btn) {
+        const q = currentQuestions[currentIndex];
+        const allBtns = document.querySelectorAll("#q-options .option-btn");
+        allBtns.forEach(b => b.disabled = true);
+
+        const isRight = btn.dataset.correct === "1";
+        if (isRight) {
+            btn.classList.add("correct");
+            score++;
+        } else {
+            btn.classList.add("wrong");
+            allBtns.forEach(b => {
+                if (b.dataset.correct === "1") b.classList.add("correct");
+            });
+        }
+
+        document.getElementById("score-live").textContent = `Правильно: ${score}`;
+        document.getElementById("q-exp-text").innerHTML = q.explanation;
+        document.getElementById("q-source").textContent = "Раздел: " + q.source;
+        document.getElementById("q-explanation").style.display = "block";
+
+        const nextBtn = document.getElementById("next-btn");
+        nextBtn.style.display = "inline-flex";
+        nextBtn.textContent = (currentIndex === currentQuestions.length - 1) ? "Завершить тест" : "Следующий вопрос";
+    }
+
+    function nextQuestion() {
+        currentIndex++;
+        if (currentIndex < currentQuestions.length) {
+            renderQuestion();
+        } else {
+            finishQuiz();
+        }
+    }
+
+    function finishQuiz() {
+        document.getElementById("quiz-screen").style.display = "none";
+        document.getElementById("result-screen").style.display = "block";
+
+        const pct = Math.round((score / currentQuestions.length) * 100);
+        if (!isFinalExam && currentChapter) {
+            saveChapterProgress(currentChapter, pct);
+        } else if (isFinalExam) {
+            saveChapterProgress("FINAL_EXAM", pct);
+        }
+
+        document.getElementById("res-title").textContent = isFinalExam ? "Итоговый зачёт завершён!" : "Глава пройдена!";
+        document.getElementById("res-percent").textContent = pct + "%";
+        document.getElementById("res-details").textContent = `Правильных ответов: ${score} из ${currentQuestions.length}`;
+
+        let msg = "Рекомендуем открыть конспект-шпаргалку по этой теме и пройти тест повторно.";
+        if (pct === 100) msg = "МашаАллах! Безупречный результат, правила усвоены полностью.";
+        else if (pct >= 80) msg = "Отличный результат! Вы уверенно знаете правила таджвида по этой теме.";
+        else if (pct >= 60) msg = "Хороший результат, но стоит повторить отдельные исключения и примеры в шпаргалке.";
+        document.getElementById("res-msg").textContent = msg;
+    }
+
+    function returnToMenu() {
+        document.getElementById("quiz-screen").style.display = "none";
+        document.getElementById("result-screen").style.display = "none";
+        document.getElementById("menu-screen").style.display = "block";
+        renderMenu();
+    }
+
+    window.addEventListener("DOMContentLoaded", initApp);
+</script>
+</body>
+</html>
