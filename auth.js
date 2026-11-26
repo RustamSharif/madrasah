@@ -1,127 +1,83 @@
 (function() {
-  const ALLOWED_IDS = [
+  var ALLOWED_IDS = [
     "859435297"
   ];
+  var TRIAL_DURATION_MS = 24 * 60 * 60 * 1000;
+  var TRIAL_STORAGE_KEY = "madrasah_trial_start_v1";
 
-  const TRIAL_KEY = "madrasah_trial_start_v1";
-  const TRIAL_HOURS = 24;
-
-  function getTelegramUser() {
+  function getUid() {
     try {
-      if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
-        return window.Telegram.WebApp.initDataUnsafe.user;
+      var tg = window.Telegram && window.Telegram.WebApp;
+      if (tg) {
+        if (typeof tg.ready === "function") tg.ready();
+        if (typeof tg.expand === "function") tg.expand();
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) {
+          return String(tg.initDataUnsafe.user.id);
+        }
       }
     } catch (e) {}
-    return null;
-  }
 
-  function getUserId() {
-    const params = new URLSearchParams(window.location.search);
-    const urlUid = params.get("uid");
-    if (urlUid && /^\d+$/.test(urlUid.trim())) {
-      try { localStorage.setItem("madrasah_uid", urlUid.trim()); } catch (e) {}
-      return urlUid.trim();
-    }
-    const tgUser = getTelegramUser();
-    if (tgUser && tgUser.id) {
-      const idStr = String(tgUser.id);
-      try { localStorage.setItem("madrasah_uid", idStr); } catch (e) {}
-      return idStr;
-    }
     try {
-      const saved = localStorage.getItem("madrasah_uid");
-      if (saved && /^\d+$/.test(saved)) return saved;
+      var params = new URLSearchParams(window.location.search);
+      var urlUid = params.get("uid");
+      if (urlUid) return String(urlUid).trim();
     } catch (e) {}
+
     return "";
   }
 
-  function isInsideTelegram() {
-    try {
-      return Boolean(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData && window.Telegram.WebApp.initData.length > 0);
-    } catch (e) {
-      return false;
+  function hasAccess(uid) {
+    if (uid && ALLOWED_IDS.indexOf(uid) !== -1) {
+      return true;
     }
-  }
-
-  function checkTrialStatus() {
-    if (!isInsideTelegram()) return { active: false, remainingHours: 0 };
     try {
-      let start = Number(localStorage.getItem(TRIAL_KEY) || "0");
-      const now = Date.now();
+      var start = localStorage.getItem(TRIAL_STORAGE_KEY);
+      var now = Date.now();
       if (!start) {
-        start = now;
-        localStorage.setItem(TRIAL_KEY, String(start));
+        localStorage.setItem(TRIAL_STORAGE_KEY, String(now));
+        return true;
       }
-      const elapsedMs = now - start;
-      const limitMs = TRIAL_HOURS * 3600 * 1000;
-      if (elapsedMs < limitMs) {
-        const rem = Math.max(1, Math.ceil((limitMs - elapsedMs) / (3600 * 1000)));
-        return { active: true, remainingHours: rem };
+      if (now - Number(start) <= TRIAL_DURATION_MS) {
+        return true;
       }
-    } catch (e) {}
-    return { active: false, remainingHours: 0 };
+    } catch (e) {
+      return true;
+    }
+    return false;
   }
 
-  function checkAccess() {
-    const uid = getUserId();
-    if (uid && ALLOWED_IDS.includes(uid)) {
-      return { allowed: true, mode: "full", uid: uid };
+  var currentUid = getUid();
+  window.MADRASAH_UID = currentUid;
+
+  function appendUidToLinks() {
+    if (!currentUid) return;
+    var links = document.querySelectorAll("a[href]");
+    for (var i = 0; i < links.length; i++) {
+      var a = links[i];
+      var href = a.getAttribute("href");
+      if (!href || href.indexOf("http") === 0 || href.indexOf("#") === 0 || href.indexOf("mailto:") === 0) {
+        continue;
+      }
+      if (href.indexOf("uid=") === -1) {
+        var sep = href.indexOf("?") === -1 ? "?" : "&";
+        a.setAttribute("href", href + sep + "uid=" + encodeURIComponent(currentUid));
+      }
     }
-    const trial = checkTrialStatus();
-    if (trial.active) {
-      return { allowed: true, mode: "trial", uid: uid, remainingHours: trial.remainingHours };
-    }
-    return { allowed: false, mode: "locked", uid: uid };
   }
 
-  function initTelegramExpand() {
-    try {
-      if (window.Telegram && window.Telegram.WebApp) {
-        window.Telegram.WebApp.ready();
-        window.Telegram.WebApp.expand();
-      }
-    } catch (e) {}
-  }
-
-  window.toggleWideWindow = function() {
-    const containers = document.querySelectorAll(".container, .wrap");
-    const isWide = document.body.classList.toggle("wide-view");
-    containers.forEach(function(el) {
-      el.style.maxWidth = isWide ? "1120px" : "720px";
-    });
-    try {
-      if (window.Telegram && window.Telegram.WebApp) {
-        window.Telegram.WebApp.expand();
-      }
-    } catch (e) {}
-  };
-
-  window.getMadrasahAuth = function() {
-    return checkAccess();
-  };
-
-  window.protectCoursePage = function(courseKey) {
-    initTelegramExpand();
-    const auth = checkAccess();
-    const uid = auth.uid;
-
-    if (uid) {
-      document.querySelectorAll('a[href*="index.html"]').forEach(function(link) {
-        const href = link.getAttribute("href");
-        if (href && href.indexOf("uid=") === -1) {
-          link.setAttribute("href", href + (href.indexOf("?") === -1 ? "?" : "&") + "uid=" + encodeURIComponent(uid));
-        }
-      });
-    }
-
-    if (!auth.allowed) {
-      document.body.innerHTML = '<div style="max-width:480px;margin:40px auto;padding:24px;background:#E5ECE6;color:#1A281F;border-radius:16px;border:1px solid #8FA695;text-align:center;font-family:sans-serif;">' +
-        '<h2 style="margin:0 0 10px;color:#1F523F;">Доступ ограничен</h2>' +
-        '<p style="margin:0 0 14px;font-size:14px;line-height:1.5;">Пробный 24-часовой доступ завершён или страница открыта вне бота.</p>' +
-        '<p style="margin:0;font-size:13px;color:#435749;">Ваш ID: <strong>' + (uid || "не определён") + '</strong></p>' +
+  window.protectCoursePage = function() {
+    if (!hasAccess(currentUid)) {
+      document.body.innerHTML =
+        '<div style="max-width:480px;margin:60px auto;padding:24px;background:#E5ECE6;border:1px solid #8FA695;border-radius:16px;text-align:center;color:#1A281F;font-family:sans-serif;">' +
+        '<h2 style="margin:0 0 10px;font-size:20px;">Пробный период завершён</h2>' +
+        '<p style="margin:0;font-size:15px;color:#435749;">Для получения постоянного доступа ко всем разделам библиотеки обратитесь к администратору бота.</p>' +
         '</div>';
     }
   };
 
-  initTelegramExpand();
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", appendUidToLinks);
+  } else {
+    appendUidToLinks();
+  }
 })();
