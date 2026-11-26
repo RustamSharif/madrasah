@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Исламская библиотека и тренажёр</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="style.css?v=20261128" />
+  <script src="auth.js?v=20261128"></script>
+  <style>
+    .hero-banner {
+      background: linear-gradient(145deg, #1F523F 0%, #183E30 100%);
+      color: #F4F7F4;
+      border-radius: 18px;
+      padding: 22px 18px;
+      text-align: center;
+      margin-bottom: 18px;
+      border: 1px solid #48735E;
+      box-shadow: 0 6px 18px rgba(14, 22, 17, 0.25);
+    }
+    .hero-arabic {
+      font-family: "Amiri", "Scheherazade New", "Traditional Arabic", serif;
+      font-size: 24px;
+      margin-bottom: 6px;
+      color: #E3EFE7;
+      direction: rtl;
+    }
+    .hero-banner h1 {
+      margin: 0 0 6px;
+      font-size: 22px;
+      font-weight: 700;
+      color: #FFFFFF;
+    }
+    .hero-banner p {
+      margin: 0;
+      font-size: 14px;
+      color: #D7E5DC;
+    }
+    .courses-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .course-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--card-bg, #E5ECE6);
+      border: 1px solid var(--border-color, #8FA695);
+      border-radius: 16px;
+      padding: 15px 16px;
+      text-decoration: none;
+      color: var(--text-main, #1A281F);
+      box-shadow: 0 4px 12px rgba(14, 22, 17, 0.14);
+      transition: transform 0.12s ease;
+    }
+    .course-item:active {
+      transform: scale(0.99);
+    }
+    .course-left {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      flex: 1;
+      min-width: 0;
+    }
+    .course-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: #1F523F;
+      color: #FFFFFF;
+      font-size: 19px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .course-body {
+      flex: 1;
+      min-width: 0;
+    }
+    .course-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1A281F;
+      margin: 0 0 4px;
+      line-height: 1.35;
+    }
+    .course-desc {
+      font-size: 13px;
+      color: #435749;
+      margin: 0 0 6px;
+      line-height: 1.4;
+    }
+    .course-meta {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #1F523F;
+      background: #DCE5DD;
+      border: 1px solid #8FA695;
+      padding: 2px 9px;
+      border-radius: 999px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="accessBar"></div>
+
+    <div class="hero-banner">
+      <div class="hero-arabic" lang="ar" dir="rtl">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+      <h1>Исламская библиотека и тренажёр</h1>
+      <p>Систематизированные знания, конспекты-шпаргалки и проверочные тесты</p>
+    </div>
+
+    <div class="courses-grid" id="coursesList"></div>
+  </div>
+
+  <script>
+    const COURSES = [
+      {
+        id: "sira",
+        icon: "🕌",
+        title: "1. Сира Пророка Мухаммада ﷺ",
+        desc: "Жизнеописание Посланника Аллаха ﷺ, сподвижники и семья Пророка ﷺ",
+        meta: "7 модулей • 7 шпаргалок • 190 вопросов",
+        href: "sira/index.html"
+      },
+      {
+        id: "nawawi",
+        icon: "📜",
+        title: "2. 40 хадисов имама Ан-Науауи",
+        desc: "Оригинальный текст, перевод, смысл и студийная озвучка 42 хадисов",
+        meta: "42 хадиса • Аудиоразбор",
+        href: "nawawi/index.html"
+      },
+      {
+        id: "fiqh",
+        icon: "⚖️",
+        title: "3. Фикх аль-Ибада",
+        desc: "Очищение, намаз, закят, пост и хадж по достоверным источникам",
+        meta: "16 глав • 16 шпаргалок • 240 вопросов",
+        href: "fiqh/index.html"
+      },
+      {
+        id: "tajweed",
+        icon: "📖",
+        title: "4. Таджвид: Правила чтения Корана",
+        desc: "Махрадж, свойства букв, правила нун сакина, мим сакина и мадд",
+        meta: "10 глав • 10 шпаргалок • 150 вопросов",
+        href: "tajweed/index.html"
+      },
+      {
+        id: "adab",
+        icon: "🌿",
+        title: "5. Адаб и Ахляк",
+        desc: "Исламская этика, воспитание сердца, цифровой адаб и культура торговли",
+        meta: "14 глав • 14 шпаргалок • 210 вопросов",
+        href: "adab/index.html"
+      },
+      {
+        id: "aqeedah",
+        icon: "🧭",
+        title: "6. Исламское вероубеждение (Акыда)",
+        desc: "Столпы Имана, доказательства существования Аллаха, имена и атрибуты",
+        meta: "14 глав • 14 шпаргалок • 210 вопросов",
+        href: "aqeedah/index.html"
+      },
+      {
+        id: "arabic",
+        icon: "🔤",
+        title: "7. Арабский язык (Сарф и Нахв)",
+        desc: "Основы грамматики, спряжение глаголов, породы и лексика Корана",
+        meta: "10 уроков • 10 шпаргалок • 150 вопросов",
+        href: "arabic/index.html"
+      },
+      {
+        id: "quran",
+        icon: "🕋",
+        title: "8. Избранные суры и аяты Корана",
+        desc: "Арабский текст с разметкой таджвида, пословным переводом и чтецами",
+        meta: "8 разделов • Пословный разбор • Аудио",
+        href: "quran/index.html"
+      },
+      {
+        id: "fiqh_extra",
+        icon: "🏛️",
+        title: "9. Фикх. Дополнение: Семья, обряды и наследство",
+        desc: "Сватовство и никах, акыка, обрезание, наследство и джаназа по Ханафитскому мазхабу",
+        meta: "4 главы • 4 шпаргалки • 60 вопросов",
+        href: "fiqh_extra/index.html"
+      }
+    ];
+
+    document.addEventListener("DOMContentLoaded", function() {
+      const search = window.location.search || "";
+      const list = document.getElementById("coursesList");
+      list.innerHTML = COURSES.map(function(c) {
+        return '<a class="course-item" href="' + c.href + search + '">' +
+          '<div class="course-left">' +
+            '<div class="course-icon">' + c.icon + '</div>' +
+            '<div class="course-body">' +
+              '<div class="course-title">' + c.title + '</div>' +
+              '<div class="course-desc">' + c.desc + '</div>' +
+              '<span class="course-meta">' + c.meta + '</span>' +
+            '</div>' +
+          '</div>' +
+        '</a>';
+      }).join("");
+    });
+  </script>
+</body>
+</html>
