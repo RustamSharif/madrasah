@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Избранные суры и аяты Корана</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="../style.css?v=20261127" />
+  <script src="../auth.js?v=20261127"></script>
+  <style>
+    :root { --ar-size: 27px; }
+    .quran-controls { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+    .font-btns { display: inline-flex; gap: 6px; }
+    .font-btn { padding: 7px 13px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-main); font-weight: 700; font-size: 14px; cursor: pointer; }
+    .reciter-panel { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px; padding: 12px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
+    .reciter-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+    .reciter-select { flex: 1; min-width: 190px; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--item-bg); color: var(--text-main); font-size: 13.5px; font-weight: 600; outline: none; }
+    .audio-bar-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+    .audio-ctrl-btn { padding: 8px 13px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--primary); color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
+    .audio-ctrl-btn.secondary { background: var(--item-bg); color: var(--text-main); }
+    .audio-ctrl-btn.active-loop { background: #2D6A4F; color: #fff; border-color: #1F523F; }
+    .tajweed-legend { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px; padding: 10px 12px; margin-bottom: 14px; font-size: 12.5px; display: flex; flex-wrap: wrap; gap: 8px 14px; justify-content: center; }
+    .legend-item { display: inline-flex; align-items: center; gap: 5px; font-weight: 600; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+    .tj-ghunna { color: #16793E; font-weight: 700; }
+    .tj-ikhfa { color: #B85214; font-weight: 700; }
+    .tj-qalqala { color: #15589C; font-weight: 700; }
+    .tj-madd { color: #8E1B4B; font-weight: 700; }
+    .ayah-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px 15px; margin-bottom: 14px; box-shadow: 0 3px 10px rgba(14, 22, 17, 0.12); transition: border-color 0.2s, background-color 0.2s; }
+    .ayah-card.playing-now { border: 2px solid #1F523F; background: #D7E6D9; }
+    .ayah-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid rgba(143, 166, 149, 0.45); font-size: 12.5px; font-weight: 700; color: var(--primary); gap: 8px; }
+    .ayah-play-btn { padding: 5px 11px; border-radius: 9px; border: 1px solid var(--border-color); background: var(--item-bg); color: var(--text-main); font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+    .ayah-play-btn.is-playing { background: #1F523F; color: #fff; border-color: #1F523F; }
+    .ayah-arabic { font-family: "Amiri", "Scheherazade New", "Traditional Arabic", serif; font-size: var(--ar-size); line-height: 2.05; direction: rtl; text-align: right; color: #111E16; margin-bottom: 12px; word-spacing: 3px; }
+    .ayah-num-badge { display: inline-block; font-size: 0.72em; color: var(--primary); margin: 0 4px; }
+    .word-grid { display: flex; flex-direction: row-reverse; flex-wrap: wrap; gap: 7px; padding-top: 10px; border-top: 1px dashed rgba(143, 166, 149, 0.6); }
+    .word-box { background: var(--item-bg); border: 1px solid rgba(143, 166, 149, 0.65); border-radius: 10px; padding: 6px 9px; text-align: center; min-width: 64px; }
+    .word-ar { font-family: "Amiri", "Scheherazade New", "Traditional Arabic", serif; font-size: calc(var(--ar-size) * 0.76); line-height: 1.5; direction: rtl; color: #111E16; display: block; }
+    .word-ru { font-size: 12px; line-height: 1.3; color: var(--text-muted); display: block; margin-top: 2px; }
+    .bismillah-box { text-align: center; font-family: "Amiri", "Scheherazade New", serif; font-size: 24px; color: var(--primary); padding: 10px; margin-bottom: 12px; background: var(--item-bg); border-radius: 12px; border: 1px solid var(--border-color); direction: rtl; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="top-nav">
+      <a href="../index.html" id="backLink" class="back-btn">Назад</a>
+      <div class="font-btns">
+        <button class="font-btn" onclick="changeFontSize(-2)">А−</button>
+        <button class="font-btn" onclick="changeFontSize(2)">А+</button>
+      </div>
+    </div>
+
+    <div class="header">
+      <h1>Избранные суры и аяты Корана</h1>
+      <p>Текст с разметкой таджвида, пословным переводом и аудиочтением по порядку Мусхафа</p>
+      <div class="stats-bar">
+        <span class="stat-pill" id="statSections">8 разделов</span>
+        <span class="stat-pill" id="statRead">Прочитано: 0 / 8</span>
+      </div>
+    </div>
+
+    <div id="menuView"><div id="sectionsList"></div></div>
+
+    <div id="readerView" class="hidden">
+      <div class="quran-controls">
+        <button class="back-btn" onclick="closeReader()">Назад к сурам</button>
+        <button class="btn btn-primary" style="width:auto;padding:8px 16px;" id="markReadBtn" onclick="toggleReadStatus()">Отметить прочитанным</button>
+      </div>
+
+      <!-- ПАНЕЛЬ ВЫБОРА ЧТЕЦА И АУДИО -->
+      <div class="reciter-panel">
+        <div class="reciter-row">
+          <span style="font-size:13px;font-weight:700;color:var(--primary);">🎧 Чтец:</span>
+          <select id="reciterSelect" class="reciter-select" onchange="changeReciter()">
+            <option value="Alafasy_128kbps">Мишари Рашид аль-Афаси</option>
+            <option value="Husary_128kbps">Махмуд Халиль аль-Хусари (муаллим-таджвид)</option>
+            <option value="Abdurrahmaan_As-Sudais_192kbps">Абдуррахман ас-Судайс</option>
+            <option value="Abdul_Basit_Murattal_192kbps">Абдуль-Басит Абдус-Самад</option>
+          </select>
+        </div>
+        <div class="audio-bar-btns">
+          <button class="audio-ctrl-btn" id="playAllBtn" onclick="togglePlayAll()">▶ Слушать подряд</button>
+          <button class="audio-ctrl-btn secondary" id="loopBtn" onclick="toggleLoopAyah()">🔁 Повтор аята: Выкл</button>
+          <button class="audio-ctrl-btn secondary" onclick="stopAudio()">⏹ Стоп</button>
+        </div>
+      </div>
+
+      <div class="tajweed-legend">
+        <span class="legend-item"><span class="dot" style="background:#16793E;"></span>Гунна / Идгам</span>
+        <span class="legend-item"><span class="dot" style="background:#B85214;"></span>Ихфа / Икляб</span>
+        <span class="legend-item"><span class="dot" style="background:#15589C;"></span>Калькаля</span>
+        <span class="legend-item"><span class="dot" style="background:#8E1B4B;"></span>Мадд</span>
+      </div>
+
+      <div class="card" style="text-align:center;">
+        <h2 id="readerTitle" style="margin:0 0 4px;font-size:19px;color:var(--primary);"></h2>
+        <p id="readerSubtitle" style="margin:0;font-size:13.5px;color:var(--text-muted);"></p>
+      </div>
+
+      <div id="bismillahBanner" class="bismillah-box">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+      <div id="ayahsContainer"></div>
+
+      <div style="margin-top:16px;">
+        <button class="btn btn-primary" onclick="closeReader()">Вернуться к списку разделов</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.QURAN_SECTIONS = [];
+    window.registerQuranSection = function(s) {
+      if (!s || !s.id) return;
+      const existing = window.QURAN_SECTIONS.find(item => item.id === s.id);
+      if (existing && Array.isArray(s.ayahs)) {
+        existing.ayahs = existing.ayahs.concat(s.ayahs);
+      } else {
+        window.QURAN_SECTIONS.push({
+          id: s.id,
+          ayahs: Array.isArray(s.ayahs) ? s.ayahs.slice() : []
+        });
+      }
+    };
+  </script>
+  <script src="quran_part1.js?v=2"></script>
+  <script src="quran_part2.js?v=2"></script>
+  <script src="quran_part3.js?v=2"></script>
+  <script src="quran_part4a1.js?v=2"></script>
+  <script src="quran_part4a2.js?v=2"></script>
+  <script src="quran_part4b.js?v=2"></script>
+
+  <script>
+    const SECTION_META = [
+      { id: "baqara_152", title: "1. Сура «Аль-Бакара» (аяты 152–157)", sub: "Терпение при испытаниях и слова возвращения к Аллаху", bismillah: false },
+      { id: "ayat_kursi", title: "2. Аят аль-Курси («Аль-Бакара», 2:255)", sub: "Величайший аят Священного Корана", bismillah: false },
+      { id: "baqara_end", title: "3. Последние два аята суры «Аль-Бакара» (2:285–286)", sub: "Аманар-Расулю — мольба об облегчении и прощении", bismillah: false },
+      { id: "isra_22", title: "4. Сура «Аль-Исра» (аяты 22–39)", sub: "Главные заповеди Единобожия и исламской нравственности", bismillah: false },
+      { id: "kahf_end", title: "5. Последние 10 аятов суры «Аль-Кахф» (18:101–110)", sub: "Защита от смуты Даджжаля и дела обитателей Рая", bismillah: false },
+      { id: "mulk", title: "6. Сура «Аль-Мульк» (67:1–30)", sub: "Власть — защита от мучений могилы (30 аятов)", bismillah: true },
+      { id: "shams_takathur", title: "7. Суры от «Аш-Шамс» (91) до «Ат-Такасур» (102)", sub: "12 сур 30-го джуза с пословным разбором", bismillah: true },
+      { id: "asr_nas", title: "8. Суры от «Аль-Аср» (103) до «Ан-Нас» (114)", sub: "Заключительные 12 сур Священного Корана", bismillah: true }
+    ];
+
+    const READ_KEY = "madrasah_quran_read_v1";
+    let currentSectionId = null;
+    let currentAyahList = [];
+    let currentArSize = Number(localStorage.getItem("madrasah_quran_font") || "27");
+
+    // Аудио-плеер
+    const quranAudio = new Audio();
+    let playingIdx = -1;
+    let isContinuousPlay = false;
+    let isLoopSingle = false;
+
+    function getReciterFolder() {
+      const sel = document.getElementById("reciterSelect");
+      return sel ? sel.value : (localStorage.getItem("madrasah_quran_reciter") || "Alafasy_128kbps");
+    }
+
+    function changeReciter() {
+      const val = getReciterFolder();
+      try { localStorage.setItem("madrasah_quran_reciter", val); } catch (e) {}
+      if (playingIdx >= 0) {
+        playAyahAt(playingIdx, isContinuousPlay);
+      }
+    }
+
+    function extractSurahNum(refStr) {
+      if (!refStr) return 0;
+      const m = String(refStr).match(/Сура\s+(\d+)/i);
+      return m ? parseInt(m[1], 10) : 0;
+    }
+
+    function buildAudioUrl(ayahObj) {
+      const surah = extractSurahNum(ayahObj.ref);
+      const ayah = parseInt(ayahObj.num, 10) || 1;
+      const sPad = String(surah).padStart(3, "0");
+      const aPad = String(ayah).padStart(3, "0");
+      return "https://everyayah.com/data/" + getReciterFolder() + "/" + sPad + aPad + ".mp3";
+    }
+
+    function updateAudioUI() {
+      document.querySelectorAll(".ayah-card").forEach((card, i) => {
+        const btn = card.querySelector(".ayah-play-btn");
+        if (i === playingIdx && !quranAudio.paused) {
+          card.classList.add("playing-now");
+          if (btn) {
+            btn.classList.add("is-playing");
+            btn.textContent = "⏸ Пауза";
+          }
+        } else {
+          card.classList.remove("playing-now");
+          if (btn) {
+            btn.classList.remove("is-playing");
+            btn.textContent = "▶ Слушать";
+          }
+        }
+      });
+
+      const playAllBtn = document.getElementById("playAllBtn");
+      if (playAllBtn) {
+        playAllBtn.textContent = (isContinuousPlay && !quranAudio.paused) ? "⏸ Пауза" : "▶ Слушать подряд";
+      }
+    }
+
+    function playAyahAt(idx, continuous) {
+      if (idx < 0 || idx >= currentAyahList.length) {
+        stopAudio();
+        return;
+      }
+      isContinuousPlay = Boolean(continuous);
+      playingIdx = idx;
+      quranAudio.src = buildAudioUrl(currentAyahList[idx]);
+      quranAudio.play().then(() => {
+        updateAudioUI();
+        const cardEl = document.getElementById("ayah-card-" + idx);
+        if (cardEl) {
+          cardEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+      }).catch(() => {
+        updateAudioUI();
+      });
+    }
+
+    function toggleAyahPlay(idx) {
+      if (playingIdx === idx && !quranAudio.paused) {
+        quranAudio.pause();
+        updateAudioUI();
+        return;
+      }
+      if (playingIdx === idx && quranAudio.paused && quranAudio.src) {
+        quranAudio.play().then(updateAudioUI).catch(() => {});
+        return;
+      }
+      playAyahAt(idx, false);
+    }
+
+    function togglePlayAll() {
+      if (isContinuousPlay && !quranAudio.paused) {
+        quranAudio.pause();
+        updateAudioUI();
+        return;
+      }
+      const startIdx = playingIdx >= 0 ? playingIdx : 0;
+      playAyahAt(startIdx, true);
+    }
+
+    function toggleLoopAyah() {
+      isLoopSingle = !isLoopSingle;
+      const btn = document.getElementById("loopBtn");
+      if (btn) {
+        btn.textContent = isLoopSingle ? "🔁 Повтор аята: Вкл" : "🔁 Повтор аята: Выкл";
+        btn.classList.toggle("active-loop", isLoopSingle);
+      }
+    }
+
+    function stopAudio() {
+      quranAudio.pause();
+      quranAudio.currentTime = 0;
+      playingIdx = -1;
+      isContinuousPlay = false;
+      updateAudioUI();
+    }
+
+    quranAudio.addEventListener("ended", function() {
+      if (isLoopSingle && playingIdx >= 0) {
+        playAyahAt(playingIdx, isContinuousPlay);
+        return;
+      }
+      if (isContinuousPlay && playingIdx + 1 < currentAyahList.length) {
+        playAyahAt(playingIdx + 1, true);
+      } else {
+        stopAudio();
+      }
+    });
+
+    function applyFontSize() {
+      document.documentElement.style.setProperty("--ar-size", currentArSize + "px");
+    }
+
+    function changeFontSize(d) {
+      currentArSize = Math.min(40, Math.max(20, currentArSize + d));
+      localStorage.setItem("madrasah_quran_font", String(currentArSize));
+      applyFontSize();
+    }
+
+    function getReadMap() {
+      try { return JSON.parse(localStorage.getItem(READ_KEY) || "{}"); }
+      catch (e) { return {}; }
+    }
+
+    function renderMenu() {
+      const readMap = getReadMap();
+      const loadedMap = {};
+      window.QURAN_SECTIONS.forEach(s => { loadedMap[s.id] = s; });
+      let readCount = 0;
+
+      document.getElementById("sectionsList").innerHTML = SECTION_META.map(meta => {
+        const loaded = loadedMap[meta.id];
+        const ayahCount = loaded && Array.isArray(loaded.ayahs) ? loaded.ayahs.length : 0;
+        const isRead = Boolean(readMap[meta.id]);
+        if (isRead) readCount++;
+
+        return `
+          <div class="chapter-card">
+            <div class="chapter-info">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                <span style="font-size:12px;font-weight:700;color:var(--primary);">${ayahCount > 0 ? "Аятов: " + ayahCount : "Подготовка текста"}</span>
+                ${isRead ? '<span style="font-size:12px;font-weight:700;color:#16793E;">✓ Прочитано</span>' : ''}
+              </div>
+              <div class="chapter-title">${meta.title}</div>
+              <div class="chapter-meta">${meta.sub}</div>
+            </div>
+            <div class="chapter-actions single">
+              <button class="btn btn-primary" ${ayahCount === 0 ? 'disabled style="opacity:0.55;"' : ''} onclick="openSection('${meta.id}')">
+                ${ayahCount > 0 ? "📖 Читать и слушать" : "⏳ Ожидает загрузки файла"}
+              </button>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      document.getElementById("statRead").textContent = "Прочитано: " + readCount + " / " + SECTION_META.length;
+    }
+
+    function openSection(secId) {
+      const meta = SECTION_META.find(m => m.id === secId);
+      const data = window.QURAN_SECTIONS.find(s => s.id === secId);
+      if (!meta || !data || !Array.isArray(data.ayahs)) return;
+
+      stopAudio();
+      currentSectionId = secId;
+      currentAyahList = data.ayahs;
+
+      document.getElementById("readerTitle").textContent = meta.title;
+      document.getElementById("readerSubtitle").textContent = meta.sub;
+      document.getElementById("bismillahBanner").style.display = meta.bismillah ? "block" : "none";
+
+      document.getElementById("ayahsContainer").innerHTML = data.ayahs.map((a, idx) => {
+        const wordsHtml = Array.isArray(a.words)
+          ? `<div class="word-grid">${a.words.map(w => `
+              <div class="word-box">
+                <span class="word-ar" lang="ar">${w.ar}</span>
+                <span class="word-ru">${w.ru}</span>
+              </div>
+            `).join("")}</div>`
+          : "";
+
+        return `
+          <div class="ayah-card" id="ayah-card-${idx}">
+            <div class="ayah-header">
+              <span>${a.ref || ""} • Аят ${a.num || ""}</span>
+              <button class="ayah-play-btn" onclick="toggleAyahPlay(${idx})">▶ Слушать</button>
+            </div>
+            <div class="ayah-arabic" lang="ar">${a.ar} <span class="ayah-num-badge">﴿${a.num || ""}﴾</span></div>
+            ${wordsHtml}
+          </div>
+        `;
+      }).join("");
+
+      updateMarkBtn();
+      document.getElementById("menuView").classList.add("hidden");
+      document.getElementById("readerView").classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function updateMarkBtn() {
+      const btn = document.getElementById("markReadBtn");
+      if (getReadMap()[currentSectionId]) {
+        btn.textContent = "✓ Прочитано";
+        btn.style.opacity = "0.85";
+      } else {
+        btn.textContent = "Отметить прочитанным";
+        btn.style.opacity = "1";
+      }
+    }
+
+    function toggleReadStatus() {
+      if (!currentSectionId) return;
+      const readMap = getReadMap();
+      if (readMap[currentSectionId]) delete readMap[currentSectionId];
+      else readMap[currentSectionId] = true;
+      localStorage.setItem(READ_KEY, JSON.stringify(readMap));
+      updateMarkBtn();
+    }
+
+    function closeReader() {
+      stopAudio();
+      document.getElementById("readerView").classList.add("hidden");
+      document.getElementById("menuView").classList.remove("hidden");
+      renderMenu();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+      applyFontSize();
+      const savedReciter = localStorage.getItem("madrasah_quran_reciter");
+      const sel = document.getElementById("reciterSelect");
+      if (savedReciter && sel) sel.value = savedReciter;
+
+      const uid = new URLSearchParams(window.location.search).get("uid");
+      if (uid) document.getElementById("backLink").href = "../index.html?uid=" + encodeURIComponent(uid);
+      if (typeof protectCoursePage === "function") protectCoursePage("quran");
+      renderMenu();
+    });
+  </script>
+</body>
+</html>
