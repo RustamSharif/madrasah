@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Сира Пророка Мухаммада ﷺ — Интерактивный курс</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="../style.css?v=20261126" />
+  <script src="../auth.js?v=20261126"></script>
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      margin: 0;
+      padding: 14px 14px 40px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #364B3D;
+      color: #1A281F;
+    }
+
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .top-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 18px;
+      background: #E5ECE6;
+      color: #1A281F;
+      border: 1px solid #8FA695;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 13.5px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .header {
+      background: linear-gradient(145deg, #1F523F 0%, #183E30 100%);
+      color: #F4F7F4;
+      padding: 22px 18px;
+      border-radius: 16px;
+      text-align: center;
+      margin-bottom: 20px;
+      border: 1px solid #48735E;
+      box-shadow: 0 6px 18px rgba(14, 22, 17, 0.25);
+    }
+
+    .header h1 {
+      margin: 0 0 8px;
+      font-size: 21px;
+      font-weight: 700;
+      color: #FFFFFF;
+      line-height: 1.3;
+    }
+
+    .header p {
+      margin: 0 0 14px;
+      font-size: 13.5px;
+      color: #D2E2D8;
+      line-height: 1.45;
+    }
+
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .stat-pill {
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      color: #F4F7F4;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12.5px;
+      font-weight: 600;
+    }
+
+    .group-title {
+      margin: 18px 2px 10px;
+      font-size: 12.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #D7E2D9;
+    }
+
+    .modules-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .module-card {
+      background: #E5ECE6;
+      border: 1px solid #8FA695;
+      border-radius: 15px;
+      padding: 16px;
+      box-shadow: 0 3px 10px rgba(14, 22, 17, 0.16);
+    }
+
+    .module-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .module-badge {
+      display: inline-block;
+      background: #1F523F;
+      color: #F4F7F4;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 11px;
+      border-radius: 20px;
+    }
+
+    .module-badge.extra {
+      background: #4E5D30;
+    }
+
+    .module-badge.final {
+      background: #6E352C;
+    }
+
+    .best-score {
+      font-size: 12px;
+      font-weight: 700;
+      color: #1F523F;
+      background: #D2E0D5;
+      border: 1px solid #96AC9B;
+      padding: 3px 9px;
+      border-radius: 12px;
+    }
+
+    .module-title {
+      margin: 0 0 5px;
+      font-size: 16.5px;
+      font-weight: 700;
+      color: #16241B;
+      line-height: 1.35;
+    }
+
+    .module-desc {
+      margin: 0 0 14px;
+      font-size: 13.5px;
+      color: #435749;
+      line-height: 1.45;
+    }
+
+    .card-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .btn-cheat, .btn-test {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 11px 12px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .btn-cheat {
+      background: #DCE5DD;
+      color: #1A281F;
+      border: 1px solid #8FA695;
+    }
+
+    .btn-test {
+      background: #1F523F;
+      color: #F4F7F4;
+      border: 1px solid #1F523F;
+    }
+
+    .btn-test:disabled, .btn-cheat:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    /* Панель шпаргалки и теста */
+    .panel-card {
+      background: #E5ECE6;
+      border: 1px solid #8FA695;
+      border-radius: 16px;
+      padding: 18px 16px;
+      box-shadow: 0 4px 14px rgba(14, 22, 17, 0.2);
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid #B5C4B8;
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 700;
+      color: #1F523F;
+    }
+
+    .btn-small-back {
+      padding: 7px 14px;
+      background: #DCE5DD;
+      color: #1A281F;
+      border: 1px solid #8FA695;
+      border-radius: 16px;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .cheatsheet-body {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #1A281F;
+    }
+
+    .cheatsheet-body .ref-section {
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #BDCCC0;
+    }
+
+    .cheatsheet-body .ref-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .cheatsheet-body h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      color: #1F523F;
+    }
+
+    .cheatsheet-body ul, .cheatsheet-body ol {
+      margin: 6px 0;
+      padding-left: 20px;
+    }
+
+    .cheatsheet-body li {
+      margin-bottom: 6px;
+    }
+
+    /* Тестирование */
+    .q-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: #435749;
+      margin-bottom: 8px;
+    }
+
+    .progress-wrap {
+      height: 9px;
+      background: #C7D4C9;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: #1F523F;
+      transition: width 0.25s ease;
+    }
+
+    .q-text {
+      font-size: 16.5px;
+      font-weight: 700;
+      line-height: 1.48;
+      color: #16241B;
+      margin-bottom: 16px;
+    }
+
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .opt-btn {
+      width: 100%;
+      text-align: left;
+      padding: 13px 15px;
+      background: #DCE5DD;
+      border: 1px solid #96AC9B;
+      border-radius: 11px;
+      font-size: 14.5px;
+      line-height: 1.45;
+      color: #1A281F;
+      cursor: pointer;
+    }
+
+    .opt-btn.correct {
+      background: #C7DFC9;
+      border: 2px solid #4D7C55;
+      color: #16301B;
+      font-weight: 700;
+    }
+
+    .opt-btn.wrong {
+      background: #E8CECA;
+      border: 2px solid #A85B52;
+      color: #421814;
+    }
+
+    .opt-btn:disabled {
+      cursor: default;
+    }
+
+    .explanation-box {
+      margin-top: 14px;
+      padding: 13px 14px;
+      background: #D6E1D8;
+      border-left: 4px solid #1F523F;
+      border-radius: 10px;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #1A281F;
+    }
+
+    .quiz-footer {
+      margin-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-primary {
+      padding: 12px 20px;
+      background: #1F523F;
+      color: #F4F7F4;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-secondary {
+      padding: 11px 16px;
+      background: #DCE5DD;
+      color: #1A281F;
+      border: 1px solid #8FA695;
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .result-box {
+      text-align: center;
+      padding: 10px 4px;
+    }
+
+    .result-score {
+      font-size: 34px;
+      font-weight: 800;
+      color: #1F523F;
+      margin: 8px 0;
+    }
+
+    .mistake-card {
+      text-align: left;
+      background: #DCE5DD;
+      border: 1px solid #A85B52;
+      border-radius: 11px;
+      padding: 13px;
+      margin-top: 10px;
+      font-size: 13.5px;
+      line-height: 1.45;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="top-nav">
+      <a class="back-btn" id="backHomeBtn" href="../index.html">Назад</a>
+    </div>
+
+    <div class="header">
+      <h1>Сира Пророка Мухаммада <bdi>ﷺ</bdi></h1>
+      <p>Интерактивный курс конспектов и тестов по жизнеописанию Посланника Аллаха <bdi>ﷺ</bdi></p>
+      <div class="stats-bar">
+        <span class="stat-pill" id="statModules">📚 7 модулей</span>
+        <span class="stat-pill" id="statQuestions">📝 190 вопросов</span>
+        <span class="stat-pill" id="statCheats">📖 7 шпаргалок</span>
+      </div>
+    </div>
+
+    <!-- ГЛАВНЫЙ СПИСОК МОДУЛЕЙ -->
+    <div id="catalogView">
+      <div class="group-title">Основной хронологический курс</div>
+      <div class="modules-list" id="groupMain"></div>
+
+      <div class="group-title">Тематические разделы</div>
+      <div class="modules-list" id="groupExtra"></div>
+
+      <div class="group-title">Итоговая аттестация</div>
+      <div class="modules-list" id="groupFinal"></div>
+    </div>
+
+    <!-- ОКНО ШПАРГАЛКИ -->
+    <div id="cheatsheetView" class="panel-card hidden">
+      <div class="panel-header">
+        <h2 class="panel-title" id="cheatTitle">Шпаргалка</h2>
+        <button class="btn-small-back" onclick="closeSubViews()">Назад</button>
+      </div>
+      <div class="cheatsheet-body" id="cheatContent"></div>
+      <div style="margin-top: 18px; display: flex; gap: 10px; justify-content: flex-end;">
+        <button class="btn-secondary" onclick="closeSubViews()">Назад</button>
+        <button class="btn-primary" id="cheatToTestBtn">📝 Тест</button>
+      </div>
+    </div>
+
+    <!-- ОКНО ТЕСТА -->
+    <div id="quizView" class="panel-card hidden">
+      <div class="panel-header">
+        <h2 class="panel-title" id="quizModuleTitle">Тест</h2>
+        <button class="btn-small-back" onclick="closeSubViews()">Назад</button>
+      </div>
+
+      <div id="quizActive">
+        <div class="q-meta">
+          <span id="qCounter">Вопрос 1 из 25</span>
+          <span id="qScoreLive">Верно: 0</span>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="q-text" id="qText"></div>
+        <div class="options-list" id="optionsList"></div>
+        <div class="explanation-box hidden" id="expBox"></div>
+        <div class="quiz-footer">
+          <button class="btn-secondary" onclick="openCheatsheetFromQuiz()">📖 Шпаргалка</button>
+          <button class="btn-primary hidden" id="nextBtn" onclick="nextQuestion()">Следующий вопрос</button>
+        </div>
+      </div>
+
+      <div id="quizResult" class="result-box hidden">
+        <h3 style="margin:0;color:#1F523F;">Тест завершён!</h3>
+        <div class="result-score" id="finalScoreText">0 / 25</div>
+        <p id="finalCommentText" style="margin:0 0 16px;font-size:14.5px;color:#3C5042;"></p>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:14px;">
+          <button class="btn-primary" onclick="restartCurrentQuiz()">Пройти заново</button>
+          <button class="btn-secondary hidden" id="retryMistakesBtn" onclick="retryMistakes()">Работать над ошибками</button>
+          <button class="btn-secondary" onclick="closeSubViews()">Назад</button>
+        </div>
+        <div id="mistakesContainer"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Универсальные приёмники до загрузки модулей -->
+  <script>
+    window.SIRA_MODULES = window.SIRA_MODULES || {};
+    window.SIRA_DATA = window.SIRA_DATA || {};
+    window.SIRA_CHAPTERS = window.SIRA_CHAPTERS || {};
+    window.registerSiraModule = function (key, data) {
+      if (typeof key === "object" && key !== null) {
+        const k = key.num || key.id || (Object.keys(window.SIRA_MODULES).length + 1);
+        window.SIRA_MODULES[k] = key;
+      } else {
+        window.SIRA_MODULES[key] = data;
+      }
+    };
+  </script>
+
+  <!-- Подключение всех 7 модулей с принудительным сбросом кэша -->
+  <script src="sira_m1.js?v=20261126"></script>
+  <script src="sira_m2.js?v=20261126"></script>
+  <script src="sira_m3.js?v=20261126"></script>
+  <script src="sira_m4.js?v=20261126"></script>
+  <script src="sira_m5.js?v=20261126"></script>
+  <script src="sira_m6.js?v=20261126"></script>
+  <script src="sira_m7.js?v=20261126"></script>
+
+  <script>
+    if (typeof protectCoursePage === "function") {
+      protectCoursePage("sira");
+    }
+
+    const FALLBACK_META = {
+      1: {
+        section: "main",
+        badge: "Часть 1",
+        title: "Доисламский период и семья Пророка ﷺ",
+        desc: "Родословная до 6-го колена, дяди и тёти, кормилицы, молочные братья и сёстры, Зам-зам и Год Слона."
+      },
+      2: {
+        section: "main",
+        badge: "Часть 2",
+        title: "От рождения до начала пророчества",
+        desc: "Детство в Бану Са'д, сиротство, встреча с Бахирой, Союз благородных, брак с Хадиджей, перестройка Каабы и пещера Хира."
+      },
+      3: {
+        section: "main",
+        badge: "Часть 3",
+        title: "Мекканский период (13 лет пророчества)",
+        desc: "Первые откровения, тайный и открытый призыв, Эфиопия, бойкот, Год скорби, Таиф, Исра и Мирадж, присяги при Акабе."
+      },
+      4: {
+        section: "main",
+        badge: "Часть 4",
+        title: "Мединский период и кончина Пророка ﷺ",
+        desc: "Хиджра, устройство общины, Бадр, Ухуд, Хандак, Худайбия, Хайбар, Открытие Мекки, Табук, Прощальный хадж и кончина ﷺ."
+      },
+      5: {
+        section: "extra",
+        badge: "Доп. тест 1",
+        title: "Семья Пророка ﷺ: жёны, дети, внуки и домочадцы",
+        desc: "Все 11 Матерей правоверных, 3 сына и 4 дочери, внуки аль-Хасан и аль-Хусайн, Ахль аль-Байт."
+      },
+      6: {
+        section: "extra",
+        badge: "Доп. тест 2",
+        title: "Выдающиеся сподвижники и сподвижницы",
+        desc: "10 обрадованных Раем, почётные титулы сахабов, писцы откровения, великие ансары и сподвижницы."
+      },
+      7: {
+        section: "final",
+        badge: "Итоговый экзамен",
+        title: "Общий зачёт по всему курсу Сиры ﷺ",
+        desc: "Сводная проверка знаний по всем хронологическим этапам, семье Пророка ﷺ и сподвижникам."
+      }
+    };
+
+    function extractAllModules() {
+      const rawMap = {};
+
+      function absorb(source) {
+        if (!source) return;
+        if (Array.isArray(source)) {
+          source.forEach((item, idx) => {
+            if (item && typeof item === "object") {
+              const num = parseInt(String(item.num || item.id || (idx + 1)).replace(/\D/g, ""), 10) || (idx + 1);
+              rawMap[num] = item;
+            }
+          });
+        } else if (typeof source === "object") {
+          Object.keys(source).forEach((k) => {
+            const item = source[k];
+            if (item && typeof item === "object") {
+              const num = parseInt(String(k).replace(/\D/g, ""), 10) ||
+                          parseInt(String(item.num || item.id || "0").replace(/\D/g, ""), 10);
+              if (num >= 1 && num <= 7) {
+                rawMap[num] = item;
+              }
+            }
+          });
+        }
+      }
+
+      absorb(window.SIRA_MODULES);
+      absorb(window.SIRA_DATA);
+      absorb(window.SIRA_DATA && window.SIRA_DATA.modules);
+      absorb(window.SIRA_DATA && window.SIRA_DATA.chapters);
+      absorb(window.SIRA_CHAPTERS);
+      absorb(window.SIRA_COURSE);
+
+      const normalized = [];
+      for (let num = 1; num <= 7; num++) {
+        const fb = FALLBACK_META[num];
+        const raw = rawMap[num] || {};
+        const qs = Array.isArray(raw.questions) ? raw.questions :
+                   Array.isArray(raw.quiz) ? raw.quiz : [];
+
+        let badgeText = raw.badge || raw.label || "";
+        if (!badgeText || badgeText === "undefined" || typeof badgeText === "number") {
+          badgeText = fb.badge;
+        }
+
+        let descText = raw.desc || raw.description || raw.subtitle || "";
+        if (!descText || descText === "undefined") {
+          descText = fb.desc;
+        }
+
+        let titleText = raw.title || fb.title;
+        let cheatText = raw.cheatsheet || raw.cheat || raw.ref || raw.summary || "";
+
+        normalized.push({
+          num: num,
+          section: raw.section || fb.section,
+          badge: badgeText,
+          title: titleText,
+          desc: descText,
+          cheatsheet: cheatText,
+          questions: qs
+        });
+      }
+      return normalized;
+    }
+
+    let MODULES_LIST = [];
+    let activeModule = null;
+    let activeQuestions = [];
+    let currentQIndex = 0;
+    let currentScore = 0;
+    let currentMistakes = [];
+    let balanceSlot = 0;
+
+    function prepareBalancedQuestions(rawQuestions) {
+      const copy = rawQuestions.map((item) => {
+        const qText = item.q || item.question || "";
+        const origOpts = Array.isArray(item.opts) ? [...item.opts] :
+                         Array.isArray(item.options) ? [...item.options] :
+                         Array.isArray(item.a) ? [...item.a] : [];
+        let origAns = typeof item.ans === "number" ? item.ans :
+                      typeof item.correct === "number" ? item.correct :
+                      typeof item.c === "number" ? item.c :
+                      typeof item.answer === "number" ? item.answer : 0;
+        if (origAns < 0 || origAns >= origOpts.length) origAns = 0;
+
+        const correctStr = origOpts[origAns];
+        const wrongArr = origOpts.filter((_, i) => i !== origAns);
+
+        for (let i = wrongArr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [wrongArr[i], wrongArr[j]] = [wrongArr[j], wrongArr[i]];
+        }
+
+        const slot = (balanceSlot + Math.floor(Math.random() * origOpts.length)) % origOpts.length;
+        balanceSlot++;
+
+        const mixedOpts = [];
+        let wPtr = 0;
+        for (let i = 0; i < origOpts.length; i++) {
+          if (i === slot) mixedOpts.push(correctStr);
+          else mixedOpts.push(wrongArr[wPtr++]);
+        }
+
+        return {
+          q: qText,
+          opts: mixedOpts,
+          ans: slot,
+          exp: item.exp || item.explanation || ""
+        };
+      });
+
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function renderModulesList() {
+      const uid = typeof getCurrentUserId === "function" ? getCurrentUserId() : "guest";
+      const backBtn = document.getElementById("backHomeBtn");
+      if (backBtn) backBtn.href = "../index.html?uid=" + encodeURIComponent(uid);
+
+      MODULES_LIST = extractAllModules();
+
+      let totalQ = 0;
+      let totalCh = 0;
+      MODULES_LIST.forEach((m) => {
+        totalQ += m.questions.length;
+        if (m.cheatsheet) totalCh++;
+      });
+
+      document.getElementById("statModules").textContent = `📚 ${MODULES_LIST.length} модулей`;
+      document.getElementById("statQuestions").textContent = `📝 ${totalQ} вопросов`;
+      document.getElementById("statCheats").textContent = `📖 ${totalCh} шпаргалок`;
+
+      const containers = {
+        main: document.getElementById("groupMain"),
+        extra: document.getElementById("groupExtra"),
+        final: document.getElementById("groupFinal")
+      };
+
+      containers.main.innerHTML = "";
+      containers.extra.innerHTML = "";
+      containers.final.innerHTML = "";
+
+      MODULES_LIST.forEach((m) => {
+        const qCount = m.questions.length;
+        const best = localStorage.getItem("sira_best_" + m.num);
+        const bestHtml = best ? `<span class="best-score">Лучший: ${best}/${qCount}</span>` : "";
+        const badgeCls = m.section === "extra" ? "extra" : (m.section === "final" ? "final" : "");
+
+        const card = document.createElement("div");
+        card.className = "module-card";
+        card.innerHTML = `
+          <div class="module-top">
+            <span class="module-badge ${badgeCls}">${m.badge} • ${qCount} вопросов</span>
+            ${bestHtml}
+          </div>
+          <div class="module-title">${m.title}</div>
+          <div class="module-desc">${m.desc}</div>
+          <div class="card-actions">
+            <button class="btn-cheat" ${m.cheatsheet ? "" : "disabled"} onclick="openCheatsheet(${m.num})">📖 Шпаргалка</button>
+            <button class="btn-test" ${qCount > 0 ? "" : "disabled"} onclick="startModuleQuiz(${m.num})">📝 Тест</button>
+          </div>
+        `;
+
+        const target = containers[m.section] || containers.main;
+        target.appendChild(card);
+      });
+    }
+
+    function openCheatsheet(num) {
+      const m = MODULES_LIST.find((x) => x.num === num);
+      if (!m || !m.cheatsheet) return;
+      activeModule = m;
+
+      document.getElementById("cheatTitle").textContent = m.title;
+      document.getElementById("cheatContent").innerHTML = m.cheatsheet;
+      const toTestBtn = document.getElementById("cheatToTestBtn");
+      toTestBtn.onclick = () => startModuleQuiz(num);
+      toTestBtn.style.display = m.questions.length > 0 ? "inline-flex" : "none";
+
+      document.getElementById("catalogView").classList.add("hidden");
+      document.getElementById("quizView").classList.add("hidden");
+      document.getElementById("cheatsheetView").classList.remove("hidden");
+      window.scrollTo(0, 0);
+    }
+
+    function openCheatsheetFromQuiz() {
+      if (activeModule && activeModule.cheatsheet) {
+        openCheatsheet(activeModule.num);
+      }
+    }
+
+    function startModuleQuiz(num, customQuestions = null) {
+      const m = MODULES_LIST.find((x) => x.num === num);
+      if (!m || m.questions.length === 0) return;
+      activeModule = m;
+
+      activeQuestions = customQuestions ? customQuestions : prepareBalancedQuestions(m.questions);
+      currentQIndex = 0;
+      currentScore = 0;
+      currentMistakes = [];
+
+      document.getElementById("quizModuleTitle").textContent = m.title;
+      document.getElementById("catalogView").classList.add("hidden");
+      document.getElementById("cheatsheetView").classList.add("hidden");
+      document.getElementById("quizResult").classList.add("hidden");
+      document.getElementById("quizActive").classList.remove("hidden");
+      document.getElementById("quizView").classList.remove("hidden");
+
+      renderCurrentQuestion();
+      window.scrollTo(0, 0);
+    }
+
+    function renderCurrentQuestion() {
+      const total = activeQuestions.length;
+      const item = activeQuestions[currentQIndex];
+
+      document.getElementById("qCounter").textContent = `Вопрос ${currentQIndex + 1} из ${total}`;
+      document.getElementById("qScoreLive").textContent = `Верно: ${currentScore}`;
+      document.getElementById("progressFill").style.width = `${(currentQIndex / total) * 100}%`;
+      document.getElementById("qText").textContent = item.q;
+
+      const optsEl = document.getElementById("optionsList");
+      optsEl.innerHTML = "";
+
+      item.opts.forEach((optText, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "opt-btn";
+        btn.textContent = optText;
+        btn.onclick = () => selectOption(idx, btn);
+        optsEl.appendChild(btn);
+      });
+
+      document.getElementById("expBox").classList.add("hidden");
+      document.getElementById("nextBtn").classList.add("hidden");
+    }
+
+    function selectOption(chosenIdx, chosenBtn) {
+      const item = activeQuestions[currentQIndex];
+      const allBtns = document.querySelectorAll("#optionsList .opt-btn");
+      allBtns.forEach((b) => (b.disabled = true));
+
+      if (chosenIdx === item.ans) {
+        chosenBtn.classList.add("correct");
+        currentScore++;
+        document.getElementById("qScoreLive").textContent = `Верно: ${currentScore}`;
+      } else {
+        chosenBtn.classList.add("wrong");
+        if (allBtns[item.ans]) allBtns[item.ans].classList.add("correct");
+        currentMistakes.push({
+          q: item.q,
+          opts: item.opts,
+          ans: item.ans,
+          exp: item.exp,
+          userText: item.opts[chosenIdx]
+        });
+      }
+
+      const expBox = document.getElementById("expBox");
+      if (item.exp) {
+        expBox.innerHTML = `<strong>Пояснение:</strong> ${item.exp}`;
+        expBox.classList.remove("hidden");
+      }
+
+      const nextBtn = document.getElementById("nextBtn");
+      nextBtn.textContent = currentQIndex + 1 < activeQuestions.length ? "Следующий вопрос" : "Завершить тест";
+      nextBtn.classList.remove("hidden");
+    }
+
+    function nextQuestion() {
+      currentQIndex++;
+      if (currentQIndex < activeQuestions.length) {
+        renderCurrentQuestion();
+      } else {
+        finishQuiz();
+      }
+    }
+
+    function finishQuiz() {
+      document.getElementById("progressFill").style.width = "100%";
+      document.getElementById("quizActive").classList.add("hidden");
+      document.getElementById("quizResult").classList.remove("hidden");
+
+      const total = activeQuestions.length;
+      document.getElementById("finalScoreText").textContent = `${currentScore} / ${total}`;
+
+      if (activeModule && total === activeModule.questions.length) {
+        const prevBest = Number(localStorage.getItem("sira_best_" + activeModule.num) || "0");
+        if (currentScore > prevBest) {
+          localStorage.setItem("sira_best_" + activeModule.num, String(currentScore));
+        }
+      }
+
+      const pct = Math.round((currentScore / total) * 100);
+      let msg = "";
+      if (pct === 100) msg = "Ма ша Аллах! Безупречный результат — 100%!";
+      else if (pct >= 80) msg = "Отличный результат! Материал усвоен очень хорошо.";
+      else if (pct >= 60) msg = "Хороший результат! Повторите шпаргалку, чтобы закрепить детали.";
+      else msg = "Рекомендуется внимательно изучить шпаргалку и пройти тест ещё раз.";
+      document.getElementById("finalCommentText").textContent = msg;
+
+      const retryBtn = document.getElementById("retryMistakesBtn");
+      const mistakesBox = document.getElementById("mistakesContainer");
+      mistakesBox.innerHTML = "";
+
+      if (currentMistakes.length > 0) {
+        retryBtn.classList.remove("hidden");
+        currentMistakes.forEach((m, idx) => {
+          const div = document.createElement("div");
+          div.className = "mistake-card";
+          div.innerHTML = `
+            <div style="font-weight:700;margin-bottom:4px;">${idx + 1}. ${m.q}</div>
+            <div style="color:#6E2820;">❌ Ваш ответ: ${m.userText}</div>
+            <div style="color:#1F523F;font-weight:700;">✅ Верно: ${m.opts[m.ans]}</div>
+            ${m.exp ? `<div style="margin-top:5px;color:#3C5042;">${m.exp}</div>` : ""}
+          `;
+          mistakesBox.appendChild(div);
+        });
+      } else {
+        retryBtn.classList.add("hidden");
+      }
+    }
+
+    function restartCurrentQuiz() {
+      if (activeModule) startModuleQuiz(activeModule.num);
+    }
+
+    function retryMistakes() {
+      if (!activeModule || currentMistakes.length === 0) return;
+      const retryList = prepareBalancedQuestions(currentMistakes);
+      startModuleQuiz(activeModule.num, retryList);
+    }
+
+    function closeSubViews() {
+      document.getElementById("cheatsheetView").classList.add("hidden");
+      document.getElementById("quizView").classList.add("hidden");
+      document.getElementById("catalogView").classList.remove("hidden");
+      renderModulesList();
+      window.scrollTo(0, 0);
+    }
+
+    document.addEventListener("DOMContentLoaded", renderModulesList);
+  </script>
+</body>
+</html>
