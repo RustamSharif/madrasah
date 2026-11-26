@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Адаб и Ахляк</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="../style.css?v=20261127" />
+  <script src="../auth.js?v=20261127"></script>
+  <script>
+    if (typeof protectCoursePage === "function") {
+      protectCoursePage("adab", "Адаб и Ахляк");
+    }
+  </script>
+  <script>
+    window.ADAB_DATA = window.ADAB_DATA || { cheatsheets: {}, questions: [] };
+  </script>
+  <script src="adab_part1.js?v=3"></script>
+  <script src="adab_part2.js?v=3"></script>
+  <script src="adab_part3a.js?v=3"></script>
+  <script src="adab_part3b.js?v=3"></script>
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      margin: 0;
+      padding: 14px 14px 36px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #364B3D;
+      color: #1A281F;
+      line-height: 1.5;
+    }
+
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 10px;
+    }
+
+    .nav-btn {
+      background: #E5ECE6;
+      color: #1A281F;
+      border: 1px solid #8FA695;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .course-header {
+      background: linear-gradient(145deg, #1F523F 0%, #183E30 100%) !important;
+      color: #F4F7F4 !important;
+      padding: 22px 18px;
+      border-radius: 16px;
+      margin-bottom: 16px;
+      text-align: center;
+      border: 1px solid #48735E !important;
+      box-shadow: 0 6px 18px rgba(14, 22, 17, 0.25);
+    }
+
+    .course-header h1 {
+      margin: 0 0 6px 0;
+      font-size: 1.45rem;
+      color: #F6F8F3;
+    }
+
+    .course-header p {
+      margin: 0 0 12px 0;
+      font-size: 0.92rem;
+      color: #CFE0D6;
+    }
+
+    .stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .stat-pill {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      color: #F4F7F4;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.84rem;
+      font-weight: 600;
+    }
+
+    .chapter-card {
+      background: #E5ECE6;
+      border: 1px solid #8FA695;
+      border-radius: 14px;
+      padding: 15px 16px;
+      margin-bottom: 11px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      box-shadow: 0 3px 10px rgba(14, 22, 17, 0.14);
+    }
+
+    .chapter-info {
+      flex: 1 1 240px;
+    }
+
+    .chapter-title {
+      font-weight: 700;
+      font-size: 1.02rem;
+      color: #18261D;
+      margin-bottom: 4px;
+    }
+
+    .chapter-meta {
+      font-size: 0.85rem;
+      color: #435749;
+    }
+
+    .chapter-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 10px;
+      padding: 9px 14px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-primary {
+      background: #1F523F;
+      color: #F4F7F4;
+    }
+
+    .btn-outline {
+      background: #D6E1D8;
+      color: #1A281F;
+      border: 1px solid #8FA695;
+    }
+
+    .exam-card {
+      background: #E5ECE6;
+      border: 1px solid #8FA695;
+      border-radius: 14px;
+      padding: 16px;
+      margin-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .quiz-box, .result-box {
+      background: #E5ECE6;
+      border: 1px solid #8FA695;
+      border-radius: 16px;
+      padding: 20px;
+      display: none;
+      box-shadow: 0 4px 14px rgba(14, 22, 17, 0.18);
+    }
+
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #B5C7B9;
+      flex-wrap: wrap;
+    }
+
+    .q-text {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #18261D;
+      margin-bottom: 16px;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .opt-btn {
+      text-align: left;
+      padding: 13px 15px;
+      border-radius: 11px;
+      border: 1px solid #9BB0A0;
+      background: #DCE5DD;
+      color: #1A281F;
+      font-size: 0.98rem;
+      cursor: pointer;
+      line-height: 1.4;
+    }
+
+    .opt-btn:disabled { cursor: default; }
+
+    .opt-btn.correct {
+      background: #C7DFC9 !important;
+      border-color: #4D7C55 !important;
+      color: #16301B !important;
+      font-weight: 700;
+    }
+
+    .opt-btn.wrong {
+      background: #E8CECA !important;
+      border-color: #A85B52 !important;
+      color: #421814 !important;
+    }
+
+    .exp-box {
+      display: none;
+      margin-top: 16px;
+      padding: 14px 16px;
+      background: #D6E1D8;
+      border-left: 4px solid #1F523F;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      color: #1A281F;
+    }
+
+    .source-tag {
+      display: block;
+      margin-top: 8px;
+      font-size: 0.82rem;
+      color: #435749;
+      font-style: italic;
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(14, 22, 17, 0.72);
+      z-index: 1000;
+      padding: 16px;
+      overflow-y: auto;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-card {
+      background: #E5ECE6;
+      color: #1A281F;
+      max-width: 680px;
+      width: 100%;
+      max-height: 86vh;
+      overflow-y: auto;
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid #8FA695;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid #B5C7B9;
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+    }
+
+    .modal-body h3 {
+      margin-top: 0;
+      color: #1F523F;
+      font-size: 1.08rem;
+    }
+
+    .modal-body ul, .modal-body ol {
+      padding-left: 20px;
+    }
+
+    .modal-body li {
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <a class="nav-btn" id="backLink" href="../index.html">Назад</a>
+    </div>
+
+    <div id="menuView">
+      <div class="course-header">
+        <h1>Адаб и Ахляк</h1>
+        <p>Исламская этика, воспитание души и благой нрав по Корану, Сунне и трудам учёных</p>
+        <div class="stats-row" id="statsRow">
+          <span class="stat-pill">📚 10 глав</span>
+          <span class="stat-pill">📝 150 вопросов</span>
+          <span class="stat-pill">📖 10 шпаргалок</span>
+        </div>
+      </div>
+
+      <div id="chaptersList"></div>
+
+      <div class="exam-card" id="examCard" style="display:none;">
+        <div>
+          <div class="chapter-title">🎓 Итоговый зачёт по курсу</div>
+          <div class="chapter-meta">40 случайных вопросов из всех загруженных глав</div>
+        </div>
+        <button class="btn btn-primary" onclick="startExam()">📝 Начать зачёт</button>
+      </div>
+    </div>
+
+    <div class="quiz-box" id="quizView">
+      <div class="quiz-header">
+        <button class="nav-btn" onclick="backToMenu()">К главам</button>
+        <span id="quizProgress" style="font-weight:700;font-size:0.92rem;color:#1F523F;"></span>
+        <button class="btn btn-outline" id="inQuizCheatBtn" style="display:none;" onclick="openCurrentCheat()">📖 Шпаргалка</button>
+      </div>
+      <div id="quizChapterLabel" style="font-size:0.85rem;color:#435749;font-weight:600;margin-bottom:6px;"></div>
+      <div class="q-text" id="qText"></div>
+      <div class="options" id="qOptions"></div>
+      <div class="exp-box" id="expBox">
+        <div id="expText"></div>
+        <span class="source-tag" id="expSource"></span>
+      </div>
+      <div style="margin-top:18px;text-align:right;">
+        <button class="btn btn-primary" id="nextBtn" style="display:none;" onclick="nextQuestion()">Следующий вопрос</button>
+      </div>
+    </div>
+
+    <div class="result-box" id="resultView">
+      <h2 style="margin-top:0;color:#1F523F;">Тест завершён!</h2>
+      <p id="resultSummary" style="font-size:1.08rem;"></p>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px;">
+        <button class="btn btn-outline" onclick="retryQuiz()">🔄 Пройти заново</button>
+        <button class="btn btn-primary" onclick="backToMenu()">К главам</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="cheatModal" onclick="if(event.target===this) closeCheat()">
+    <div class="modal-card">
+      <div class="modal-head">
+        <strong id="cheatTitle">Шпаргалка</strong>
+        <button class="nav-btn" onclick="closeCheat()">✕ Закрыть</button>
+      </div>
+      <div class="modal-body" id="cheatBody"></div>
+    </div>
+  </div>
+
+  <script>
+    (function syncBackLink() {
+      const uid = typeof getCurrentUserId === "function" ? getCurrentUserId() : new URLSearchParams(window.location.search).get("uid");
+      if (uid && uid !== "guest") {
+        document.getElementById("backLink").href = "../index.html?uid=" + encodeURIComponent(uid);
+      }
+    })();
+
+    const CHAPTERS = [
+      { num: 1, title: "Глава 1. Искренность (Ихляс) и работа над сердцем", keys: ["искренност", "ихляс", "сердц", "глава 1"] },
+      { num: 2, title: "Глава 2. Адаб по отношению к Аллаху и Корану", keys: ["аллаху и корану", "корану", "глава 2"] },
+      { num: 3, title: "Глава 3. Адаб к Пророку ﷺ и обладателям знания", keys: ["пророку", "знания", "учёным", "глава 3"] },
+      { num: 4, title: "Глава 4. Благочестие к родителям и родственные связи", keys: ["родителям", "родственн", "валидайн", "глава 4"] },
+      { num: 5, title: "Глава 5. Адаб в семье: супруги и воспитание детей", keys: ["семье", "супруг", "дет", "глава 5"] },
+      { num: 6, title: "Глава 6. Адаб с соседями, гостями и друзьями", keys: ["сосед", "гост", "друз", "глава 6"] },
+      { num: 7, title: "Глава 7. Культура речи и хранение языка", keys: ["речи", "язык", "гыйб", "глава 7"] },
+      { num: 8, title: "Глава 8. Этикет приветствия, собраний и общения", keys: ["приветств", "собрани", "общен", "салям", "глава 8"] },
+      { num: 9, title: "Глава 9. Адаб еды, питья, сна и внешнего вида", keys: ["еды", "питья", "сна", "внешнего", "глава 9"] },
+      { num: 10, title: "Глава 10. Адаб мечети, дороги и общественных мест", keys: ["мечети", "дороги", "обществен", "глава 10"] }
+    ];
+
+    function detectChapterNum(rawStr) {
+      if (!rawStr) return null;
+      const s = String(rawStr).toLowerCase();
+      for (const ch of CHAPTERS) {
+        for (const k of ch.keys) {
+          if (s.includes(k)) return ch.num;
+        }
+      }
+      return null;
+    }
+
+    const mappedCheats = {};
+    const mappedQuestions = { 1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[], 8:[], 9:[], 10:[] };
+
+    function collectData() {
+      const sources = [
+        window.ADAB_DATA,
+        window.adabData,
+        window.QUIZ_DATA,
+        { cheatsheets: window.cheatsheets, questions: window.questions || window.allQuestions }
+      ];
+
+      const seenQ = new Set();
+
+      sources.forEach(src => {
+        if (!src) return;
+        if (src.cheatsheets && typeof src.cheatsheets === "object") {
+          Object.entries(src.cheatsheets).forEach(([k, html]) => {
+            if (!html) return;
+            const num = detectChapterNum(k) || detectChapterNum(html.slice(0, 160));
+            if (num && !mappedCheats[num]) {
+              mappedCheats[num] = html;
+            }
+          });
+        }
+        if (Array.isArray(src.questions)) {
+          src.questions.forEach(q => {
+            if (!q || !q.question || seenQ.has(q.question)) return;
+            const num = detectChapterNum(q.chapter) || detectChapterNum(q.topic) || detectChapterNum(q.question);
+            if (num) {
+              seenQ.add(q.question);
+              mappedQuestions[num].push(q);
+            }
+          });
+        }
+      });
+    }
+
+    let progressStore = {};
+    try {
+      progressStore = JSON.parse(localStorage.getItem("adab_progress_v1") || "{}");
+    } catch (e) {}
+
+    function renderMenu() {
+      collectData();
+      const list = document.getElementById("chaptersList");
+      list.innerHTML = "";
+
+      let totalCheats = 0;
+      let totalQs = 0;
+
+      CHAPTERS.forEach(ch => {
+        const qs = mappedQuestions[ch.num] || [];
+        const hasCheat = Boolean(mappedCheats[ch.num]);
+        if (hasCheat) totalCheats++;
+        totalQs += qs.length;
+
+        const saved = progressStore[ch.num];
+        const statusText = saved ? ` • Лучший результат: ${saved}%` : "";
+
+        const card = document.createElement("div");
+        card.className = "chapter-card";
+        card.innerHTML = `
+          <div class="chapter-info">
+            <div class="chapter-title">${ch.title}</div>
+            <div class="chapter-meta">Вопросов: ${qs.length}${statusText}</div>
+          </div>
+          <div class="chapter-actions">
+            ${hasCheat ? `<button class="btn btn-outline" onclick="openCheat(${ch.num})">📖 Шпаргалка</button>` : ""}
+            <button class="btn btn-primary" onclick="startChapter(${ch.num})">📝 Тест</button>
+          </div>
+        `;
+        list.appendChild(card);
+      });
+
+      document.getElementById("statsRow").innerHTML = `
+        <span class="stat-pill">📚 10 глав</span>
+        <span class="stat-pill">📝 ${totalQs} вопросов</span>
+        <span class="stat-pill">📖 ${totalCheats} шпаргалок</span>
+      `;
+
+      if (totalQs >= 20) {
+        document.getElementById("examCard").style.display = "flex";
+      }
+    }
+
+    function openCheat(num) {
+      const ch = CHAPTERS.find(c => c.num === num);
+      document.getElementById("cheatTitle").textContent = "📖 " + (ch ? ch.title : "Шпаргалка");
+      document.getElementById("cheatBody").innerHTML = mappedCheats[num] || "<p>Конспект скоро будет добавлен.</p>";
+      document.getElementById("cheatModal").style.display = "flex";
+    }
+    function closeCheat() {
+      document.getElementById("cheatModal").style.display = "none";
+    }
+
+    let activeChapterNum = null;
+    let activeQuestions = [];
+    let qIdx = 0;
+    let score = 0;
+    let slotCounter = 0;
+    let currentShuffledOptions = [];
+
+    function buildBalancedOptions(q) {
+      const opts = Array.isArray(q.options) ? q.options : [];
+      const correctIdx = typeof q.correct === "number" ? q.correct : 0;
+      const items = opts.map((text, idx) => ({
+        text: text,
+        isCorrect: idx === correctIdx
+      }));
+
+      if (items.length < 2) return items;
+
+      const correctItem = items.find(it => it.isCorrect) || items[0];
+      const wrongItems = items.filter(it => !it.isCorrect);
+
+      for (let i = wrongItems.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [wrongItems[i], wrongItems[j]] = [wrongItems[j], wrongItems[i]];
+      }
+
+      const targetSlot = (slotCounter + Math.floor(Math.random() * items.length)) % items.length;
+      slotCounter++;
+
+      const arranged = [];
+      let wPtr = 0;
+      for (let i = 0; i < items.length; i++) {
+        if (i === targetSlot) arranged.push(correctItem);
+        else arranged.push(wrongItems[wPtr++]);
+      }
+      return arranged;
+    }
+
+    function startChapter(num) {
+      const qs = mappedQuestions[num] || [];
+      if (!qs.length) {
+        alert("Вопросы для этой главы не найдены. Убедитесь, что все файлы adab_part*.js загружены в папку adab/ на GitHub.");
+        return;
+      }
+      activeChapterNum = num;
+      activeQuestions = [...qs].sort(() => Math.random() - 0.5);
+      launchQuiz();
+    }
+
+    function startExam() {
+      const all = Object.values(mappedQuestions).flat();
+      if (!all.length) return;
+      activeChapterNum = "exam";
+      activeQuestions = [...all].sort(() => Math.random() - 0.5).slice(0, 40);
+      launchQuiz();
+    }
+
+    function launchQuiz() {
+      qIdx = 0;
+      score = 0;
+      document.getElementById("menuView").style.display = "none";
+      document.getElementById("resultView").style.display = "none";
+      document.getElementById("quizView").style.display = "block";
+
+      const cheatBtn = document.getElementById("inQuizCheatBtn");
+      if (typeof activeChapterNum === "number" && mappedCheats[activeChapterNum]) {
+        cheatBtn.style.display = "inline-flex";
+      } else {
+        cheatBtn.style.display = "none";
+      }
+      renderQuestion();
+    }
+
+    function openCurrentCheat() {
+      if (typeof activeChapterNum === "number") {
+        openCheat(activeChapterNum);
+      }
+    }
+
+    function renderQuestion() {
+      const q = activeQuestions[qIdx];
+      document.getElementById("quizProgress").textContent =
+        `Вопрос ${qIdx + 1} из ${activeQuestions.length} • Верно: ${score}`;
+      document.getElementById("quizChapterLabel").textContent =
+        q.chapter ? `Раздел: ${q.chapter}` : "";
+      document.getElementById("qText").textContent = q.question;
+
+      const optsDiv = document.getElementById("qOptions");
+      optsDiv.innerHTML = "";
+      document.getElementById("expBox").style.display = "none";
+      document.getElementById("nextBtn").style.display = "none";
+
+      currentShuffledOptions = buildBalancedOptions(q);
+
+      currentShuffledOptions.forEach((optObj, i) => {
+        const b = document.createElement("button");
+        b.className = "opt-btn";
+        b.textContent = optObj.text;
+        b.onclick = () => selectAnswer(i, b);
+        optsDiv.appendChild(b);
+      });
+    }
+
+    function selectAnswer(idx, btn) {
+      const q = activeQuestions[qIdx];
+      const btns = document.querySelectorAll("#qOptions .opt-btn");
+      btns.forEach(b => b.disabled = true);
+
+      const chosen = currentShuffledOptions[idx];
+      if (chosen && chosen.isCorrect) {
+        btn.classList.add("correct");
+        score++;
+      } else {
+        btn.classList.add("wrong");
+        currentShuffledOptions.forEach((optObj, i) => {
+          if (optObj.isCorrect && btns[i]) {
+            btns[i].classList.add("correct");
+          }
+        });
+      }
+
+      document.getElementById("quizProgress").textContent =
+        `Вопрос ${qIdx + 1} из ${activeQuestions.length} • Верно: ${score}`;
+
+      if (q.explanation || q.source) {
+        document.getElementById("expText").textContent = q.explanation || "";
+        document.getElementById("expSource").textContent = q.source ? "Источник: " + q.source : "";
+        document.getElementById("expBox").style.display = "block";
+      }
+
+      const nextBtn = document.getElementById("nextBtn");
+      nextBtn.style.display = "inline-flex";
+      nextBtn.textContent = (qIdx === activeQuestions.length - 1) ? "Завершить тест 🏁" : "Следующий вопрос";
+    }
+
+    function nextQuestion() {
+      qIdx++;
+      if (qIdx < activeQuestions.length) {
+        renderQuestion();
+      } else {
+        finishQuiz();
+      }
+    }
+
+    function finishQuiz() {
+      document.getElementById("quizView").style.display = "none";
+      document.getElementById("resultView").style.display = "block";
+
+      const pct = Math.round((score / activeQuestions.length) * 100);
+      if (typeof activeChapterNum === "number") {
+        const prev = progressStore[activeChapterNum] || 0;
+        if (pct > prev) {
+          progressStore[activeChapterNum] = pct;
+          localStorage.setItem("adab_progress_v1", JSON.stringify(progressStore));
+        }
+      }
+
+      let note = "Рекомендуем ещё раз прочитать шпаргалку и повторить тест.";
+      if (pct >= 90) note = "МашаАллах! Отличное знание материала.";
+      else if (pct >= 70) note = "Хороший результат! Закрепите оставшиеся моменты.";
+
+      document.getElementById("resultSummary").innerHTML =
+        `Ваш результат: <strong>${score} из ${activeQuestions.length} (${pct}%)</strong><br><br>${note}`;
+    }
+
+    function retryQuiz() {
+      activeQuestions.sort(() => Math.random() - 0.5);
+      launchQuiz();
+    }
+
+    function backToMenu() {
+      document.getElementById("quizView").style.display = "none";
+      document.getElementById("resultView").style.display = "none";
+      document.getElementById("menuView").style.display = "block";
+      renderMenu();
+    }
+
+    document.addEventListener("DOMContentLoaded", renderMenu);
+  </script>
+</body>
+</html>
