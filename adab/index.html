@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Адаб и Ахляк — Исламская этика и воспитание души</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="../style.css?v=20261128" />
+  <script src="../auth.js?v=20261128"></script>
+  <style>
+    .hidden { display: none !important; }
+
+    .progress-wrap {
+      background: #E5ECE6;
+      border: 1px solid #8FA695;
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 700;
+      color: #1A281F;
+      margin-bottom: 8px;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: #C7D4C9;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #1F523F;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .chapter-badge {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 8px;
+      background: #D0DDD2;
+      color: #1F523F;
+    }
+
+    .chapter-badge.done {
+      background: #C7DFC9;
+      color: #16301B;
+    }
+
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #8FA695;
+      flex-wrap: wrap;
+    }
+
+    .quiz-counter {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #1F523F;
+    }
+
+    .q-text {
+      font-size: 16.5px;
+      font-weight: 700;
+      color: #1A281F;
+      margin-bottom: 16px;
+      line-height: 1.45;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .exp-box {
+      margin-top: 14px;
+      padding: 13px 14px;
+      border-radius: 12px;
+      background: #D6E1D8;
+      border-left: 4px solid #1F523F;
+      font-size: 14px;
+      color: #1A281F;
+      line-height: 1.5;
+    }
+
+    .source-tag {
+      display: block;
+      margin-top: 6px;
+      font-size: 12.5px;
+      color: #435749;
+      font-style: italic;
+    }
+
+    .cheat-body h3 {
+      margin-top: 0;
+      color: #1F523F;
+      font-size: 18px;
+      border-bottom: 1px solid #8FA695;
+      padding-bottom: 8px;
+    }
+
+    .cheat-body h4 {
+      margin: 14px 0 6px;
+      color: #1A281F;
+      font-size: 15px;
+    }
+
+    .cheat-body ul, .cheat-body ol {
+      padding-left: 20px;
+      margin: 8px 0;
+    }
+
+    .cheat-body li {
+      margin-bottom: 7px;
+      font-size: 14.5px;
+      line-height: 1.5;
+    }
+
+    .result-score {
+      font-size: 32px;
+      font-weight: 800;
+      color: #1F523F;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="top-nav">
+      <a class="back-btn" id="backLink" href="../index.html">Назад</a>
+    </div>
+
+    <div id="menuView">
+      <div class="course-header">
+        <h1>Адаб и Ахляк</h1>
+        <p>Исламская этика, воспитание души и благой нрав по Корану, Сунне и трудам учёных</p>
+        <div class="stats-bar">
+          <span class="stat-pill" id="statChapters">14 глав</span>
+          <span class="stat-pill" id="statCheats">0 шпаргалок</span>
+          <span class="stat-pill" id="statQuestions">0 вопросов</span>
+        </div>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="progress-header">
+          <span>Общий прогресс по курсу</span>
+          <span id="overallProgressText">0 / 14 глав</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="overallProgressFill"></div>
+        </div>
+      </div>
+
+      <div id="chaptersList"></div>
+
+      <div class="card" style="text-align:center;margin-top:18px;">
+        <h3 style="margin:0 0 6px;font-size:17px;color:#1F523F;">🎓 Итоговый зачёт по курсу</h3>
+        <p style="margin:0 0 14px;font-size:13.5px;color:#435749;">40 случайных вопросов из всех 14 разделов для комплексной проверки знаний</p>
+        <button class="btn btn-primary" id="startExamBtn" onclick="startExam()">Начать итоговый зачёт (40 вопросов)</button>
+      </div>
+    </div>
+
+    <div class="card hidden" id="cheatView">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;">
+        <button class="back-btn" onclick="backToMenu()">Назад к главам</button>
+        <button class="btn btn-primary" id="cheatToTestBtn" style="width:auto;padding:9px 16px;" onclick="startTestFromCheat()">📝 Перейти к тесту</button>
+      </div>
+      <div class="cheat-body" id="cheatBody"></div>
+    </div>
+
+    <div class="card hidden" id="quizView">
+      <div class="quiz-header">
+        <button class="back-btn" style="padding:6px 14px;font-size:13px;" onclick="backToMenu()">Назад к главам</button>
+        <span class="quiz-counter" id="quizProgress">Вопрос 1 из 15</span>
+        <button class="btn btn-cheat" id="inQuizCheatBtn" style="width:auto;padding:6px 12px;font-size:13px;" onclick="openCurrentCheat()">📖 Шпаргалка</button>
+      </div>
+      <div id="quizChapterLabel" style="font-size:12.5px;color:#435749;font-weight:600;margin-bottom:6px;"></div>
+      <div class="q-text" id="qText"></div>
+      <div class="options" id="qOptions"></div>
+      <div class="exp-box hidden" id="expBox">
+        <div id="expText"></div>
+        <span class="source-tag" id="expSource"></span>
+      </div>
+      <div style="margin-top:16px;display:flex;justify-content:space-between;align-items:center;gap:10px;">
+        <span id="quizScoreLive" style="font-size:13px;font-weight:600;color:#435749;">Верно: 0</span>
+        <button class="btn btn-primary hidden" id="nextBtn" style="width:auto;padding:10px 18px;" onclick="nextQuestion()">Следующий вопрос</button>
+      </div>
+    </div>
+
+    <div class="card hidden" id="resultView" style="text-align:center;">
+      <div style="font-size:42px;" id="resultEmoji">🌟</div>
+      <h2 style="margin:8px 0 4px;color:#1A281F;" id="resultTitle">Тест завершён!</h2>
+      <div class="result-score" id="resultSummary">0 / 15</div>
+      <p style="color:#435749;font-size:14px;margin-bottom:18px;" id="resultNote"></p>
+      <div class="chapter-actions">
+        <button class="btn btn-cheat" onclick="backToMenu()">К списку глав</button>
+        <button class="btn btn-primary" onclick="retryQuiz()">Пройти заново</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop hidden" id="cheatModal" onclick="if(event.target===this) closeModalCheat()">
+    <div class="modal-box">
+      <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #8FA695;padding-bottom:10px;margin-bottom:12px;">
+        <strong id="modalCheatTitle" style="color:#1F523F;">📖 Шпаргалка</strong>
+        <button class="back-btn" style="padding:5px 12px;font-size:13px;" onclick="closeModalCheat()">Закрыть</button>
+      </div>
+      <div class="cheat-body" id="modalCheatBody"></div>
+    </div>
+  </div>
+
+  <script>
+    window.ADAB_DATA = window.ADAB_DATA || { cheatsheets: {}, questions: [] };
+    window.ADAB_CHAPTERS_DATA = window.ADAB_CHAPTERS_DATA || {};
+
+    window.registerAdabChapter = function(num, title, cheat, qs) {
+      if (typeof num === "object" && num !== null) {
+        var obj = num;
+        var n = obj.id || obj.num || obj.chapter;
+        if (n) {
+          window.ADAB_CHAPTERS_DATA[n] = {
+            title: obj.title || "",
+            cheat: obj.cheat || obj.cheatsheet || "",
+            questions: Array.isArray(obj.questions) ? obj.questions : []
+          };
+        }
+        return;
+      }
+      if (typeof num === "number") {
+        window.ADAB_CHAPTERS_DATA[num] = {
+          title: title || "",
+          cheat: typeof cheat === "string" ? cheat : (Array.isArray(qs) ? "" : ""),
+          questions: Array.isArray(qs) ? qs : (Array.isArray(cheat) ? cheat : [])
+        };
+      }
+    };
+  </script>
+  <script src="adab_part1.js?v=20261128"></script>
+  <script src="adab_part2.js?v=20261128"></script>
+  <script src="adab_part3a.js?v=20261128"></script>
+  <script src="adab_part3b.js?v=20261128"></script>
+  <script src="adab_part4a.js?v=20261128"></script>
+  <script src="adab_part4b.js?v=20261128"></script>
+
+  <script>
+    if (typeof protectCoursePage === "function") {
+      protectCoursePage("adab");
+    }
+
+    (function syncBackLink() {
+      const p = new URLSearchParams(window.location.search);
+      const uid = p.get("uid") || p.get("id");
+      if (uid) {
+        document.getElementById("backLink").href = "../index.html?uid=" + encodeURIComponent(uid);
+      }
+    })();
+
+    const CHAPTERS = [
+      { num: 1,  title: "Глава 1. Искренность (Ихляс) и работа над сердцем", keys: ["искренност", "ихляс", "сердц", "глава 1"] },
+      { num: 2,  title: "Глава 2. Адаб по отношению к Аллаху и Корану", keys: ["аллаху и корану", "корану", "глава 2"] },
+      { num: 3,  title: "Глава 3. Адаб к Пророку ﷺ и обладателям знания", keys: ["пророку", "знания", "учёным", "глава 3"] },
+      { num: 4,  title: "Глава 4. Благочестие к родителям и родственные связи", keys: ["родителям", "родственн", "валидайн", "глава 4"] },
+      { num: 5,  title: "Глава 5. Адаб в семье: супруги и воспитание детей", keys: ["семье", "супруг", "дет", "глава 5"] },
+      { num: 6,  title: "Глава 6. Адаб с соседями, гостями и друзьями", keys: ["сосед", "гост", "друз", "глава 6"] },
+      { num: 7,  title: "Глава 7. Культура речи и хранение языка", keys: ["речи", "язык", "гыйб", "глава 7"] },
+      { num: 8,  title: "Глава 8. Этикет приветствия, собраний и общения", keys: ["приветств", "собрани", "общен", "салям", "глава 8"] },
+      { num: 9,  title: "Глава 9. Адаб еды, питья, сна и внешнего вида", keys: ["еды", "питья", "сна", "внешнего", "глава 9"] },
+      { num: 10, title: "Глава 10. Адаб мечети, дороги и общественных мест", keys: ["мечети", "дороги", "обществен", "глава 10"] },
+      { num: 11, title: "Глава 11. Цифровой адаб: соцсети, мессенджеры и проверка вестей", keys: ["цифров", "соцсет", "мессендж", "новост", "тасаббут", "глава 11"] },
+      { num: 12, title: "Глава 12. Этикет разногласий (Адаб аль-Ихтиляф) и наставления", keys: ["разноглас", "ихтиляф", "наставлен", "насиха", "глава 12"] },
+      { num: 13, title: "Глава 13. Очищение сердца (Тазкият ан-Нафс) и болезни души", keys: ["очищен", "тазкият", "болезн", "хасад", "завист", "глава 13"] },
+      { num: 14, title: "Глава 14. Адаб труда, торговли, договоров и долгов", keys: ["труд", "торгов", "договор", "долг", "финанс", "глава 14"] }
+    ];
+
+    function detectChapterNum(rawStr) {
+      if (typeof rawStr === "number" && rawStr >= 1 && rawStr <= 14) return rawStr;
+      if (!rawStr) return null;
+      const s = String(rawStr).toLowerCase();
+      const numMatch = s.match(/глава\s*(\d+)/);
+      if (numMatch) {
+        const parsed = parseInt(numMatch[1], 10);
+        if (parsed >= 1 && parsed <= 14) return parsed;
+      }
+      for (const ch of CHAPTERS) {
+        for (const k of ch.keys) {
+          if (s.includes(k)) return ch.num;
+        }
+      }
+      return null;
+    }
+
+    const mappedCheats = {};
+    const mappedQuestions = {};
+    for (let i = 1; i <= 14; i++) mappedQuestions[i] = [];
+
+    function collectData() {
+      Object.keys(window.ADAB_CHAPTERS_DATA).forEach(k => {
+        const num = Number(k);
+        const item = window.ADAB_CHAPTERS_DATA[k];
+        if (num >= 1 && num <= 14 && item) {
+          if (item.cheat && !mappedCheats[num]) mappedCheats[num] = item.cheat;
+          if (Array.isArray(item.questions)) {
+            item.questions.forEach(q => {
+              if (q && (q.question || q.q)) {
+                mappedQuestions[num].push({
+                  chapter: CHAPTERS[num - 1].title,
+                  question: q.question || q.q,
+                  options: q.options || q.a || [],
+                  correct: typeof q.correct === "number" ? q.correct : (typeof q.c === "number" ? q.c : 0),
+                  explanation: q.explanation || q.exp || "",
+                  source: q.source || ""
+                });
+              }
+            });
+          }
+        }
+      });
+
+      const sources = [
+        window.ADAB_DATA,
+        window.adabData,
+        window.QUIZ_DATA,
+        { cheatsheets: window.cheatsheets, questions: window.questions || window.allQuestions }
+      ];
+
+      const seenQ = new Set();
+      Object.values(mappedQuestions).flat().forEach(q => seenQ.add(q.question));
+
+      sources.forEach(src => {
+        if (!src) return;
+        if (src.cheatsheets && typeof src.cheatsheets === "object") {
+          Object.entries(src.cheatsheets).forEach(([k, html]) => {
+            if (!html) return;
+            const num = detectChapterNum(k) || detectChapterNum(html.slice(0, 180));
+            if (num && !mappedCheats[num]) {
+              mappedCheats[num] = html;
+            }
+          });
+        }
+        if (Array.isArray(src.questions)) {
+          src.questions.forEach(q => {
+            const qText = q && (q.question || q.q);
+            if (!qText || seenQ.has(qText)) return;
+            const num = detectChapterNum(q.chapterId || q.num) || detectChapterNum(q.chapter) || detectChapterNum(q.topic) || detectChapterNum(qText);
+            if (num && mappedQuestions[num]) {
+              seenQ.add(qText);
+              mappedQuestions[num].push({
+                chapter: CHAPTERS[num - 1].title,
+                question: qText,
+                options: q.options || q.a || [],
+                correct: typeof q.correct === "number" ? q.correct : (typeof q.c === "number" ? q.c : 0),
+                explanation: q.explanation || q.exp || "",
+                source: q.source || ""
+              });
+            }
+          });
+        }
+      });
+    }
+
+    let progressStore = {};
+    try {
+      progressStore = JSON.parse(localStorage.getItem("adab_progress_v2") || localStorage.getItem("adab_progress_v1") || "{}");
+    } catch (e) {}
+
+    function renderMenu() {
+      collectData();
+      const list = document.getElementById("chaptersList");
+      list.innerHTML = "";
+
+      let totalCheats = 0;
+      let totalQs = 0;
+      let completedCount = 0;
+
+      CHAPTERS.forEach(ch => {
+        const qs = mappedQuestions[ch.num] || [];
+        const hasCheat = Boolean(mappedCheats[ch.num]);
+        if (hasCheat) totalCheats++;
+        totalQs += qs.length;
+
+        const saved = progressStore[ch.num];
+        const isDone = typeof saved === "number" && saved >= 70;
+        if (isDone) completedCount++;
+
+        const card = document.createElement("div");
+        card.className = "chapter-card";
+        card.innerHTML = `
+          <div class="chapter-info">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+              <span class="chapter-badge ${isDone ? "done" : ""}">${isDone ? "✓ Пройдено" : "Глава " + ch.num}</span>
+              ${typeof saved === "number" ? `<span style="font-size:12px;font-weight:700;color:#1F523F;">Лучший: ${saved}%</span>` : ""}
+            </div>
+            <div class="chapter-title">${ch.title}</div>
+            <div class="chapter-meta">${hasCheat ? "📖 Конспект-шпаргалка • " : ""}📝 Вопросов: ${qs.length}</div>
+          </div>
+          <div class="chapter-actions ${!hasCheat ? "single" : ""}">
+            ${hasCheat ? `<button class="btn btn-cheat" onclick="openCheat(${ch.num})">📖 Шпаргалка</button>` : ""}
+            <button class="btn btn-primary" ${qs.length === 0 ? 'disabled style="opacity:0.55;"' : ''} onclick="startChapter(${ch.num})">
+              ${qs.length > 0 ? "📝 Тест" : "⏳ Ожидает загрузки"}
+            </button>
+          </div>
+        `;
+        list.appendChild(card);
+      });
+
+      document.getElementById("statChapters").textContent = "14 глав";
+      document.getElementById("statCheats").textContent = `${totalCheats} шпаргалок`;
+      document.getElementById("statQuestions").textContent = `${totalQs} вопросов`;
+      document.getElementById("overallProgressText").textContent = `${completedCount} / 14 глав`;
+      document.getElementById("overallProgressFill").style.width = `${Math.round((completedCount / 14) * 100)}%`;
+
+      const examBtn = document.getElementById("startExamBtn");
+      examBtn.disabled = totalQs < 20;
+      examBtn.style.opacity = totalQs < 20 ? "0.55" : "1";
+    }
+
+    let viewedCheatNum = null;
+
+    function openCheat(num) {
+      viewedCheatNum = num;
+      document.getElementById("cheatBody").innerHTML = mappedCheats[num] || "<p>Конспект скоро будет добавлен.</p>";
+      const qs = mappedQuestions[num] || [];
+      document.getElementById("cheatToTestBtn").style.display = qs.length > 0 ? "inline-flex" : "none";
+      document.getElementById("menuView").classList.add("hidden");
+      document.getElementById("quizView").classList.add("hidden");
+      document.getElementById("resultView").classList.add("hidden");
+      document.getElementById("cheatView").classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function startTestFromCheat() {
+      if (viewedCheatNum) startChapter(viewedCheatNum);
+    }
+
+    let activeChapterNum = null;
+    let activeQuestions = [];
+    let qIdx = 0;
+    let score = 0;
+    let slotCursor = 0;
+
+    function buildBalancedOptions(q) {
+      const opts = Array.isArray(q.options) ? q.options : [];
+      const corrIdx = typeof q.correct === "number" ? q.correct : 0;
+      const items = opts.map((text, idx) => ({
+        text: text,
+        isCorrect: idx === corrIdx
+      }));
+
+      if (items.length < 2) return items;
+
+      const correctItem = items.find(i => i.isCorrect) || items[0];
+      const wrongItems = items.filter(i => i !== correctItem);
+
+      for (let i = wrongItems.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [wrongItems[i], wrongItems[j]] = [wrongItems[j], wrongItems[i]];
+      }
+
+      const targetPos = (slotCursor + Math.floor(Math.random() * items.length)) % items.length;
+      slotCursor++;
+
+      const result = [];
+      let wPtr = 0;
+      for (let i = 0; i < items.length; i++) {
+        if (i === targetPos) result.push(correctItem);
+        else result.push(wrongItems[wPtr++]);
+      }
+      return result;
+    }
+
+    function startChapter(num) {
+      const qs = mappedQuestions[num] || [];
+      if (!qs.length) return;
+      activeChapterNum = num;
+      activeQuestions = [...qs].sort(() => Math.random() - 0.5);
+      launchQuiz();
+    }
+
+    function startExam() {
+      const all = Object.values(mappedQuestions).flat();
+      if (!all.length) return;
+      activeChapterNum = "exam";
+      activeQuestions = [...all].sort(() => Math.random() - 0.5).slice(0, 40);
+      launchQuiz();
+    }
+
+    function launchQuiz() {
+      qIdx = 0;
+      score = 0;
+      document.getElementById("menuView").classList.add("hidden");
+      document.getElementById("cheatView").classList.add("hidden");
+      document.getElementById("resultView").classList.add("hidden");
+      document.getElementById("quizView").classList.remove("hidden");
+
+      const cheatBtn = document.getElementById("inQuizCheatBtn");
+      if (typeof activeChapterNum === "number" && mappedCheats[activeChapterNum]) {
+        cheatBtn.style.display = "inline-flex";
+      } else {
+        cheatBtn.style.display = "none";
+      }
+      renderQuestion();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function openCurrentCheat() {
+      if (typeof activeChapterNum === "number" && mappedCheats[activeChapterNum]) {
+        const ch = CHAPTERS.find(c => c.num === activeChapterNum);
+        document.getElementById("modalCheatTitle").textContent = "📖 " + (ch ? ch.title : "Шпаргалка");
+        document.getElementById("modalCheatBody").innerHTML = mappedCheats[activeChapterNum];
+        document.getElementById("cheatModal").classList.remove("hidden");
+      }
+    }
+
+    function closeModalCheat() {
+      document.getElementById("cheatModal").classList.add("hidden");
+    }
+
+    function renderQuestion() {
+      const q = activeQuestions[qIdx];
+      document.getElementById("quizProgress").textContent = `Вопрос ${qIdx + 1} из ${activeQuestions.length}`;
+      document.getElementById("quizScoreLive").textContent = `Верно: ${score}`;
+      document.getElementById("quizChapterLabel").textContent = q.chapter || "";
+      document.getElementById("qText").textContent = q.question;
+
+      const optsDiv = document.getElementById("qOptions");
+      optsDiv.innerHTML = "";
+      document.getElementById("expBox").classList.add("hidden");
+      document.getElementById("nextBtn").classList.add("hidden");
+
+      const preparedOptions = buildBalancedOptions(q);
+
+      preparedOptions.forEach(optObj => {
+        const b = document.createElement("button");
+        b.className = "option-btn";
+        b.textContent = optObj.text;
+        b.dataset.correct = optObj.isCorrect ? "1" : "0";
+        b.onclick = () => selectAnswer(b, q);
+        optsDiv.appendChild(b);
+      });
+    }
+
+    function selectAnswer(clickedBtn, q) {
+      const btns = document.querySelectorAll("#qOptions .option-btn");
+      btns.forEach(b => {
+        b.disabled = true;
+        if (b.dataset.correct === "1") {
+          b.classList.add("correct");
+        }
+      });
+
+      if (clickedBtn.dataset.correct === "1") {
+        score++;
+      } else {
+        clickedBtn.classList.add("wrong");
+      }
+
+      document.getElementById("quizScoreLive").textContent = `Верно: ${score}`;
+
+      if (q.explanation || q.source) {
+        document.getElementById("expText").innerHTML = q.explanation ? `<strong>Разбор:</strong> ${q.explanation}` : "";
+        document.getElementById("expSource").textContent = q.source ? `Источник: ${q.source}` : "";
+        document.getElementById("expBox").classList.remove("hidden");
+      }
+
+      const nextBtn = document.getElementById("nextBtn");
+      nextBtn.classList.remove("hidden");
+      nextBtn.textContent = (qIdx === activeQuestions.length - 1) ? "Завершить тест" : "Следующий вопрос";
+    }
+
+    function nextQuestion() {
+      qIdx++;
+      if (qIdx < activeQuestions.length) renderQuestion();
+      else finishQuiz();
+    }
+
+    function finishQuiz() {
+      document.getElementById("quizView").classList.add("hidden");
+      document.getElementById("resultView").classList.remove("hidden");
+
+      const pct = Math.round((score / activeQuestions.length) * 100);
+      if (typeof activeChapterNum === "number") {
+        const prev = progressStore[activeChapterNum] || 0;
+        if (pct > prev) {
+          progressStore[activeChapterNum] = pct;
+          localStorage.setItem("adab_progress_v2", JSON.stringify(progressStore));
+        }
+      }
+
+      let note = "Рекомендуем ещё раз прочитать конспект-шпаргалку и повторить тест.";
+      let emoji = "📖";
+      if (pct >= 85) {
+        note = "Ма шаа Аллах! Отличное знание исламской этики и правил благонравия.";
+        emoji = "🌟";
+      } else if (pct >= 65) {
+        note = "Хороший результат! Закрепите оставшиеся тонкости по шпаргалке.";
+        emoji = "👍";
+      }
+
+      document.getElementById("resultEmoji").textContent = emoji;
+      document.getElementById("resultSummary").textContent = `${score} / ${activeQuestions.length} (${pct}%)`;
+      document.getElementById("resultNote").textContent = note;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function retryQuiz() {
+      activeQuestions.sort(() => Math.random() - 0.5);
+      launchQuiz();
+    }
+
+    function backToMenu() {
+      document.getElementById("quizView").classList.add("hidden");
+      document.getElementById("cheatView").classList.add("hidden");
+      document.getElementById("resultView").classList.add("hidden");
+      document.getElementById("menuView").classList.remove("hidden");
+      renderMenu();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    document.addEventListener("DOMContentLoaded", renderMenu);
+  </script>
+</body>
+</html>
