@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Исламская библиотека знаний</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="style.css?v=20261129" />
+  <script src="auth.js?v=20261129"></script>
+  <style>
+    .access-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: #E5ECE6;
+      border: 1px solid #8FA695;
+      border-radius: 16px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      color: #1A281F;
+      box-shadow: 0 3px 10px rgba(14, 22, 17, 0.14);
+    }
+    .access-info {
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+    .access-sub {
+      font-size: 12px;
+      color: #435749;
+      font-weight: 500;
+    }
+    .hero-banner {
+      background: linear-gradient(145deg, #1F523F 0%, #183E30 100%) !important;
+      color: #F4F7F4 !important;
+      border-radius: 18px !important;
+      padding: 22px 18px !important;
+      text-align: center !important;
+      margin-bottom: 18px !important;
+      border: 1px solid #48735E !important;
+      box-shadow: 0 6px 18px rgba(14, 22, 17, 0.25) !important;
+    }
+    .hero-bismillah {
+      font-family: "Amiri", "Scheherazade New", "Traditional Arabic", serif;
+      font-size: 24px;
+      color: #E7F0EA;
+      margin-bottom: 6px;
+      direction: rtl;
+    }
+    .course-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .course-link {
+      display: block;
+      text-decoration: none;
+      background: #E5ECE6;
+      border: 1px solid #8FA695;
+      border-radius: 16px;
+      padding: 15px 16px;
+      color: #1A281F;
+      box-shadow: 0 4px 12px rgba(14, 22, 17, 0.14);
+      transition: transform 0.12s ease;
+    }
+    .course-link:active {
+      transform: scale(0.99);
+    }
+    .course-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .course-title {
+      font-size: 16.5px;
+      font-weight: 700;
+      color: #1A281F;
+    }
+    .course-tag {
+      font-size: 12px;
+      font-weight: 700;
+      color: #1F523F;
+      background: #DCE5DD;
+      border: 1px solid #8FA695;
+      padding: 3px 9px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .course-desc {
+      font-size: 13.5px;
+      color: #435749;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="access-bar">
+      <div class="access-info">
+        <div id="accessStatusTitle">Проверка доступа...</div>
+        <div class="access-sub" id="accessStatusSub">Исламская учебная библиотека</div>
+      </div>
+    </div>
+
+    <div class="hero-banner">
+      <div class="hero-bismillah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+      <h1 style="margin:0 0 6px;font-size:22px;color:#FFFFFF;">Исламская библиотека знаний</h1>
+      <p style="margin:0;font-size:14px;color:#D7E5DC;">Конспекты, интерактивные тесты и чтение Корана с разбором</p>
+    </div>
+
+    <div class="course-grid" id="courseGrid"></div>
+  </div>
+
+  <script>
+    const COURSES = [
+      {
+        title: "1. Сира Пророка Мухаммада ﷺ",
+        desc: "Жизнеописание Посланника Аллаха ﷺ, семья и выдающиеся сподвижники",
+        tag: "7 модулей • 190 вопросов",
+        url: "sira/index.html"
+      },
+      {
+        title: "2. 40 хадисов имама ан-Науауи",
+        desc: "Текст, перевод, разбор и студийная аудиоозвучка 42 хадисов",
+        tag: "4 главы • Аудио",
+        url: "nawawi/index.html"
+      },
+      {
+        title: "3. Фикх аль-Ибада",
+        desc: "Очищение, намаз, пост, закят и хадж согласно Ханафитскому мазхабу",
+        tag: "16 глав • 240 вопросов",
+        url: "fiqh/index.html"
+      },
+      {
+        title: "4. Таджвид: Правила чтения Корана",
+        desc: "Махрадж букв, правила нун сакина, мадд и остановки с примерами",
+        tag: "10 глав • 150 вопросов",
+        url: "tajweed/index.html"
+      },
+      {
+        title: "5. Адаб и Ахляк",
+        desc: "Исламская этика, воспитание сердца, цифровой адаб и культура торговли",
+        tag: "14 глав • 210 вопросов",
+        url: "adab/index.html"
+      },
+      {
+        title: "6. Исламское вероубеждение (Акыда)",
+        desc: "Столпы Имана, доказательства существования Аллаха и правила об атрибутах",
+        tag: "14 глав • 210 вопросов",
+        url: "aqeedah/index.html"
+      },
+      {
+        title: "7. Арабский язык (Сарф и Нахв)",
+        desc: "Грамматика, спряжение глаголов, породы и ключевая лексика Корана",
+        tag: "10 уроков • 150 вопросов",
+        url: "arabic/index.html"
+      },
+      {
+        title: "8. Избранные суры и аяты Корана",
+        desc: "Цветовая разметка таджвида, пословный перевод и аудиочтение чтецов",
+        tag: "8 разделов • Аудио",
+        url: "quran/index.html"
+      },
+      {
+        title: "9. Фикх. Дополнение: Семья, обряды и наследство",
+        desc: "Сватовство, никах, акыка, обрезание, мирас и джаназа по Ханафитскому мазхабу",
+        tag: "4 главы • 60 вопросов",
+        url: "fiqh_extra/index.html"
+      }
+    ];
+
+    document.addEventListener("DOMContentLoaded", function() {
+      const status = typeof window.getMadrasahAccess === "function"
+        ? window.getMadrasahAccess()
+        : { allowed: true, mode: "full", uid: "" };
+
+      const titleEl = document.getElementById("accessStatusTitle");
+      const subEl = document.getElementById("accessStatusSub");
+
+      if (status.mode === "full") {
+        titleEl.textContent = "Ваш ID: " + status.uid + " • Полный доступ";
+        subEl.textContent = "Все 9 разделов библиотеки открыты";
+      } else if (status.mode === "trial") {
+        titleEl.textContent = "Пробный доступ (осталось ~" + status.hoursLeft + " ч.)";
+        subEl.textContent = status.uid ? ("Ваш ID: " + status.uid) : "Открыто в Telegram";
+      } else {
+        titleEl.textContent = "Доступ ограничен";
+        subEl.textContent = "Откройте приложение через бота в Telegram";
+      }
+
+      const suffix = status.uid ? ("?uid=" + encodeURIComponent(status.uid)) : "";
+      const grid = document.getElementById("courseGrid");
+      grid.innerHTML = COURSES.map(c => `
+        <a class="course-link" href="${c.url}${suffix}">
+          <div class="course-top">
+            <span class="course-title">${c.title}</span>
+            <span class="course-tag">${c.tag}</span>
+          </div>
+          <div class="course-desc">${c.desc}</div>
+        </a>
+      `).join("");
+    });
+  </script>
+</body>
+</html>
