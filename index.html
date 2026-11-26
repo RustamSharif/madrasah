@@ -8,200 +8,156 @@
   <link rel="stylesheet" href="style.css?v=20261129" />
   <script src="auth.js?v=20261129"></script>
   <style>
-    .access-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      background: #E5ECE6;
-      border: 1px solid #8FA695;
-      border-radius: 16px;
-      padding: 10px 14px;
-      margin-bottom: 14px;
-      color: #1A281F;
-      box-shadow: 0 3px 10px rgba(14, 22, 17, 0.14);
-    }
-    .access-info {
-      font-size: 13px;
-      font-weight: 600;
-      line-height: 1.35;
-    }
-    .access-sub {
-      font-size: 12px;
-      color: #435749;
-      font-weight: 500;
-    }
-    .hero-banner {
-      background: linear-gradient(145deg, #1F523F 0%, #183E30 100%) !important;
-      color: #F4F7F4 !important;
-      border-radius: 18px !important;
-      padding: 22px 18px !important;
-      text-align: center !important;
-      margin-bottom: 18px !important;
-      border: 1px solid #48735E !important;
-      box-shadow: 0 6px 18px rgba(14, 22, 17, 0.25) !important;
-    }
-    .hero-bismillah {
-      font-family: "Amiri", "Scheherazade New", "Traditional Arabic", serif;
-      font-size: 24px;
-      color: #E7F0EA;
-      margin-bottom: 6px;
-      direction: rtl;
-    }
-    .course-grid {
+    .catalog-list {
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
-    .course-link {
+
+    .course-card {
       display: block;
       text-decoration: none;
-      background: #E5ECE6;
-      border: 1px solid #8FA695;
+      background: var(--card-bg, #E5ECE6);
+      border: 1px solid var(--border-color, #8FA695);
       border-radius: 16px;
-      padding: 15px 16px;
-      color: #1A281F;
+      padding: 16px 17px;
+      color: var(--text-main, #1A281F);
       box-shadow: 0 4px 12px rgba(14, 22, 17, 0.14);
       transition: transform 0.12s ease;
     }
-    .course-link:active {
+
+    .course-card:active {
       transform: scale(0.99);
     }
+
     .course-top {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 4px;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 6px;
     }
+
     .course-title {
       font-size: 16.5px;
       font-weight: 700;
-      color: #1A281F;
+      color: var(--text-main, #1A281F);
+      line-height: 1.3;
     }
-    .course-tag {
+
+    .course-pill {
+      flex-shrink: 0;
+      background: #D4E1D6;
+      border: 1px solid var(--border-color, #8FA695);
+      color: #1F523F;
       font-size: 12px;
       font-weight: 700;
-      color: #1F523F;
-      background: #DCE5DD;
-      border: 1px solid #8FA695;
-      padding: 3px 9px;
+      padding: 4px 10px;
       border-radius: 999px;
       white-space: nowrap;
     }
+
     .course-desc {
       font-size: 13.5px;
-      color: #435749;
+      color: var(--text-muted, #435749);
       line-height: 1.4;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="access-bar">
-      <div class="access-info">
-        <div id="accessStatusTitle">Проверка доступа...</div>
-        <div class="access-sub" id="accessStatusSub">Исламская учебная библиотека</div>
-      </div>
+    <div id="accessBar"></div>
+
+    <div class="header" style="border-bottom: 1px solid #48735E !important;">
+      <div style="font-family: 'Amiri', 'Scheherazade New', serif; font-size: 24px; margin-bottom: 6px; direction: rtl; color: #E2EFE6;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+      <h1>Исламская библиотека знаний</h1>
+      <p>Конспекты, интерактивные тесты и чтение Корана с разбором</p>
     </div>
 
-    <div class="hero-banner">
-      <div class="hero-bismillah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
-      <h1 style="margin:0 0 6px;font-size:22px;color:#FFFFFF;">Исламская библиотека знаний</h1>
-      <p style="margin:0;font-size:14px;color:#D7E5DC;">Конспекты, интерактивные тесты и чтение Корана с разбором</p>
-    </div>
+    <div class="catalog-list" id="catalogList">
+      <a href="sira/index.html" class="course-card">
+        <div class="course-top">
+          <div class="course-title">1. Сира Пророка Мухаммада ﷺ</div>
+          <span class="course-pill">7 модулей • 190 вопросов</span>
+        </div>
+        <div class="course-desc">Жизнеописание Посланника Аллаха ﷺ, семья и выдающиеся сподвижники</div>
+      </a>
 
-    <div class="course-grid" id="courseGrid"></div>
+      <a href="nawawi/index.html" class="course-card">
+        <div class="course-top">
+          <div class="course-title">2. 40 хадисов имама ан-Науауи</div>
+          <span class="course-pill">4 главы • Аудио</span>
+        </div>
+        <div class="course-desc">Текст, перевод, разбор и студийная аудиоозвучка 42 хадисов</div>
+      </a>
+
+      <a href="fiqh/index.html" class="course-card">
+        <div class="course-top">
+          <div class="course-title">3. Фикх аль-Ибада</div>
+          <span class="course-pill">16 глав • 240 вопросов</span>
+        </div>
+        <div class="course-desc">Очищение, намаз, пост, закят и хадж согласно Ханафитскому мазхабу</div>
+      </a>
+
+      <a href="tajweed/index.html" class="course-card" id="tajweedLink">
+        <div class="course-top">
+          <div class="course-title">4. Таджвид: Правила чтения Корана</div>
+          <span class="course-pill">10 глав • 150 вопросов</span>
+        </div>
+        <div class="course-desc">Махрадж букв, правила нун сакина, мадд и остановки с примерами</div>
+      </a>
+
+      <a href="adab/index.html" class="course-card">
+        <div class="course-top">
+          <div class="course-title">5. Адаб и Ахляк</div>
+          <span class="course-pill">14 глав • 210 вопросов</span>
+        </div>
+        <div class="course-desc">Исламская этика, воспитание сердца, цифровой адаб и культура торговли</div>
+      </a>
+
+      <a href="aqeedah/index.html" class="course-card">
+        <div class="course-top">
+          <div class="course-title">6. Исламское вероубеждение (Акыда)</div>
+          <span class="course-pill">14 глав • 210 вопросов</span>
+        </div>
+        <div class="course-desc">Столпы Имана, доказательства существования Аллаха и правила об атрибутах</div>
+      </a>
+
+      <a href="arabic/index.html" class="course-card">
+        <div class="course-top">
+          <div class="course-title">7. Арабский язык (Сарф и Нахв)</div>
+          <span class="course-pill">10 уроков • 150 вопросов</span>
+        </div>
+        <div class="course-desc">Базовая грамматика, спряжение глаголов и лексика Священного Корана</div>
+      </a>
+
+      <a href="quran/index.html" class="course-card">
+        <div class="course-top">
+          <div class="course-title">8. Избранные суры и аяты Корана</div>
+          <span class="course-pill">8 разделов • Аудио</span>
+        </div>
+        <div class="course-desc">Разметка таджвида, пословный перевод и озвучка чтецов по порядку Мусхафа</div>
+      </a>
+
+      <a href="fiqh_extra/index.html" class="course-card">
+        <div class="course-top">
+          <div class="course-title">9. Фикх. Дополнение: Семья и обряды</div>
+          <span class="course-pill">4 главы • 60 вопросов</span>
+        </div>
+        <div class="course-desc">Сватовство, никах, имянаречение, акыка, наследство и джаназа по Ханафитскому мазхабу</div>
+      </a>
+    </div>
   </div>
 
   <script>
-    const COURSES = [
-      {
-        title: "1. Сира Пророка Мухаммада ﷺ",
-        desc: "Жизнеописание Посланника Аллаха ﷺ, семья и выдающиеся сподвижники",
-        tag: "7 модулей • 190 вопросов",
-        url: "sira/index.html"
-      },
-      {
-        title: "2. 40 хадисов имама ан-Науауи",
-        desc: "Текст, перевод, разбор и студийная аудиоозвучка 42 хадисов",
-        tag: "4 главы • Аудио",
-        url: "nawawi/index.html"
-      },
-      {
-        title: "3. Фикх аль-Ибада",
-        desc: "Очищение, намаз, пост, закят и хадж согласно Ханафитскому мазхабу",
-        tag: "16 глав • 240 вопросов",
-        url: "fiqh/index.html"
-      },
-      {
-        title: "4. Таджвид: Правила чтения Корана",
-        desc: "Махрадж букв, правила нун сакина, мадд и остановки с примерами",
-        tag: "10 глав • 150 вопросов",
-        url: "tajweed/index.html"
-      },
-      {
-        title: "5. Адаб и Ахляк",
-        desc: "Исламская этика, воспитание сердца, цифровой адаб и культура торговли",
-        tag: "14 глав • 210 вопросов",
-        url: "adab/index.html"
-      },
-      {
-        title: "6. Исламское вероубеждение (Акыда)",
-        desc: "Столпы Имана, доказательства существования Аллаха и правила об атрибутах",
-        tag: "14 глав • 210 вопросов",
-        url: "aqeedah/index.html"
-      },
-      {
-        title: "7. Арабский язык (Сарф и Нахв)",
-        desc: "Грамматика, спряжение глаголов, породы и ключевая лексика Корана",
-        tag: "10 уроков • 150 вопросов",
-        url: "arabic/index.html"
-      },
-      {
-        title: "8. Избранные суры и аяты Корана",
-        desc: "Цветовая разметка таджвида, пословный перевод и аудиочтение чтецов",
-        tag: "8 разделов • Аудио",
-        url: "quran/index.html"
-      },
-      {
-        title: "9. Фикх. Дополнение: Семья, обряды и наследство",
-        desc: "Сватовство, никах, акыка, обрезание, мирас и джаназа по Ханафитскому мазхабу",
-        tag: "4 главы • 60 вопросов",
-        url: "fiqh_extra/index.html"
-      }
-    ];
-
     document.addEventListener("DOMContentLoaded", function() {
-      const status = typeof window.getMadrasahAccess === "function"
-        ? window.getMadrasahAccess()
-        : { allowed: true, mode: "full", uid: "" };
-
-      const titleEl = document.getElementById("accessStatusTitle");
-      const subEl = document.getElementById("accessStatusSub");
-
-      if (status.mode === "full") {
-        titleEl.textContent = "Ваш ID: " + status.uid + " • Полный доступ";
-        subEl.textContent = "Все 9 разделов библиотеки открыты";
-      } else if (status.mode === "trial") {
-        titleEl.textContent = "Пробный доступ (осталось ~" + status.hoursLeft + " ч.)";
-        subEl.textContent = status.uid ? ("Ваш ID: " + status.uid) : "Открыто в Telegram";
-      } else {
-        titleEl.textContent = "Доступ ограничен";
-        subEl.textContent = "Откройте приложение через бота в Telegram";
+      const uid = new URLSearchParams(window.location.search).get("uid");
+      if (uid) {
+        document.querySelectorAll("#catalogList a.course-card").forEach(function(link) {
+          const base = link.getAttribute("href").split("?")[0];
+          link.setAttribute("href", base + "?uid=" + encodeURIComponent(uid));
+        });
       }
-
-      const suffix = status.uid ? ("?uid=" + encodeURIComponent(status.uid)) : "";
-      const grid = document.getElementById("courseGrid");
-      grid.innerHTML = COURSES.map(c => `
-        <a class="course-link" href="${c.url}${suffix}">
-          <div class="course-top">
-            <span class="course-title">${c.title}</span>
-            <span class="course-tag">${c.tag}</span>
-          </div>
-          <div class="course-desc">${c.desc}</div>
-        </a>
-      `).join("");
     });
   </script>
 </body>
