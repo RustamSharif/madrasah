@@ -1,83 +1,101 @@
-(function() {
+(function () {
   var ALLOWED_IDS = [
     "859435297"
   ];
-  var TRIAL_DURATION_MS = 24 * 60 * 60 * 1000;
-  var TRIAL_STORAGE_KEY = "madrasah_trial_start_v1";
 
-  function getUid() {
+  var TRIAL_KEY = "madrasah_trial_start_v1";
+  var TRIAL_MS = 24 * 60 * 60 * 1000;
+
+  function getTgUserId() {
     try {
-      var tg = window.Telegram && window.Telegram.WebApp;
-      if (tg) {
-        if (typeof tg.ready === "function") tg.ready();
-        if (typeof tg.expand === "function") tg.expand();
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) {
-          return String(tg.initDataUnsafe.user.id);
-        }
+      if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
+        return String(window.Telegram.WebApp.initDataUnsafe.user.id);
       }
     } catch (e) {}
-
     try {
       var params = new URLSearchParams(window.location.search);
-      var urlUid = params.get("uid");
-      if (urlUid) return String(urlUid).trim();
+      var uid = params.get("uid");
+      if (uid) return String(uid).trim();
     } catch (e) {}
-
     return "";
   }
 
-  function hasAccess(uid) {
-    if (uid && ALLOWED_IDS.indexOf(uid) !== -1) {
-      return true;
-    }
+  function isInsideTelegram() {
     try {
-      var start = localStorage.getItem(TRIAL_STORAGE_KEY);
-      var now = Date.now();
-      if (!start) {
-        localStorage.setItem(TRIAL_STORAGE_KEY, String(now));
-        return true;
-      }
-      if (now - Number(start) <= TRIAL_DURATION_MS) {
-        return true;
-      }
+      return Boolean(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData && window.Telegram.WebApp.initData.length > 0);
     } catch (e) {
-      return true;
+      return false;
     }
-    return false;
   }
 
-  var currentUid = getUid();
-  window.MADRASAH_UID = currentUid;
+  function checkAccess() {
+    var uid = getTgUserId();
+    if (uid && ALLOWED_IDS.indexOf(uid) !== -1) {
+      return { allowed: true, mode: "full", uid: uid };
+    }
+    if (isInsideTelegram()) {
+      var now = Date.now();
+      var start = Number(localStorage.getItem(TRIAL_KEY) || "0");
+      if (!start) {
+        start = now;
+        localStorage.setItem(TRIAL_KEY, String(start));
+      }
+      if (now - start <= TRIAL_MS) {
+        return { allowed: true, mode: "trial", uid: uid || "Гость" };
+      }
+      return { allowed: false, mode: "expired", uid: uid || "Не определён" };
+    }
+    return { allowed: true, mode: "guest", uid: uid || "—" };
+  }
 
-  function appendUidToLinks() {
-    if (!currentUid) return;
+  function appendUidToLinks(uid) {
+    if (!uid || uid === "—" || uid === "Гость") return;
     var links = document.querySelectorAll("a[href]");
     for (var i = 0; i < links.length; i++) {
-      var a = links[i];
-      var href = a.getAttribute("href");
-      if (!href || href.indexOf("http") === 0 || href.indexOf("#") === 0 || href.indexOf("mailto:") === 0) {
-        continue;
-      }
+      var href = links[i].getAttribute("href");
+      if (!href || href.indexOf("http") === 0 || href.indexOf("#") === 0 || href.indexOf("javascript:") === 0) continue;
       if (href.indexOf("uid=") === -1) {
         var sep = href.indexOf("?") === -1 ? "?" : "&";
-        a.setAttribute("href", href + sep + "uid=" + encodeURIComponent(currentUid));
+        links[i].setAttribute("href", href + sep + "uid=" + encodeURIComponent(uid));
       }
     }
   }
 
-  window.protectCoursePage = function() {
-    if (!hasAccess(currentUid)) {
+  function updateIdBar(access) {
+    var idTextEl = document.getElementById("userIdDisplay");
+    var statusBadgeEl = document.getElementById("userAccessBadge");
+    if (idTextEl) {
+      idTextEl.textContent = "Ваш ID: " + access.uid;
+    }
+    if (statusBadgeEl) {
+      if (access.mode === "full") {
+        statusBadgeEl.textContent = "Полный доступ";
+      } else if (access.mode === "trial") {
+        statusBadgeEl.textContent = "Пробный доступ (24 ч)";
+      } else if (access.mode === "expired") {
+        statusBadgeEl.textContent = "Доступ ограничен";
+      } else {
+        statusBadgeEl.textContent = "Ознакомительный режим";
+      }
+    }
+  }
+
+  window.protectCoursePage = function () {
+    var access = checkAccess();
+    appendUidToLinks(access.uid);
+    if (!access.allowed) {
       document.body.innerHTML =
-        '<div style="max-width:480px;margin:60px auto;padding:24px;background:#E5ECE6;border:1px solid #8FA695;border-radius:16px;text-align:center;color:#1A281F;font-family:sans-serif;">' +
-        '<h2 style="margin:0 0 10px;font-size:20px;">Пробный период завершён</h2>' +
-        '<p style="margin:0;font-size:15px;color:#435749;">Для получения постоянного доступа ко всем разделам библиотеки обратитесь к администратору бота.</p>' +
+        '<div style="max-width:480px;margin:40px auto;padding:24px;background:#E5ECE6;color:#1A281F;border-radius:16px;border:1px solid #8FA695;text-align:center;font-family:sans-serif;">' +
+        '<h2 style="margin-top:0;color:#1F523F;">Пробный период завершён</h2>' +
+        '<p>Ваш ID: <strong>' + access.uid + '</strong></p>' +
+        '<p style="font-size:14px;color:#435749;">Для получения постоянного доступа ко всем разделам библиотеки обратитесь к администратору бота.</p>' +
         '</div>';
     }
   };
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", appendUidToLinks);
-  } else {
-    appendUidToLinks();
-  }
+  document.addEventListener("DOMContentLoaded", function () {
+    var access = checkAccess();
+    updateIdBar(access);
+    appendUidToLinks(access.uid);
+  });
 })();

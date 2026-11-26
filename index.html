@@ -5,146 +5,268 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Исламская библиотека знаний</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <link rel="stylesheet" href="style.css?v=20261129" />
-  <script src="auth.js?v=20261129"></script>
+  <link rel="stylesheet" href="style.css?v=20261130" />
+  <script src="auth.js?v=20261130"></script>
   <style>
-    .catalog-list {
+    .id-bar {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      box-shadow: 0 3px 10px rgba(14, 22, 17, 0.12);
+    }
+    .id-value {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .id-badge {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--item-bg);
+      border: 1px solid var(--border-color);
+      padding: 4px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .hero-bismillah {
+      font-family: "Amiri", "Scheherazade New", "Traditional Arabic", serif;
+      font-size: 28px;
+      line-height: 1.5;
+      color: #F4F7F4;
+      margin-bottom: 6px;
+      direction: rtl;
+    }
+    .course-list {
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
     .course-card {
-      display: block;
-      background: #E5ECE6;
-      border: 1px solid #8FA695;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
       border-radius: 16px;
-      padding: 16px 18px;
-      text-decoration: none;
-      color: #1A281F;
+      padding: 15px 16px;
+      text-decoration: none !important;
+      color: var(--text-main) !important;
       box-shadow: 0 4px 12px rgba(14, 22, 17, 0.14);
+      transition: transform 0.12s ease;
     }
     .course-card:active {
       transform: scale(0.99);
     }
-    .course-top {
+    .course-icon {
+      width: 46px;
+      height: 46px;
+      min-width: 46px;
+      border-radius: 13px;
+      background: var(--item-bg);
+      border: 1px solid var(--border-color);
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 6px;
+      justify-content: center;
+      font-size: 24px;
     }
-    .course-name {
-      font-size: 17px;
+    .course-body {
+      flex: 1;
+      min-width: 0;
+    }
+    .course-title {
+      font-size: 16px;
       font-weight: 700;
-      color: #1A281F;
+      color: var(--text-main);
+      margin: 0 0 4px;
+      line-height: 1.3;
+    }
+    .course-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin: 0 0 8px;
+      line-height: 1.35;
     }
     .course-pill {
       display: inline-block;
-      background: #DCE5DD;
-      border: 1px solid #8FA695;
-      color: #1F523F;
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--item-bg);
+      border: 1px solid var(--border-color);
       padding: 3px 10px;
       border-radius: 999px;
-      white-space: nowrap;
     }
-    .course-desc {
-      font-size: 14px;
-      color: #435749;
+    .footer-info {
+      margin-top: 20px;
+      text-align: center;
+    }
+    .legal-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: rgba(229, 236, 230, 0.9);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .legal-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(14, 22, 17, 0.72);
+      z-index: 9999;
+      padding: 16px;
+      align-items: center;
+      justify-content: center;
+    }
+    .legal-modal.open {
+      display: flex;
+    }
+    .legal-box {
+      background: var(--card-bg);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 20px;
+      max-width: 540px;
+      width: 100%;
+      max-height: 82vh;
+      overflow-y: auto;
+      text-align: left;
+    }
+    .legal-box h3 {
+      margin: 0 0 10px;
+      font-size: 17px;
+      color: var(--primary);
+    }
+    .legal-box p {
+      margin: 0 0 10px;
+      font-size: 13.5px;
       line-height: 1.45;
-      margin: 0;
-    }
-    .hero-bismillah {
-      font-family: "Amiri", "Scheherazade New", "Traditional Arabic", serif;
-      font-size: 24px;
-      margin-bottom: 8px;
-      color: #F4F7F4;
-      direction: rtl;
+      color: var(--text-main);
     }
   </style>
 </head>
 <body>
   <div class="container">
+    <div class="id-bar">
+      <span class="id-value" id="userIdDisplay">Ваш ID: —</span>
+      <span class="id-badge" id="userAccessBadge">Проверка доступа</span>
+    </div>
+
     <div class="header">
       <div class="hero-bismillah" lang="ar">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
       <h1>Исламская библиотека знаний</h1>
       <p>Конспекты, интерактивные тесты и чтение Корана с разбором</p>
     </div>
 
-    <div class="catalog-list">
-      <a class="course-card" href="sira/index.html">
-        <div class="course-top">
-          <span class="course-name">1. Сира Пророка Мухаммада ﷺ</span>
+    <div class="course-list">
+      <a href="sira/index.html" class="course-card">
+        <div class="course-icon">🕌</div>
+        <div class="course-body">
+          <div class="course-title">1. Сира Пророка Мухаммада ﷺ</div>
+          <div class="course-desc">Жизнеописание Посланника Аллаха ﷺ, семья и выдающиеся сподвижники</div>
           <span class="course-pill">7 модулей • 190 вопросов</span>
         </div>
-        <p class="course-desc">Жизнеописание Посланника Аллаха ﷺ, семья и выдающиеся сподвижники</p>
       </a>
 
-      <a class="course-card" href="nawawi/index.html">
-        <div class="course-top">
-          <span class="course-name">2. 40 хадисов имама ан-Науауи</span>
+      <a href="nawawi/index.html" class="course-card">
+        <div class="course-icon">📜</div>
+        <div class="course-body">
+          <div class="course-title">2. 40 хадисов имама ан-Науауи</div>
+          <div class="course-desc">Текст, перевод, разбор и студийная аудиоозвучка 42 хадисов</div>
           <span class="course-pill">4 главы • Аудио</span>
         </div>
-        <p class="course-desc">Текст, перевод, разбор и студийная аудиоозвучка 42 хадисов</p>
       </a>
 
-      <a class="course-card" href="fiqh/index.html">
-        <div class="course-top">
-          <span class="course-name">3. Фикх аль-Ибада</span>
+      <a href="fiqh/index.html" class="course-card">
+        <div class="course-icon">⚖️</div>
+        <div class="course-body">
+          <div class="course-title">3. Фикх аль-Ибада</div>
+          <div class="course-desc">Очищение, намаз, пост, закят и хадж согласно Ханафитскому мазхабу</div>
           <span class="course-pill">16 глав • 240 вопросов</span>
         </div>
-        <p class="course-desc">Очищение, намаз, пост, закят и хадж согласно Ханафитскому мазхабу</p>
       </a>
 
-      <a class="course-card" href="tajweed/index.html">
-        <div class="course-top">
-          <span class="course-name">4. Таджвид: Правила чтения Корана</span>
+      <a href="tajweed/index.html" class="course-card">
+        <div class="course-icon">📖</div>
+        <div class="course-body">
+          <div class="course-title">4. Таджвид: Правила чтения Корана</div>
+          <div class="course-desc">Махрадж букв, правила нун сакина, мадд и остановки с примерами</div>
           <span class="course-pill">10 глав • 150 вопросов</span>
         </div>
-        <p class="course-desc">Махрадж букв, правила нун сакина, мадд и остановки с примерами</p>
       </a>
 
-      <a class="course-card" href="adab/index.html">
-        <div class="course-top">
-          <span class="course-name">5. Адаб и Ахляк</span>
+      <a href="adab/index.html" class="course-card">
+        <div class="course-icon">🌿</div>
+        <div class="course-body">
+          <div class="course-title">5. Адаб и Ахляк</div>
+          <div class="course-desc">Исламская этика, воспитание сердца, цифровой адаб и культура торговли</div>
           <span class="course-pill">14 глав • 210 вопросов</span>
         </div>
-        <p class="course-desc">Исламская этика, воспитание сердца, цифровой адаб и культура торговли</p>
       </a>
 
-      <a class="course-card" href="aqeedah/index.html">
-        <div class="course-top">
-          <span class="course-name">6. Исламское вероубеждение (Акыда)</span>
+      <a href="aqeedah/index.html" class="course-card">
+        <div class="course-icon">🧭</div>
+        <div class="course-body">
+          <div class="course-title">6. Исламское вероубеждение (Акыда)</div>
+          <div class="course-desc">Столпы Имана, доказательства существования Аллаха и правила об атрибутах</div>
           <span class="course-pill">14 глав • 210 вопросов</span>
         </div>
-        <p class="course-desc">Столпы Имана, доказательства существования Аллаха и правила об атрибутах</p>
       </a>
 
-      <a class="course-card" href="arabic/index.html">
-        <div class="course-top">
-          <span class="course-name">7. Арабский язык: Сарф и Нахв</span>
+      <a href="arabic/index.html" class="course-card">
+        <div class="course-icon">🔤</div>
+        <div class="course-body">
+          <div class="course-title">7. Арабский язык</div>
+          <div class="course-desc">Основы сарфа и нахва, таблицы спряжений и лексика Священного Корана</div>
           <span class="course-pill">10 уроков • 150 вопросов</span>
         </div>
-        <p class="course-desc">Грамматика, спряжение глаголов и ключевая лексика Священного Корана</p>
       </a>
 
-      <a class="course-card" href="quran/index.html">
-        <div class="course-top">
-          <span class="course-name">8. Избранные суры и аяты Корана</span>
-          <span class="course-pill">8 разделов • Пословный разбор</span>
+      <a href="quran/index.html" class="course-card">
+        <div class="course-icon">🕋</div>
+        <div class="course-body">
+          <div class="course-title">8. Избранные суры и аяты Корана</div>
+          <div class="course-desc">Текст с разметкой таджвида, пословным переводом и аудиочтением</div>
+          <span class="course-pill">8 разделов • Аудио и разбор</span>
         </div>
-        <p class="course-desc">Аят аль-Курси, Аль-Мульк, суры 91–114 с разметкой таджвида и озвучкой</p>
       </a>
 
-      <a class="course-card" href="fiqh_extra/index.html">
-        <div class="course-top">
-          <span class="course-name">9. Фикх. Дополнение: Семья и обряды</span>
+      <a href="fiqh_extra/index.html" class="course-card">
+        <div class="course-icon">📋</div>
+        <div class="course-body">
+          <div class="course-title">9. Фикх. Дополнение: Семья и обряды</div>
+          <div class="course-desc">Сватовство, акыка, наследство и разбор обрядов джаназа по Ханафитскому мазхабу</div>
           <span class="course-pill">4 главы • 60 вопросов</span>
         </div>
-        <p class="course-desc">Сватовство, никах, акыка, обрезание, наследство и джаназа по Ханафитскому мазхабу</p>
       </a>
+    </div>
+
+    <div class="footer-info">
+      <button type="button" class="legal-btn" onclick="document.getElementById('legalModal').classList.add('open')">ℹ️ Правовая справка и конфиденциальность</button>
+    </div>
+  </div>
+
+  <div id="legalModal" class="legal-modal" onclick="if(event.target===this)this.classList.remove('open')">
+    <div class="legal-box">
+      <h3>Правовая справка и конфиденциальность</h3>
+      <p><strong>1. Учебный характер материалов.</strong> Все конспекты, тексты и тестовые задания носят исключительно образовательный, просветительский и справочный характер, основаны на классических исламских источниках и не являются призывом к противоправным или экстремистским действиям на территории Российской Федерации.</p>
+      <p><strong>2. Отсутствие индивидуальных фетв.</strong> Разборы вопросов предназначены для самопроверки знаний и не заменяют индивидуального обращения к квалифицированным религиозным деятелям и имамам по частным жизненным ситуациям.</p>
+      <p><strong>3. Защита персональных данных (152-ФЗ).</strong> Приложение не собирает и не хранит на сторонних серверах фамилии, номера телефонов или адреса пользователей. Прогресс обучения сохраняется локально в памяти вашего устройства, а числовой ID Telegram используется исключительно для проверки доступа.</p>
+      <button type="button" class="btn btn-primary" style="margin-top:8px;" onclick="document.getElementById('legalModal').classList.remove('open')">Закрыть</button>
     </div>
   </div>
 </body>
