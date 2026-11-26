@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Сира Пророка Мухаммада ﷺ — Интерактивный курс</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="../style.css?v=20261126" />
+  <script src="../auth.js?v=20261126"></script>
+  <style>
+    .sira-wrap { max-width: 720px; margin: 0 auto; }
+    .nav-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 10px; }
+    .btn-back-unified {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 9px 18px; background: #E5ECE6; color: #1A281F;
+      border: 1px solid #8FA695; border-radius: 20px;
+      font-weight: 700; font-size: 13.5px; text-decoration: none; cursor: pointer;
+    }
+    .btn-back-unified:hover { background: #D5E0D7; }
+    .course-hero {
+      background: linear-gradient(145deg, #1F523F 0%, #183E30 100%);
+      color: #F4F7F4; border: 1px solid #48735E; border-radius: 16px;
+      padding: 22px 18px; text-align: center; margin-bottom: 18px;
+      box-shadow: 0 6px 18px rgba(14, 22, 17, 0.24);
+    }
+    .course-hero h1 { margin: 0 0 8px; font-size: 21px; font-weight: 700; color: #F6F8F3; line-height: 1.3; }
+    .course-hero p { margin: 0 0 14px; font-size: 13.5px; color: #CFE0D6; line-height: 1.45; }
+    .hero-pills { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; }
+    .hero-pill {
+      background: rgba(255, 255, 255, 0.14); border: 1px solid rgba(255, 255, 255, 0.24);
+      color: #F4F7F4; padding: 5px 12px; border-radius: 20px; font-size: 12.5px; font-weight: 600;
+    }
+    .group-title {
+      margin: 18px 4px 10px; font-size: 12.5px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.6px; color: #D7E2D9;
+    }
+    .modules-stack { display: flex; flex-direction: column; gap: 12px; }
+    .mod-card {
+      background: #E5ECE6; border: 1px solid #8FA695; border-radius: 15px;
+      padding: 16px; color: #1A281F; box-shadow: 0 3px 10px rgba(14, 22, 17, 0.16);
+    }
+    .mod-card.final-mod { background: #E3EAE4; border: 1.5px solid #6F8F78; }
+    .mod-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+    .mod-badge { display: inline-block; background: #1F523F; color: #F4F7F4; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 8px; }
+    .mod-badge.extra { background: #3B5E4B; }
+    .mod-badge.final { background: #2B4C3B; }
+    .mod-score {
+      font-size: 12px; font-weight: 700; color: #1F523F;
+      background: #D2DFD4; border: 1px solid #96AC9B; padding: 3px 9px; border-radius: 8px;
+    }
+    .mod-title { margin: 0 0 5px; font-size: 16.5px; font-weight: 700; color: #16241B; line-height: 1.35; }
+    .mod-desc { margin: 0 0 14px; font-size: 13.5px; color: #415447; line-height: 1.45; }
+    .mod-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn-cheat {
+      flex: 1; min-width: 130px; padding: 10px 14px; background: #D5E0D7; color: #1A281F;
+      border: 1px solid #8FA695; border-radius: 10px; font-size: 13.5px; font-weight: 700; cursor: pointer; text-align: center;
+    }
+    .btn-cheat:hover { background: #C8D6CB; }
+    .btn-test {
+      flex: 1; min-width: 130px; padding: 10px 14px; background: #1F523F; color: #F4F7F4;
+      border: none; border-radius: 10px; font-size: 13.5px; font-weight: 700; cursor: pointer; text-align: center;
+    }
+    .btn-test:hover { background: #183E30; }
+    .hidden { display: none !important; }
+    .panel-card {
+      background: #E5ECE6; border: 1px solid #8FA695; border-radius: 16px;
+      padding: 20px 18px; color: #1A281F; box-shadow: 0 4px 14px rgba(14, 22, 17, 0.18);
+    }
+    .panel-header {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #B6C5B9; flex-wrap: wrap;
+    }
+    .panel-title { margin: 0; font-size: 17px; font-weight: 700; color: #1F523F; }
+    .ref-section { margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid #C2CFC5; }
+    .ref-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .ref-section h3 { margin: 0 0 8px; font-size: 15.5px; color: #1F523F; }
+    .ref-section p { margin: 0 0 8px; font-size: 14px; line-height: 1.55; }
+    .ref-list { margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.55; }
+    .ref-list li { margin-bottom: 6px; }
+    .quiz-meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; font-size: 13px; font-weight: 700; color: #415447; flex-wrap: wrap; }
+    .cat-pill { background: #D2DFD4; color: #1F523F; border: 1px solid #96AC9B; padding: 3px 10px; border-radius: 8px; font-size: 12px; }
+    .prog-track { width: 100%; height: 8px; background: #C7D3C9; border-radius: 8px; overflow: hidden; margin-bottom: 16px; }
+    .prog-fill { height: 100%; width: 0%; background: #1F523F; transition: width 0.25s ease; }
+    .q-question { font-size: 16.5px; font-weight: 700; line-height: 1.5; margin: 0 0 16px; color: #16241B; }
+    .opts-list { display: flex; flex-direction: column; gap: 10px; }
+    .opt-choice {
+      width: 100%; text-align: left; padding: 13px 15px; background: #DCE5DD;
+      border: 1px solid #9BB0A0; border-radius: 11px; color: #1A281F;
+      font-size: 14.5px; line-height: 1.45; cursor: pointer;
+    }
+    .opt-choice:hover:not(:disabled) { background: #D0DDD2; border-color: #1F523F; }
+    .opt-choice.correct { background: #C7DFC9; border: 2px solid #4D7C55; color: #16301B; font-weight: 700; }
+    .opt-choice.wrong { background: #E8CECA; border: 2px solid #A85B52; color: #421814; }
+    .opt-choice:disabled { cursor: default; }
+    .exp-card {
+      margin-top: 14px; padding: 13px 15px; background: #D5E0D7; border-left: 4px solid #1F523F;
+      border-radius: 10px; font-size: 13.8px; line-height: 1.5; color: #1A281F;
+    }
+    .quiz-footer { margin-top: 16px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .result-box { text-align: center; padding: 10px 4px; }
+    .result-score { font-size: 36px; font-weight: 800; color: #1F523F; margin: 8px 0; }
+    .mistake-card {
+      text-align: left; background: #DCE5DD; border: 1px solid #B58C86;
+      border-radius: 11px; padding: 13px; margin-top: 10px; font-size: 13.5px; line-height: 1.45;
+    }
+  </style>
+</head>
+<body>
+  <div class="sira-wrap">
+    <div class="nav-row">
+      <a href="../index.html" id="topBackBtn" class="btn-back-unified">Назад</a>
+      <button id="modeToggleBtn" class="btn-back-unified hidden" onclick="toggleOrderMode()">🔀 Вопросы вперемешку</button>
+    </div>
+
+    <div class="course-hero" id="courseHero">
+      <h1>Сира Пророка Мухаммада <bdi>ﷺ</bdi></h1>
+      <p>Интерактивный курс конспектов и тестов по жизнеописанию Посланника Аллаха <bdi>ﷺ</bdi></p>
+      <div class="hero-pills">
+        <span class="hero-pill">📚 7 модулей</span>
+        <span class="hero-pill">📝 190 вопросов</span>
+        <span class="hero-pill">📖 7 шпаргалок</span>
+      </div>
+    </div>
+
+    <div id="menuView">
+      <div class="group-title">Основной хронологический курс</div>
+      <div class="modules-stack" id="chronoList"></div>
+
+      <div class="group-title">Тематические разделы</div>
+      <div class="modules-stack" id="extraList"></div>
+
+      <div class="group-title">Итоговая аттестация</div>
+      <div class="modules-stack" id="finalList"></div>
+    </div>
+
+    <div id="cheatView" class="panel-card hidden">
+      <div class="panel-header">
+        <h2 class="panel-title" id="cheatTitle">Шпаргалка</h2>
+        <button class="btn-test" style="flex:0 0 auto;min-width:auto;" id="cheatStartTestBtn">📝 Тест</button>
+      </div>
+      <div id="cheatBody"></div>
+    </div>
+
+    <div id="quizView" class="panel-card hidden">
+      <div class="panel-header">
+        <h2 class="panel-title" id="quizModuleTitle">Тест</h2>
+        <button class="btn-cheat" style="flex:0 0 auto;min-width:auto;" id="quizOpenCheatBtn">📖 Шпаргалка</button>
+      </div>
+
+      <div id="quizActive">
+        <div class="quiz-meta">
+          <span id="qCounter">Вопрос 1 из 25</span>
+          <span class="cat-pill" id="qCat">Категория</span>
+        </div>
+        <div class="prog-track">
+          <div class="prog-fill" id="progFill"></div>
+        </div>
+        <div class="q-question" id="qText">Текст вопроса</div>
+        <div class="opts-list" id="optsList"></div>
+        <div class="exp-card hidden" id="expBox"></div>
+        <div class="quiz-footer">
+          <span style="font-size:12.5px;color:#415447;" id="liveScoreLabel">Верно: 0</span>
+          <button class="btn-test hidden" style="flex:0 0 auto;min-width:160px;" id="nextBtn" onclick="nextQuestion()">Следующий вопрос</button>
+        </div>
+      </div>
+
+      <div id="quizResult" class="result-box hidden">
+        <h3 style="margin:0;color:#1F523F;">Тест завершён</h3>
+        <div class="result-score" id="finalScore">0 / 25</div>
+        <p id="finalComment" style="margin:0 0 16px;font-size:14px;color:#2E4034;"></p>
+        <div class="mod-actions" style="justify-content:center;margin-bottom:14px;">
+          <button class="btn-test" style="flex:0 1 200px;" onclick="restartCurrentQuiz()">Пройти заново</button>
+          <button class="btn-cheat hidden" style="flex:0 1 200px;" id="retryMistakesBtn" onclick="retryMistakes()">Работать над ошибками</button>
+        </div>
+        <div id="mistakesContainer"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.SIRA_MODULES = {};
+    window.registerSiraModule = function (id, moduleObj) {
+      window.SIRA_MODULES[id] = moduleObj;
+    };
+  </script>
+  <script src="sira_m1.js?v=20261126"></script>
+  <script src="sira_m2.js?v=20261126"></script>
+  <script src="sira_m3.js?v=20261126"></script>
+  <script src="sira_m4.js?v=20261126"></script>
+  <script src="sira_m5.js?v=20261126"></script>
+  <script src="sira_m6.js?v=20261126"></script>
+  <script src="sira_m7.js?v=20261126"></script>
+  <script>
+    if (typeof protectCoursePage === "function") {
+      protectCoursePage("sira");
+    }
+
+    const MODULE_ORDER = ["m1", "m2", "m3", "m4", "m5", "m6", "m7"];
+
+    let activeModuleId = null;
+    let returnToQuizFromCheat = false;
+    let shuffleQuestionsMode = true;
+    let currentQuestions = [];
+    let currentIndex = 0;
+    let score = 0;
+    let mistakes = [];
+    let slotRotation = Math.floor(Math.random() * 4);
+
+    function getProgressMap() {
+      try { return JSON.parse(localStorage.getItem("sira_progress_v2") || "{}"); }
+      catch (e) { return {}; }
+    }
+
+    function saveModuleProgress(modId, got, total) {
+      try {
+        const map = getProgressMap();
+        const prev = map[modId];
+        if (!prev || got > prev.got) {
+          map[modId] = { got, total };
+          localStorage.setItem("sira_progress_v2", JSON.stringify(map));
+        }
+      } catch (e) {}
+    }
+
+    function updateTopBackButton(mode) {
+      const btn = document.getElementById("topBackBtn");
+      const modeBtn = document.getElementById("modeToggleBtn");
+      const uid = typeof getCurrentUserId === "function" ? getCurrentUserId() : "guest";
+
+      if (mode === "menu") {
+        btn.textContent = "Назад";
+        btn.href = "../index.html?uid=" + encodeURIComponent(uid);
+        btn.onclick = null;
+        modeBtn.classList.add("hidden");
+      } else if (mode === "cheat" && returnToQuizFromCheat) {
+        btn.textContent = "Назад";
+        btn.href = "#";
+        btn.onclick = function (e) { e.preventDefault(); showView("quiz"); };
+        modeBtn.classList.add("hidden");
+      } else {
+        btn.textContent = "Назад";
+        btn.href = "#";
+        btn.onclick = function (e) { e.preventDefault(); showView("menu"); };
+        if (mode === "quiz") modeBtn.classList.remove("hidden");
+        else modeBtn.classList.add("hidden");
+      }
+    }
+
+    function showView(viewName) {
+      document.getElementById("menuView").classList.toggle("hidden", viewName !== "menu");
+      document.getElementById("cheatView").classList.toggle("hidden", viewName !== "cheat");
+      document.getElementById("quizView").classList.toggle("hidden", viewName !== "quiz");
+      document.getElementById("courseHero").classList.toggle("hidden", viewName !== "menu");
+      updateTopBackButton(viewName);
+      if (viewName === "menu") renderModulesMenu();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function renderModulesMenu() {
+      const chronoEl = document.getElementById("chronoList");
+      const extraEl = document.getElementById("extraList");
+      const finalEl = document.getElementById("finalList");
+      chronoEl.innerHTML = "";
+      extraEl.innerHTML = "";
+      finalEl.innerHTML = "";
+
+      const prog = getProgressMap();
+
+      MODULE_ORDER.forEach((id) => {
+        const mod = window.SIRA_MODULES[id];
+        if (!mod) return;
+
+        const qCount = Array.isArray(mod.questions) ? mod.questions.length : 0;
+        const p = prog[id];
+        const scoreHtml = p ? `<span class="mod-score">Лучший результат: ${p.got} / ${p.total}</span>` : "";
+
+        let badgeClass = "mod-badge";
+        let cardClass = "mod-card";
+        if (mod.group === "extra") badgeClass += " extra";
+        if (mod.group === "final") { badgeClass += " final"; cardClass += " final-mod"; }
+
+        const card = document.createElement("div");
+        card.className = cardClass;
+        card.innerHTML = `
+          <div class="mod-top">
+            <span class="${badgeClass}">${mod.badge} • ${qCount} вопросов</span>
+            ${scoreHtml}
+          </div>
+          <h3 class="mod-title">${mod.title}</h3>
+          <p class="mod-desc">${mod.desc}</p>
+          <div class="mod-actions">
+            <button class="btn-cheat" onclick="openCheatsheet('${id}', false)">📖 Шпаргалка</button>
+            <button class="btn-test" onclick="openQuiz('${id}')">📝 Тест</button>
+          </div>
+        `;
+
+        if (mod.group === "chrono") chronoEl.appendChild(card);
+        else if (mod.group === "extra") extraEl.appendChild(card);
+        else finalEl.appendChild(card);
+      });
+    }
+
+    function openCheatsheet(modId, fromQuiz) {
+      const mod = window.SIRA_MODULES[modId];
+      if (!mod) return;
+      activeModuleId = modId;
+      returnToQuizFromCheat = Boolean(fromQuiz);
+
+      document.getElementById("cheatTitle").innerHTML = mod.title;
+      document.getElementById("cheatBody").innerHTML = mod.cheatsheet || "<p>Конспект скоро будет добавлен.</p>";
+      const startBtn = document.getElementById("cheatStartTestBtn");
+      startBtn.onclick = function () {
+        if (returnToQuizFromCheat) showView("quiz");
+        else openQuiz(modId);
+      };
+      startBtn.textContent = returnToQuizFromCheat ? "Вернуться к тесту" : "📝 Тест";
+      showView("cheat");
+    }
+
+    function toggleOrderMode() {
+      shuffleQuestionsMode = !shuffleQuestionsMode;
+      const btn = document.getElementById("modeToggleBtn");
+      btn.textContent = shuffleQuestionsMode ? "🔀 Вопросы вперемешку" : "📋 Вопросы по порядку";
+      if (activeModuleId) openQuiz(activeModuleId);
+    }
+
+    function shuffleList(arr) {
+      const copy = arr.slice();
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function openQuiz(modId, customQuestions) {
+      const mod = window.SIRA_MODULES[modId];
+      if (!mod || !Array.isArray(mod.questions)) return;
+      activeModuleId = modId;
+
+      document.getElementById("quizModuleTitle").innerHTML = mod.title;
+      document.getElementById("quizOpenCheatBtn").onclick = function () {
+        openCheatsheet(modId, true);
+      };
+
+      if (customQuestions) currentQuestions = customQuestions;
+      else currentQuestions = shuffleQuestionsMode ? shuffleList(mod.questions) : mod.questions.slice();
+
+      currentIndex = 0;
+      score = 0;
+      mistakes = [];
+
+      document.getElementById("quizActive").classList.remove("hidden");
+      document.getElementById("quizResult").classList.add("hidden");
+      showView("quiz");
+      renderQuestion();
+    }
+
+    function restartCurrentQuiz() {
+      if (activeModuleId) openQuiz(activeModuleId);
+    }
+
+    function buildBalancedOptions(qObj) {
+      const rawOpts = qObj.opts || [];
+      const correctText = rawOpts[qObj.ans];
+      const wrongTexts = rawOpts.filter((_, idx) => idx !== qObj.ans);
+      const shuffledWrongs = shuffleList(wrongTexts);
+
+      const targetPos = (slotRotation + Math.floor(Math.random() * 2) * 2) % rawOpts.length;
+      slotRotation = (slotRotation + 1) % rawOpts.length;
+
+      const result = [];
+      let wIdx = 0;
+      for (let i = 0; i < rawOpts.length; i++) {
+        if (i === targetPos) result.push({ text: correctText, isCorrect: true });
+        else result.push({ text: shuffledWrongs[wIdx++], isCorrect: false });
+      }
+      return result;
+    }
+
+    function renderQuestion() {
+      const qObj = currentQuestions[currentIndex];
+      const total = currentQuestions.length;
+
+      document.getElementById("qCounter").textContent = `Вопрос ${currentIndex + 1} из ${total}`;
+      document.getElementById("qCat").textContent = qObj.cat || "Сира";
+      document.getElementById("progFill").style.width = `${(currentIndex / total) * 100}%`;
+      document.getElementById("qText").textContent = qObj.q;
+      document.getElementById("liveScoreLabel").textContent = `Верно: ${score}`;
+
+      const optsEl = document.getElementById("optsList");
+      optsEl.innerHTML = "";
+
+      const preparedOptions = buildBalancedOptions(qObj);
+
+      preparedOptions.forEach((optItem) => {
+        const btn = document.createElement("button");
+        btn.className = "opt-choice";
+        btn.textContent = optItem.text;
+        btn.dataset.correct = optItem.isCorrect ? "1" : "0";
+        btn.onclick = () => selectOption(btn, preparedOptions, qObj);
+        optsEl.appendChild(btn);
+      });
+
+      document.getElementById("expBox").classList.add("hidden");
+      document.getElementById("nextBtn").classList.add("hidden");
+    }
+
+    function selectOption(chosenBtn, preparedOptions, qObj) {
+      const allBtns = document.querySelectorAll("#optsList .opt-choice");
+      allBtns.forEach((b) => { b.disabled = true; });
+
+      const isRight = chosenBtn.dataset.correct === "1";
+      const correctOpt = preparedOptions.find((o) => o.isCorrect);
+
+      if (isRight) {
+        chosenBtn.classList.add("correct");
+        score++;
+        document.getElementById("liveScoreLabel").textContent = `Верно: ${score}`;
+      } else {
+        chosenBtn.classList.add("wrong");
+        allBtns.forEach((b) => {
+          if (b.dataset.correct === "1") b.classList.add("correct");
+        });
+        mistakes.push({
+          qObj: qObj,
+          userText: chosenBtn.textContent,
+          correctText: correctOpt ? correctOpt.text : ""
+        });
+      }
+
+      const expBox = document.getElementById("expBox");
+      expBox.innerHTML = `<strong>Пояснение:</strong> ${qObj.exp}`;
+      expBox.classList.remove("hidden");
+
+      const nextBtn = document.getElementById("nextBtn");
+      nextBtn.textContent = currentIndex + 1 < currentQuestions.length ? "Следующий вопрос" : "Показать результаты";
+      nextBtn.classList.remove("hidden");
+    }
+
+    function nextQuestion() {
+      currentIndex++;
+      if (currentIndex < currentQuestions.length) renderQuestion();
+      else finishQuiz();
+    }
+
+    function finishQuiz() {
+      document.getElementById("progFill").style.width = "100%";
+      document.getElementById("quizActive").classList.add("hidden");
+      document.getElementById("quizResult").classList.remove("hidden");
+
+      const total = currentQuestions.length;
+      saveModuleProgress(activeModuleId, score, total);
+
+      document.getElementById("finalScore").textContent = `${score} / ${total}`;
+      const pct = Math.round((score / total) * 100);
+      let msg = "";
+      if (pct === 100) msg = "Ма ша Аллах! Безупречный результат — тема усвоена на 100%!";
+      else if (pct >= 80) msg = "Отличный результат! Осталось закрепить буквально пару деталей.";
+      else if (pct >= 60) msg = "Хороший результат! Загляните в шпаргалку для повторения сложных моментов.";
+      else msg = "Рекомендуем сначала внимательно прочитать шпаргалку, а затем пройти тест заново.";
+      document.getElementById("finalComment").textContent = msg;
+
+      const retryBtn = document.getElementById("retryMistakesBtn");
+      const mistakesEl = document.getElementById("mistakesContainer");
+      mistakesEl.innerHTML = "";
+
+      if (mistakes.length > 0) {
+        retryBtn.classList.remove("hidden");
+        const h = document.createElement("h4");
+        h.style.cssText = "margin:16px 0 8px;text-align:left;color:#1F523F;";
+        h.textContent = `Разбор ошибок (${mistakes.length}):`;
+        mistakesEl.appendChild(h);
+
+        mistakes.forEach((m, idx) => {
+          const card = document.createElement("div");
+          card.className = "mistake-card";
+          card.innerHTML = `
+            <div style="font-weight:700;margin-bottom:6px;">${idx + 1}. ${m.qObj.q}</div>
+            <div style="color:#7A261E;">Ваш ответ: ${m.userText}</div>
+            <div style="color:#1E5228;font-weight:700;">Правильный ответ: ${m.correctText}</div>
+            <div style="margin-top:6px;color:#34473B;">${m.qObj.exp}</div>
+          `;
+          mistakesEl.appendChild(card);
+        });
+      } else {
+        retryBtn.classList.add("hidden");
+      }
+    }
+
+    function retryMistakes() {
+      const list = mistakes.map((m) => m.qObj);
+      openQuiz(activeModuleId, list);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      updateTopBackButton("menu");
+      renderModulesMenu();
+    });
+  </script>
+</body>
+</html>
