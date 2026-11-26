@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Интерактивная библиотека знаний</title>
+  <link rel="stylesheet" href="style.css?v=1" />
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="auth.js?v=1"></script>
+</head>
+<body>
+  <div class="app-wrap">
+    <div class="top-nav">
+      <div class="top-bar-info">
+        <span>Ваш ID: <span class="uid-badge" id="uidDisplay">...</span></span>
+        <span id="accessStatusLabel" style="font-weight:700;color:#1F523F;"></span>
+      </div>
+    </div>
+
+    <header class="hero-header centered">
+      <div class="arabic-bismillah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+      <div class="arabic-salam">السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ</div>
+      <h1 class="hero-title">Интерактивная библиотека знаний</h1>
+      <p class="hero-subtitle">Конспекты, пословные разборы и тренажёры для закрепления шариатских дисциплин</p>
+    </header>
+
+    <div id="subStripContainer"></div>
+    <div id="browserLoginContainer"></div>
+
+    <div class="section-heading">Дисциплины и разделы (8)</div>
+    <div class="cards-stack" id="coursesList"></div>
+
+    <div class="footer-caption">
+      Прогресс обучения сохраняется автоматически на вашем устройстве
+    </div>
+  </div>
+
+  <script>
+    const COURSES = [
+      {
+        code: "sira",
+        icon: "🕌",
+        title: "1. Сира Пророка <bdi>ﷺ</bdi>",
+        meta: "Жизнеописание Посланника Аллаха <bdi>ﷺ</bdi> • 7 модулей • 190 вопросов",
+        href: "sira/index.html"
+      },
+      {
+        code: "nawawi",
+        icon: "📜",
+        title: "2. 40 хадисов Ан-Науауи",
+        meta: "Ключевые хадисы Ислама • Карточки, текст и 42 теста",
+        href: "nawawi/index.html"
+      },
+      {
+        code: "fiqh",
+        icon: "⚖️",
+        title: "3. Фикх аль-Ибада",
+        meta: "По «Мухтасар аль-Кудури» • 16 глав • 240 вопросов",
+        href: "fiqh/index.html"
+      },
+      {
+        code: "tajwid",
+        icon: "📖",
+        title: "4. Таджвид",
+        meta: "Правила чтения Священного Корана • 10 глав • 150 вопросов",
+        href: "tajwid/index.html"
+      },
+      {
+        code: "adab",
+        icon: "🌿",
+        title: "5. Адаб и Ахляк",
+        meta: "Исламская этика и воспитание души • 10 глав • 150 вопросов",
+        href: "adab/index.html"
+      },
+      {
+        code: "aqeedah",
+        icon: "🧭",
+        title: "6. Акыда",
+        meta: "Основы вероубеждения по хадису Джибрииля • 10 глав • 150 вопросов",
+        href: "aqeedah/index.html"
+      },
+      {
+        code: "arabic",
+        icon: "🖋️",
+        title: "7. Арабский язык",
+        meta: "Грамматика (Сарф и Нахв) и лексика Корана • 10 уроков • 150 вопросов",
+        href: "arabic/index.html"
+      },
+      {
+        code: "quran",
+        icon: "📗",
+        title: "8. Избранные суры и аяты Корана",
+        meta: "Таджвид-разметка и пословный перевод по порядку Мусхафа",
+        href: "quran/index.html"
+      }
+    ];
+
+    function formatRemaining(ms) {
+      const totalSec = Math.max(0, Math.floor(ms / 1000));
+      const h = Math.floor(totalSec / 3600);
+      const m = Math.floor((totalSec % 3600) / 60);
+      const s = totalSec % 60;
+      return `${h} ч ${String(m).padStart(2, "0")} мин ${String(s).padStart(2, "0")} сек`;
+    }
+
+    function activateTrialClick() {
+      if (startTrial24h()) {
+        renderCatalog();
+      }
+    }
+
+    function applyManualUid() {
+      const inp = document.getElementById("manualUidInput");
+      if (!inp) return;
+      const val = inp.value.trim();
+      if (!/^\d+$/.test(val)) {
+        alert("Введите корректный числовой ID.");
+        return;
+      }
+      try { localStorage.setItem("madrasah_uid", val); } catch (e) {}
+      renderCatalog();
+    }
+
+    function renderCatalog() {
+      const uid = getCurrentUserId();
+      const uidEl = document.getElementById("uidDisplay");
+      if (uidEl) uidEl.textContent = uid;
+
+      const hasFullPerm = Array.isArray(ALLOWED_USERS[uid]) && ALLOWED_USERS[uid].includes("all");
+      const trial = getTrialState();
+
+      const statusLabel = document.getElementById("accessStatusLabel");
+      if (statusLabel) {
+        if (hasFullPerm) {
+          statusLabel.textContent = "Полный доступ";
+          statusLabel.style.color = "#1F523F";
+        } else if (trial.status === "active") {
+          statusLabel.textContent = "Пробный 24 ч";
+          statusLabel.style.color = "#1F523F";
+        } else {
+          statusLabel.textContent = "Ограниченный";
+          statusLabel.style.color = "#7A4738";
+        }
+      }
+
+      const subContainer = document.getElementById("subStripContainer");
+      if (subContainer) {
+        if (hasFullPerm) {
+          subContainer.innerHTML = "";
+        } else if (isInsideTelegram()) {
+          if (trial.status === "available") {
+            subContainer.innerHTML = `
+              <div class="notice-strip">
+                <span>🎁 Ознакомительный доступ на <b>24 часа</b> ко всем курсам</span>
+                <button class="btn-action" onclick="activateTrialClick()">Включить 24 ч</button>
+              </div>
+            `;
+          } else if (trial.status === "active") {
+            subContainer.innerHTML = `
+              <div class="notice-strip active">
+                <span>⏳ Пробный доступ активен • Осталось: <b id="trialCountdown">${formatRemaining(trial.remainingMs)}</b></span>
+              </div>
+            `;
+          } else if (trial.status === "expired") {
+            subContainer.innerHTML = `
+              <div class="notice-strip expired">
+                <span>⌛ Ознакомительный период (24 ч) завершён. Передайте ваш ID администратору для полного доступа.</span>
+              </div>
+            `;
+          }
+        } else {
+          subContainer.innerHTML = "";
+        }
+      }
+
+      const browserLogin = document.getElementById("browserLoginContainer");
+      if (browserLogin) {
+        if (!isInsideTelegram() && !hasFullPerm) {
+          browserLogin.innerHTML = `
+            <div class="browser-login-box">
+              <div>🌐 <b>Вход через браузер:</b> введите ваш персональный цифровой ID для открытия курсов</div>
+              <div class="browser-login-row">
+                <input type="text" id="manualUidInput" inputmode="numeric" placeholder="Например: 859435297" value="${uid !== 'guest' ? uid : ''}" />
+                <button class="btn-action" onclick="applyManualUid()">Войти</button>
+              </div>
+            </div>
+          `;
+        } else {
+          browserLogin.innerHTML = "";
+        }
+      }
+
+      const listEl = document.getElementById("coursesList");
+      if (!listEl) return;
+      listEl.innerHTML = COURSES.map((c) => {
+        const unlocked = hasCourseAccess(c.code);
+        const targetUrl = `${c.href}?uid=${encodeURIComponent(uid)}`;
+        const btnLabel = unlocked ? "📝 Открыть" : "🔒 Закрыто";
+
+        return `
+          <a class="surface-card course-link-card" href="${targetUrl}" onclick="return handleCourseClick(event, '${c.code}', '${targetUrl}')">
+            <div class="course-icon-box">${c.icon}</div>
+            <div class="course-card-body">
+              <div class="course-card-title">${c.title}</div>
+              <div class="course-card-meta">${c.meta}</div>
+            </div>
+            <span class="btn-action ${unlocked ? "" : "locked"}">${btnLabel}</span>
+          </a>
+        `;
+      }).join("");
+    }
+
+    function handleCourseClick(e, code, url) {
+      if (hasCourseAccess(code)) return true;
+      e.preventDefault();
+      const trial = getTrialState();
+      if (isInsideTelegram() && trial.status === "available") {
+        if (confirm("Включить бесплатный ознакомительный доступ ко всем курсам на 24 часа?")) {
+          startTrial24h();
+          window.location.href = url;
+        }
+      } else {
+        alert("Доступ закрыт. Ваш ID: " + getCurrentUserId() + ". Обратитесь к администратору.");
+      }
+      return false;
+    }
+
+    document.addEventListener("DOMContentLoaded", renderCatalog);
+    setTimeout(renderCatalog, 250);
+
+    setInterval(() => {
+      const trial = getTrialState();
+      const cd = document.getElementById("trialCountdown");
+      if (trial.status === "active" && cd) {
+        cd.textContent = formatRemaining(trial.remainingMs);
+      } else if (trial.status === "expired" && cd) {
+        renderCatalog();
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
