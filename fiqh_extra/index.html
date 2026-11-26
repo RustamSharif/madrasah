@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Фикх. Дополнение — Семья, обряды и наследство</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="../style.css?v=20261128" />
+  <script src="../auth.js?v=20261128"></script>
+  <style>
+    .hidden { display: none !important; }
+    .cheat-body h3 { margin-top: 0; color: var(--primary); font-size: 18px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+    .cheat-body h4 { margin: 14px 0 6px; font-size: 15.5px; color: var(--text-main); }
+    .cheat-body ul, .cheat-body ol { padding-left: 20px; margin: 8px 0; }
+    .cheat-body li { margin-bottom: 7px; font-size: 14.5px; }
+    .quiz-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color); }
+    .quiz-counter { font-size: 13.5px; font-weight: 700; color: var(--primary); }
+    .quiz-question { font-size: 16.5px; font-weight: 700; margin-bottom: 16px; line-height: 1.45; }
+    .options-list { display: flex; flex-direction: column; gap: 10px; }
+    .explanation-box { margin-top: 14px; padding: 13px 14px; border-radius: 12px; background: var(--item-bg); border-left: 4px solid var(--primary); font-size: 14px; }
+    .quiz-footer { margin-top: 16px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .result-score { font-size: 30px; font-weight: 800; color: var(--primary); margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="top-nav">
+      <a href="../index.html" id="backLink" class="back-btn">Назад</a>
+    </div>
+
+    <div class="header">
+      <h1>Фикх. Дополнение</h1>
+      <p>Сватовство и никах, права новорождённого, наследство и ханафитский разбор обрядов джаназа</p>
+      <div class="stats-bar">
+        <span class="stat-pill">4 главы</span>
+        <span class="stat-pill" id="statCheats">0 шпаргалок</span>
+        <span class="stat-pill" id="statQuestions">0 вопросов</span>
+      </div>
+    </div>
+
+    <div id="menuView">
+      <div id="chaptersList"></div>
+
+      <div class="card" style="text-align:center;">
+        <h3 style="margin:0 0 6px;font-size:17px;color:var(--primary);">🎓 Итоговый зачёт по разделу</h3>
+        <p style="margin:0 0 14px;font-size:13.5px;color:var(--text-muted);">30 случайных вопросов из всех 4 глав по Ханафитскому мазхабу</p>
+        <button class="btn btn-primary" id="startExamBtn" onclick="startExam()">Начать итоговый зачёт</button>
+      </div>
+    </div>
+
+    <div id="cheatView" class="card hidden">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:14px;">
+        <button class="back-btn" onclick="showMenu()">Назад к главам</button>
+        <button class="btn btn-primary" style="width:auto;padding:8px 16px;" id="cheatToTestBtn">Пройти тест</button>
+      </div>
+      <div class="cheat-body" id="cheatBody"></div>
+    </div>
+
+    <div id="quizView" class="card hidden">
+      <div class="quiz-top">
+        <button class="back-btn" style="padding:6px 12px;font-size:13px;" onclick="showMenu()">Выйти</button>
+        <span class="quiz-counter" id="quizCounter">Вопрос 1 / 15</span>
+        <button class="btn btn-cheat" id="inlineCheatBtn" style="width:auto;padding:6px 12px;font-size:13px;" onclick="openInlineCheat()">📖 Шпаргалка</button>
+      </div>
+      <div style="font-size:12.5px;color:var(--text-muted);margin-bottom:6px;" id="quizChapterLabel"></div>
+      <div class="quiz-question" id="quizQuestionText"></div>
+      <div class="options-list" id="quizOptionsList"></div>
+      <div class="explanation-box hidden" id="quizExplanationBox"></div>
+      <div class="quiz-footer">
+        <span style="font-size:13px;color:var(--text-muted);" id="quizScoreLive">Верно: 0</span>
+        <button class="btn btn-primary hidden" style="width:auto;padding:10px 18px;" id="nextQuestionBtn" onclick="nextQuestion()">Следующий вопрос</button>
+      </div>
+    </div>
+
+    <div id="resultView" class="card hidden" style="text-align:center;">
+      <div style="font-size:40px;" id="resultEmoji">🌟</div>
+      <h2 style="margin:8px 0 4px;" id="resultTitle">Тест завершён!</h2>
+      <div class="result-score" id="resultScoreText">0 / 15</div>
+      <p style="color:var(--text-muted);font-size:14px;margin-bottom:18px;" id="resultSubtitle"></p>
+      <div class="chapter-actions">
+        <button class="btn btn-cheat" onclick="showMenu()">К списку глав</button>
+        <button class="btn btn-primary" onclick="retryQuiz()">Пройти заново</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="cheatModal" class="modal-backdrop hidden" onclick="if(event.target===this) closeModal()">
+    <div class="modal-box">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
+        <button class="back-btn" style="padding:6px 14px;" onclick="closeModal()">Закрыть</button>
+      </div>
+      <div class="cheat-body" id="modalCheatBody"></div>
+    </div>
+  </div>
+
+  <script>
+    window.FIQH_EXTRA_CHAPTERS = [
+      { id: 1, title: "Глава 1. Сватовство (Хытба) и основы брачного договора (Никах)", cheat: "", questions: [] },
+      { id: 2, title: "Глава 2. Права новорождённого: имянаречение, акыка и обрезание", cheat: "", questions: [] },
+      { id: 3, title: "Глава 3. Основы наследственного права (Мирас / Фараид)", cheat: "", questions: [] },
+      { id: 4, title: "Глава 4. Обряды джаназа, посещение могил и нововведения по Ханафитскому мазхабу", cheat: "", questions: [] }
+    ];
+
+    window.FIQH_EXTRA_DATA = window.FIQH_EXTRA_DATA || { chapters: {}, cheatsheets: {}, questions: [] };
+
+    function normQ(raw, chId, chTitle) {
+      return {
+        chapterId: chId,
+        chapterTitle: chTitle,
+        question: raw.question || raw.q || raw.text || "",
+        options: raw.options || raw.a || raw.answers || [],
+        correct: typeof raw.correct === "number" ? raw.correct : (typeof raw.c === "number" ? raw.c : 0),
+        explanation: raw.explanation || raw.exp || raw.desc || ""
+      };
+    }
+
+    window.registerFiqhExtraChapter = function(a, b, c, d) {
+      var num = null, title = "", cheat = "", qs = [];
+      if (typeof a === "object" && a !== null) {
+        num = a.id || a.num || a.chapter || null;
+        title = a.title || a.name || "";
+        cheat = a.cheat || a.cheatsheet || "";
+        qs = a.questions || [];
+      } else if (typeof a === "number") {
+        num = a;
+        title = typeof b === "string" ? b : "";
+        if (Array.isArray(c)) { qs = c; cheat = typeof d === "string" ? d : ""; }
+        else { cheat = typeof c === "string" ? c : ""; qs = Array.isArray(d) ? d : []; }
+      }
+      if (!num || num < 1 || num > 4) return;
+      var target = window.FIQH_EXTRA_CHAPTERS[num - 1];
+      if (title) target.title = title;
+      if (cheat) target.cheat = cheat;
+      if (Array.isArray(qs) && qs.length > 0) {
+        target.questions = qs.map(function(item) { return normQ(item, target.id, target.title); });
+      }
+    };
+  </script>
+  <script src="fiqh_extra_part1.js?v=20261128"></script>
+  <script src="fiqh_extra_part2.js?v=20261128"></script>
+
+  <script>
+    const PROG_KEY = "madrasah_fiqh_extra_v1";
+    let currentCh = null;
+    let quizState = { mode: "chapter", chapterId: null, questions: [], index: 0, score: 0, answered: false };
+
+    function collectFallbackData() {
+      if (!window.FIQH_EXTRA_DATA) return;
+      if (window.FIQH_EXTRA_DATA.chapters) {
+        Object.keys(window.FIQH_EXTRA_DATA.chapters).forEach(function(k) {
+          var item = window.FIQH_EXTRA_DATA.chapters[k];
+          var id = Number(item.id || k);
+          if (id >= 1 && id <= 4) {
+            var target = window.FIQH_EXTRA_CHAPTERS[id - 1];
+            if (item.title) target.title = item.title;
+            if (item.cheatsheet || item.cheat) target.cheat = item.cheatsheet || item.cheat;
+            if (Array.isArray(item.questions) && item.questions.length > 0) {
+              target.questions = item.questions.map(function(q) { return normQ(q, id, target.title); });
+            }
+          }
+        });
+      }
+      if (window.FIQH_EXTRA_DATA.cheatsheets) {
+        Object.keys(window.FIQH_EXTRA_DATA.cheatsheets).forEach(function(k) {
+          var m = String(k).match(/\d+/);
+          if (m) {
+            var id = Number(m[0]);
+            if (id >= 1 && id <= 4 && !window.FIQH_EXTRA_CHAPTERS[id - 1].cheat) {
+              window.FIQH_EXTRA_CHAPTERS[id - 1].cheat = window.FIQH_EXTRA_DATA.cheatsheets[k];
+            }
+          }
+        });
+      }
+      if (Array.isArray(window.FIQH_EXTRA_DATA.questions)) {
+        window.FIQH_EXTRA_DATA.questions.forEach(function(raw) {
+          var id = Number(raw.chapterId || raw.chapter || 0);
+          if (id >= 1 && id <= 4) {
+            var target = window.FIQH_EXTRA_CHAPTERS[id - 1];
+            var nq = normQ(raw, id, target.title);
+            if (!target.questions.some(function(ex) { return ex.question === nq.question; })) {
+              target.questions.push(nq);
+            }
+          }
+        });
+      }
+    }
+
+    function getProg() {
+      try { return JSON.parse(localStorage.getItem(PROG_KEY) || "{}"); }
+      catch (e) { return {}; }
+    }
+
+    function showView(id) {
+      ["menuView", "cheatView", "quizView", "resultView"].forEach(function(v) {
+        document.getElementById(v).classList.add("hidden");
+      });
+      document.getElementById(id).classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function showMenu() {
+      renderMenu();
+      showView("menuView");
+    }
+
+    function renderMenu() {
+      collectFallbackData();
+      var prog = getProg();
+      var listEl = document.getElementById("chaptersList");
+      var totalCheats = 0;
+      var totalQs = 0;
+
+      listEl.innerHTML = window.FIQH_EXTRA_CHAPTERS.map(function(ch) {
+        var hasCheat = Boolean(ch.cheat && ch.cheat.trim());
+        var qCount = ch.questions.length;
+        if (hasCheat) totalCheats++;
+        totalQs += qCount;
+
+        var best = prog[ch.id];
+        var bestHtml = best ? ' • Лучший результат: ' + best.score + '/' + best.total : '';
+
+        return '<div class="chapter-card">' +
+          '<div class="chapter-info">' +
+            '<div class="chapter-title">' + ch.title + '</div>' +
+            '<div class="chapter-meta">Вопросов: ' + qCount + bestHtml + '</div>' +
+          '</div>' +
+          '<div class="chapter-actions ' + (!hasCheat ? 'single' : '') + '">' +
+            (hasCheat ? '<button class="btn btn-cheat" onclick="openCheat(' + ch.id + ')">📖 Шпаргалка</button>' : '') +
+            '<button class="btn btn-primary" ' + (qCount === 0 ? 'disabled style="opacity:0.55;"' : '') + ' onclick="startChapter(' + ch.id + ')">📝 Тест</button>' +
+          '</div>' +
+        '</div>';
+      }).join("");
+
+      document.getElementById("statCheats").textContent = totalCheats + " шпаргалок";
+      document.getElementById("statQuestions").textContent = totalQs + " вопросов";
+
+      var examBtn = document.getElementById("startExamBtn");
+      examBtn.disabled = totalQs === 0;
+      examBtn.style.opacity = totalQs === 0 ? "0.55" : "1";
+    }
+
+    function openCheat(id) {
+      var ch = window.FIQH_EXTRA_CHAPTERS[id - 1];
+      if (!ch || !ch.cheat) return;
+      currentCh = ch;
+      document.getElementById("cheatBody").innerHTML = ch.cheat;
+      var btn = document.getElementById("cheatToTestBtn");
+      btn.style.display = ch.questions.length > 0 ? "inline-flex" : "none";
+      btn.onclick = function() { startChapter(ch.id); };
+      showView("cheatView");
+    }
+
+    function shuffle(arr) {
+      var a = arr.slice();
+      for (var i = a.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = a[i]; a[i] = a[j]; a[j] = t;
+      }
+      return a;
+    }
+
+    function startChapter(id) {
+      var ch = window.FIQH_EXTRA_CHAPTERS[id - 1];
+      if (!ch || ch.questions.length === 0) return;
+      currentCh = ch;
+      quizState = { mode: "chapter", chapterId: ch.id, questions: shuffle(ch.questions), index: 0, score: 0, answered: false };
+      showView("quizView");
+      renderQuestion();
+    }
+
+    function startExam() {
+      var pool = [];
+      window.FIQH_EXTRA_CHAPTERS.forEach(function(ch) { pool = pool.concat(ch.questions); });
+      if (pool.length === 0) return;
+      quizState = { mode: "exam", chapterId: null, questions: shuffle(pool).slice(0, 30), index: 0, score: 0, answered: false };
+      showView("quizView");
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      var q = quizState.questions[quizState.index];
+      quizState.answered = false;
+
+      document.getElementById("quizCounter").textContent = "Вопрос " + (quizState.index + 1) + " / " + quizState.questions.length;
+      document.getElementById("quizScoreLive").textContent = "Верно: " + quizState.score;
+      document.getElementById("quizChapterLabel").textContent = q.chapterTitle;
+      document.getElementById("quizQuestionText").textContent = q.question;
+
+      var ch = window.FIQH_EXTRA_CHAPTERS[q.chapterId - 1];
+      document.getElementById("inlineCheatBtn").style.display = (ch && ch.cheat) ? "inline-flex" : "none";
+
+      var wrappedOpts = q.options.map(function(txt, idx) {
+        return { text: txt, isCorrect: idx === q.correct };
+      });
+      wrappedOpts = shuffle(wrappedOpts);
+
+      var optsEl = document.getElementById("quizOptionsList");
+      optsEl.innerHTML = "";
+      wrappedOpts.forEach(function(optObj) {
+        var btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.textContent = optObj.text;
+        btn.dataset.correct = optObj.isCorrect ? "1" : "0";
+        btn.onclick = function() { selectAnswer(btn); };
+        optsEl.appendChild(btn);
+      });
+
+      var expBox = document.getElementById("quizExplanationBox");
+      expBox.classList.add("hidden");
+      expBox.innerHTML = "";
+
+      document.getElementById("nextQuestionBtn").classList.add("hidden");
+    }
+
+    function selectAnswer(selectedBtn) {
+      if (quizState.answered) return;
+      quizState.answered = true;
+
+      var q = quizState.questions[quizState.index];
+      var buttons = document.querySelectorAll("#quizOptionsList .option-btn");
+      var isRight = selectedBtn.dataset.correct === "1";
+
+      buttons.forEach(function(btn) {
+        btn.disabled = true;
+        if (btn.dataset.correct === "1") btn.classList.add("correct");
+        else if (btn === selectedBtn && !isRight) btn.classList.add("wrong");
+      });
+
+      if (isRight) {
+        quizState.score++;
+        document.getElementById("quizScoreLive").textContent = "Верно: " + quizState.score;
+      }
+
+      if (q.explanation) {
+        var expBox = document.getElementById("quizExplanationBox");
+        expBox.innerHTML = "<strong>Разбор по Ханафитскому мазхабу:</strong> " + q.explanation;
+        expBox.classList.remove("hidden");
+      }
+
+      var nextBtn = document.getElementById("nextQuestionBtn");
+      nextBtn.textContent = (quizState.index + 1 < quizState.questions.length) ? "Следующий вопрос" : "Завершить тест";
+      nextBtn.classList.remove("hidden");
+    }
+
+    function nextQuestion() {
+      if (quizState.index + 1 < quizState.questions.length) {
+        quizState.index++;
+        renderQuestion();
+      } else {
+        finishQuiz();
+      }
+    }
+
+    function finishQuiz() {
+      var total = quizState.questions.length;
+      var score = quizState.score;
+      var pct = Math.round((score / total) * 100);
+
+      if (quizState.mode === "chapter" && quizState.chapterId) {
+        var prog = getProg();
+        var prev = prog[quizState.chapterId];
+        if (!prev || score >= prev.score) {
+          prog[quizState.chapterId] = { score: score, total: total };
+          localStorage.setItem(PROG_KEY, JSON.stringify(prog));
+        }
+      }
+
+      document.getElementById("resultScoreText").textContent = score + " / " + total + " (" + pct + "%)";
+      if (pct >= 80) {
+        document.getElementById("resultEmoji").textContent = "🌟";
+        document.getElementById("resultTitle").textContent = "Отличный результат!";
+        document.getElementById("resultSubtitle").textContent = "Ма шаа Аллах! Вы уверенно усвоили положения ханафитского фикха.";
+      } else {
+        document.getElementById("resultEmoji").textContent = "📖";
+        document.getElementById("resultTitle").textContent = "Стоит повторить материал";
+        document.getElementById("resultSubtitle").textContent = "Рекомендуем внимательно изучить шпаргалку и пройти тест заново.";
+      }
+      showView("resultView");
+    }
+
+    function retryQuiz() {
+      if (quizState.mode === "exam") startExam();
+      else if (quizState.chapterId) startChapter(quizState.chapterId);
+    }
+
+    function openInlineCheat() {
+      var q = quizState.questions[quizState.index];
+      var ch = window.FIQH_EXTRA_CHAPTERS[q.chapterId - 1];
+      if (!ch || !ch.cheat) return;
+      document.getElementById("modalCheatBody").innerHTML = ch.cheat;
+      document.getElementById("cheatModal").classList.remove("hidden");
+    }
+
+    function closeModal() {
+      document.getElementById("cheatModal").classList.add("hidden");
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+      var uid = new URLSearchParams(window.location.search).get("uid");
+      if (uid) document.getElementById("backLink").href = "../index.html?uid=" + encodeURIComponent(uid);
+      if (typeof protectCoursePage === "function") protectCoursePage("fiqh_extra");
+      renderMenu();
+    });
+  </script>
+</body>
+</html>
