@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Арабский язык — Сарф, Нахв и лексика Корана</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <link rel="stylesheet" href="../style.css?v=20261128" />
-  <script src="../auth.js?v=20261128"></script>
+  <link rel="stylesheet" href="../style.css?v=20261201" />
+  <script src="../auth.js?v=20261201"></script>
   <script>
     if (typeof protectCoursePage === "function") {
       protectCoursePage("arabic");
@@ -118,6 +118,7 @@
       padding: 15px 16px;
       color: #1A281F;
       box-shadow: 0 3px 10px rgba(14, 22, 17, 0.16);
+      overflow: hidden;
     }
 
     .chapter-header {
@@ -125,6 +126,7 @@
       align-items: flex-start;
       gap: 12px;
       margin-bottom: 12px;
+      width: 100%;
     }
 
     .chapter-num {
@@ -148,17 +150,22 @@
       color: #16301B;
     }
 
-    .chapter-info {
-      flex: 1;
-      min-width: 0;
+    .chapter-header .chapter-info {
+      flex: 1 1 0% !important;
+      width: auto !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+      margin-bottom: 0 !important;
     }
 
-    .chapter-title {
+    .chapter-header .chapter-title {
       font-size: 16px;
       font-weight: 700;
       color: #18261D;
       margin-bottom: 4px;
       line-height: 1.35;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
 
     .chapter-meta {
