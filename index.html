@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Исламская библиотека знаний</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <link rel="stylesheet" href="style.css?v=20261201" />
-  <script src="auth.js?v=20261201"></script>
+  <link rel="stylesheet" href="style.css?v=20261203" />
+  <script src="auth.js?v=20261203"></script>
   <style>
     .id-bar {
       display: flex;
@@ -127,7 +127,10 @@
 
     .footer-legal {
       margin-top: 22px;
-      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
     }
 
     .legal-btn {
@@ -139,10 +142,27 @@
       color: #1A281F;
       border: 1px solid #8FA695;
       border-radius: 999px;
-      padding: 8px 16px;
+      padding: 8px 18px;
       font-size: 12.5px;
       font-weight: 600;
       cursor: pointer;
+    }
+
+    .support-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: #1F523F;
+      color: #F4F7F4;
+      border: 1px solid #48735E;
+      border-radius: 999px;
+      padding: 8px 18px;
+      font-size: 12.5px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(14, 22, 17, 0.16);
     }
 
     .legal-modal {
@@ -188,6 +208,13 @@
 
     .legal-box li {
       margin-bottom: 8px;
+    }
+
+    .legal-email {
+      color: #1F523F;
+      font-weight: 700;
+      text-decoration: underline;
+      word-break: break-all;
     }
   </style>
 </head>
@@ -312,6 +339,9 @@
       <button type="button" class="legal-btn" onclick="document.getElementById('legalModal').classList.add('open')">
         ℹ️ Правовая справка и конфиденциальность
       </button>
+      <a id="supportLinkBtn" href="https://t.me/madrasah_support_bot" target="_blank" rel="noopener" class="support-btn">
+        💬 Написать в поддержку
+      </a>
     </div>
   </div>
 
@@ -322,12 +352,15 @@
         <li><strong>Учебный характер материалов:</strong> все конспекты, аудиозаписи и тесты носят исключительно образовательный, просветительский и культурно-исторический характер, основаны на классических исламских источниках и <strong>не являются призывом к противоправным или экстремистским действиям на территории РФ</strong>.</li>
         <li><strong>Справочный статус:</strong> материалы предназначены для самопроверки знаний и не являются индивидуальными религиозно-правовыми заключениями (фетвами).</li>
         <li><strong>Защита данных (152-ФЗ):</strong> приложение не собирает и не хранит на сторонних серверах фамилии, номера телефонов или адреса пользователей. Прогресс сохраняется локально в памяти вашего устройства.</li>
+        <li><strong>Дополнительный канал связи:</strong> по официальным вопросам и предложениям вы также можете написать на электронную почту <a href="mailto:abugaisha@gmail.com" class="legal-email">abugaisha@gmail.com</a>.</li>
       </ul>
       <button type="button" class="btn btn-primary" onclick="document.getElementById('legalModal').classList.remove('open')">Закрыть</button>
     </div>
   </div>
 
   <script>
+    const SUPPORT_USERNAME = "madrasah_support_bot";
+
     document.addEventListener("DOMContentLoaded", function () {
       const params = new URLSearchParams(window.location.search);
       let uid = params.get("uid");
@@ -347,6 +380,20 @@
       } else {
         document.getElementById("userIdDisplay").textContent = "Ваш ID: гостевой режим";
       }
+
+      const supportBtn = document.getElementById("supportLinkBtn");
+      if (supportBtn && SUPPORT_USERNAME) {
+        const cleanUser = SUPPORT_USERNAME.replace(/^@/, "");
+        const tgUrl = "https://t.me/" + cleanUser;
+        supportBtn.href = tgUrl;
+        supportBtn.addEventListener("click", function (e) {
+          if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.openTelegramLink === "function") {
+            e.preventDefault();
+            window.Telegram.WebApp.openTelegramLink(tgUrl);
+          }
+        });
+      }
+
       const statusEl = document.getElementById("accessStatusDisplay");
       if (statusEl && statusEl.textContent === "Проверка доступа") {
         statusEl.textContent = uid ? "Доступ активен" : "Пробный режим";
