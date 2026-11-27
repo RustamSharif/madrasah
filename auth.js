@@ -4,7 +4,9 @@
   ];
 
   var ALLOWED_IDS = [
-    "859435297"
+    "859435297",
+    "806762570",
+    "1665058233",
   ];
 
   var TRIAL_KEY = "madrasah_trial_start_v1";
